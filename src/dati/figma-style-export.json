@@ -1,0 +1,346 @@
+{
+  "styles": {
+    "colors": [
+      {
+        "name": "Primary/Blue",
+        "token": "primary-blue",
+        "type": "solid"
+      },
+      {
+        "name": "Primary/Gray",
+        "token": "primary-gray",
+        "type": "solid"
+      },
+      {
+        "name": "Primary/Light Blue",
+        "token": "primary-light-blue",
+        "type": "solid"
+      },
+      {
+        "name": "Primary/D&L/Blue/Blue80%",
+        "token": "primary-d-l-blue-blue80",
+        "type": "solid"
+      },
+      {
+        "name": "Primary/D&L/Blue/Blue60%",
+        "token": "primary-d-l-blue-blue60",
+        "type": "solid"
+      },
+      {
+        "name": "Primary/D&L/Blue/Blue40%",
+        "token": "primary-d-l-blue-blue40",
+        "type": "solid"
+      },
+      {
+        "name": "Primary/D&L/Blue/Blue20%",
+        "token": "primary-d-l-blue-blue20",
+        "type": "solid"
+      },
+      {
+        "name": "Primary/D&L/Grey/Grey80%",
+        "token": "primary-d-l-grey-grey80",
+        "type": "solid"
+      },
+      {
+        "name": "Primary/D&L/Grey/Grey60%",
+        "token": "primary-d-l-grey-grey60",
+        "type": "solid"
+      },
+      {
+        "name": "Primary/D&L/Grey/Grey40%",
+        "token": "primary-d-l-grey-grey40",
+        "type": "solid"
+      },
+      {
+        "name": "Primary/D&L/Grey/Grey20%",
+        "token": "primary-d-l-grey-grey20",
+        "type": "solid"
+      },
+      {
+        "name": "Primary/D&L/Light Blue/LightBlue80%",
+        "token": "primary-d-l-light-blue-lightblue80",
+        "type": "solid"
+      },
+      {
+        "name": "Primary/D&L/Light Blue/LightBlue60%",
+        "token": "primary-d-l-light-blue-lightblue60",
+        "type": "solid"
+      },
+      {
+        "name": "Primary/D&L/Light Blue/LightBlue40%",
+        "token": "primary-d-l-light-blue-lightblue40",
+        "type": "solid"
+      },
+      {
+        "name": "Primary/D&L/Light Blue/LightBlue20%",
+        "token": "primary-d-l-light-blue-lightblue20",
+        "type": "solid"
+      },
+      {
+        "name": "Secondary/Orange",
+        "token": "secondary-orange",
+        "type": "solid"
+      },
+      {
+        "name": "Secondary/Bordeaux",
+        "token": "secondary-bordeaux",
+        "type": "solid"
+      },
+      {
+        "name": "Secondary/D&L/Orange/Orange80%",
+        "token": "secondary-d-l-orange-orange80",
+        "type": "solid"
+      },
+      {
+        "name": "Secondary/D&L/Orange/Orange60%",
+        "token": "secondary-d-l-orange-orange60",
+        "type": "solid"
+      },
+      {
+        "name": "Secondary/D&L/Orange/Orange40%",
+        "token": "secondary-d-l-orange-orange40",
+        "type": "solid"
+      },
+      {
+        "name": "Secondary/D&L/Orange/Orange20%",
+        "token": "secondary-d-l-orange-orange20",
+        "type": "solid"
+      },
+      {
+        "name": "Secondary/D&L/Bordeaux/Bordeaux80%",
+        "token": "secondary-d-l-bordeaux-bordeaux80",
+        "type": "solid"
+      },
+      {
+        "name": "Secondary/D&L/Bordeaux/Bordeaux60%",
+        "token": "secondary-d-l-bordeaux-bordeaux60",
+        "type": "solid"
+      },
+      {
+        "name": "Secondary/D&L/Bordeaux/Bordeaux40%",
+        "token": "secondary-d-l-bordeaux-bordeaux40",
+        "type": "solid"
+      },
+      {
+        "name": "Secondary/D&L/Bordeaux/Bordeaux20%",
+        "token": "secondary-d-l-bordeaux-bordeaux20",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/Ochre",
+        "token": "tertiary-ochre",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/Petrol",
+        "token": "tertiary-petrol",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/Green",
+        "token": "tertiary-green",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/Purple",
+        "token": "tertiary-purple",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/D&L/Ochre/Ochre80%",
+        "token": "tertiary-d-l-ochre-ochre80",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/D&L/Ochre/Ochre60%",
+        "token": "tertiary-d-l-ochre-ochre60",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/D&L/Ochre/Ochre40%",
+        "token": "tertiary-d-l-ochre-ochre40",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/D&L/Ochre/Ochre20%",
+        "token": "tertiary-d-l-ochre-ochre20",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/D&L/Petrol/Petrol80%",
+        "token": "tertiary-d-l-petrol-petrol80",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/D&L/Petrol/Petrol60%",
+        "token": "tertiary-d-l-petrol-petrol60",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/D&L/Petrol/Petrol40%",
+        "token": "tertiary-d-l-petrol-petrol40",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/D&L/Petrol/Petrol20%",
+        "token": "tertiary-d-l-petrol-petrol20",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/D&L/Green/Green80%",
+        "token": "tertiary-d-l-green-green80",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/D&L/Green/Green60%",
+        "token": "tertiary-d-l-green-green60",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/D&L/Green/Green40%",
+        "token": "tertiary-d-l-green-green40",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/D&L/Green/Green20%",
+        "token": "tertiary-d-l-green-green20",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/D&L/Purple/Purple80%",
+        "token": "tertiary-d-l-purple-purple80",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/D&L/Purple/Purple60%",
+        "token": "tertiary-d-l-purple-purple60",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/D&L/Purple/Purple40%",
+        "token": "tertiary-d-l-purple-purple40",
+        "type": "solid"
+      },
+      {
+        "name": "Tertiary/D&L/Purple/Purple20%",
+        "token": "tertiary-d-l-purple-purple20",
+        "type": "solid"
+      }
+    ],
+    "textStyles": [
+      {
+        "name": "Custom Timer",
+        "token": "custom-timer",
+        "type": "text",
+        "fontFamily": "Lato",
+        "fontWeight": "700",
+        "fontSize": "96px",
+        "letterSpacing": "0%"
+      },
+      {
+        "name": "Heading/H2",
+        "token": "heading-h2",
+        "type": "text",
+        "fontFamily": "Lato",
+        "fontWeight": "700",
+        "fontSize": "24px",
+        "letterSpacing": "0%"
+      },
+      {
+        "name": "Heading/H1",
+        "token": "heading-h1",
+        "type": "text",
+        "fontFamily": "Lato",
+        "fontWeight": "700",
+        "fontSize": "28px",
+        "letterSpacing": "0%"
+      },
+      {
+        "name": "Heading/H3",
+        "token": "heading-h3",
+        "type": "text",
+        "fontFamily": "Lato",
+        "fontWeight": "700",
+        "fontSize": "20px",
+        "lineHeight": "24px",
+        "letterSpacing": "0%"
+      },
+      {
+        "name": "Heading/H4",
+        "token": "heading-h4",
+        "type": "text",
+        "fontFamily": "Lato",
+        "fontWeight": "700",
+        "fontSize": "16px",
+        "letterSpacing": "0%"
+      },
+      {
+        "name": "Body/Regular",
+        "token": "body-regular",
+        "type": "text",
+        "fontFamily": "Lato",
+        "fontWeight": "400",
+        "fontSize": "16px",
+        "letterSpacing": "0%"
+      },
+      {
+        "name": "Body/Large",
+        "token": "body-large",
+        "type": "text",
+        "fontFamily": "Lato",
+        "fontWeight": "400",
+        "fontSize": "20px",
+        "letterSpacing": "0%"
+      },
+      {
+        "name": "Body/Small",
+        "token": "body-small",
+        "type": "text",
+        "fontFamily": "Lato",
+        "fontWeight": "400",
+        "fontSize": "12px",
+        "letterSpacing": "0%"
+      },
+      {
+        "name": "Body/Xsmall",
+        "token": "body-xsmall",
+        "type": "text",
+        "fontFamily": "Lato",
+        "fontWeight": "400",
+        "fontSize": "10px",
+        "letterSpacing": "0%"
+      },
+      {
+        "name": "Card/Timer",
+        "token": "card-timer",
+        "type": "text",
+        "fontFamily": "Lato",
+        "fontWeight": "700",
+        "fontSize": "48px",
+        "letterSpacing": "0%"
+      },
+      {
+        "name": "Card/Suggestion",
+        "token": "card-suggestion",
+        "type": "text",
+        "fontFamily": "Lato",
+        "fontWeight": "700",
+        "fontSize": "40px",
+        "lineHeight": "44px",
+        "letterSpacing": "4%"
+      },
+      {
+        "name": "Card/decalogo",
+        "token": "card-decalogo",
+        "type": "text",
+        "fontFamily": "Lato",
+        "fontWeight": "700",
+        "fontSize": "64px",
+        "lineHeight": "64px",
+        "letterSpacing": "0%"
+      }
+    ],
+    "effectStyles": [],
+    "gridStyles": []
+  }
+}
