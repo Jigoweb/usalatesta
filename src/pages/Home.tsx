@@ -2,19 +2,13 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import logoWhite from '../assets/images/usa-la-testa_logo-white.png';
 import { ARTICLES } from '../data/articles';
+import { TIPS } from '../data/tips';
 
 // Import images
 import quizImg from '../assets/images/usa-la-testa_quizimg.PNG';
 import decalogoImg from '../assets/images/usa-la-testa_decalogo.png';
 import supportoImg from '../assets/images/usa-la-testa_supporto.png';
 import aComponentImg from '../assets/images/a_component.png';
-
-// Mock data for tips
-const TIPS = [
-  { id: 1, text: "Prima di giocare definisci una somma fissa e un tempo determinato", color: "from-purple-600 to-blue-600" },
-  { id: 2, text: "Non giocare mai con denaro ricavato in prestito o destinato ad altri scopi", color: "from-orange-500 to-red-500" },
-  { id: 3, text: "Gioca per divertirti e non pensare al gioco come una fonte di reddito", color: "from-blue-500 to-cyan-500" },
-];
 
 export default function Home() {
   const navigate = useNavigate();
@@ -132,16 +126,16 @@ export default function Home() {
         </div>
 
         <div className="space-y-4">
-          {TIPS.map((tip, index) => (
+          {TIPS.map((tip) => (
             <div 
               key={tip.id}
-              className={`bg-gradient-to-br ${tip.color} rounded-2xl p-6 relative overflow-hidden shadow-md transform transition-transform hover:-translate-y-1`}
+              className={`bg-gradient-to-br ${tip.color || 'from-gray-500 to-gray-700'} rounded-2xl p-6 relative overflow-visible shadow-md transform transition-transform hover:-translate-y-1 min-h-[496px]`}
             >
-              <p className="text-white font-bold text-xl pr-8 relative z-10">
+              <p className="text-white font-bold text-[40px] leading-[44px] tracking-[0.04em] pr-12 relative z-10">
                 {tip.text}
               </p>
-              <span className="absolute bottom-[-20px] right-[-10px] text-8xl font-black text-white opacity-10">
-                0{index + 1}
+              <span className="absolute bottom-6 right-6 text-[64px] leading-[64px] font-bold text-white opacity-10 select-none pointer-events-none tracking-normal">
+                {String(tip.id).padStart(2, '0')}
               </span>
             </div>
           ))}

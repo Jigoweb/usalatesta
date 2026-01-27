@@ -54,3 +54,9 @@ export interface Article {
   category: string;
   readTime: number;
 }
+
+export interface Tip {
+  id: number;
+  text: string;
+  color?: string; // Gradient color class for styling
+}
