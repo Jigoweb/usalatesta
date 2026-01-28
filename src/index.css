@@ -19,3 +19,11 @@
     display: none;
   }
 }
+
+@layer components {
+  .font-custom-timer {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0%;
+  }
+}
