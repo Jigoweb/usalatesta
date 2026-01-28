@@ -180,11 +180,13 @@ export default function Timer() {
   const [selectedHours, setSelectedHours] = useState<number>(0);
   const [selectedMinutes, setSelectedMinutes] = useState<number>(0);
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
+  // Reset picker a 00:00 quando si torna alla schermata di selezione (dopo stop o fine timer)
+  useEffect(() => {
+    if (!timerState.isActive) {
+      setSelectedHours(0);
+      setSelectedMinutes(0);
+    }
+  }, [timerState.isActive]);
 
   const handleCustomStart = () => {
     const totalMinutes = selectedHours * 60 + selectedMinutes;
@@ -211,85 +213,123 @@ export default function Timer() {
     return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
   };
 
-  if (timerState.isActive) {
-    return (
-      <div className="min-h-screen bg-primary-blue flex flex-col items-center justify-center p-8 relative overflow-hidden">
-        {/* Background decorative elements */}
-        <div className="absolute top-0 left-0 w-64 h-64 bg-primary-light-blue rounded-full mix-blend-multiply filter blur-3xl opacity-20 -translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 right-0 w-64 h-64 bg-secondary-orange rounded-full mix-blend-multiply filter blur-3xl opacity-20 translate-x-1/2 translate-y-1/2"></div>
-
-        <div className="z-10 text-center w-full max-w-md">
-          <h2 className="text-blue-200 text-xl font-medium mb-8">Tempo rimanente</h2>
-          
-          <div className="text-[6rem] font-bold text-white font-sans tracking-tighter leading-none mb-12">
-            {formatTime(timerState.timeRemaining)}
-          </div>
-
-          <div className="flex justify-center space-x-8">
-            {timerState.isPaused ? (
-              <button 
-                onClick={resumeTimer}
-                className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-green-600 transition-colors"
-              >
-                <Play size={32} fill="currentColor" />
-              </button>
-            ) : (
-              <button 
-                onClick={pauseTimer}
-                className="w-20 h-20 bg-yellow-500 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-yellow-600 transition-colors"
-              >
-                <Pause size={32} fill="currentColor" />
-              </button>
-            )}
-            
-            <button 
-              onClick={stopTimer}
-              className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-red-600 transition-colors"
-            >
-              <Square size={32} fill="currentColor" />
-            </button>
-          </div>
-          
-          <div className="mt-12 text-blue-200/60 text-sm">
-            Sessione da {timerState.duration} minuti
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const totalSec = timerState.timeRemaining;
+  const countdownHH = Math.floor(totalSec / 3600)
+    .toString()
+    .padStart(2, '0');
+  const countdownMM = Math.floor((totalSec % 3600) / 60)
+    .toString()
+    .padStart(2, '0');
+  const countdownSS = (totalSec % 60).toString().padStart(2, '0');
 
   return (
     <div className="min-h-screen bg-white p-6 pb-24">
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Timer del giocatore</h1>
-      <p className="text-sm text-gray-600 mb-8">Scegli quanto far durare la tua sessione di gioco</p>
-      
+      <p className="text-sm text-gray-600 mb-8">
+        {timerState.isActive
+          ? timerState.isPaused
+            ? 'Timer in pausa'
+            : 'Tempo rimanente'
+          : 'Scegli quanto far durare la tua sessione di gioco'}
+      </p>
+
       <div className="mb-8">
-        <TimePicker
-          hours={selectedHours}
-          minutes={selectedMinutes}
-          onHoursChange={setSelectedHours}
-          onMinutesChange={setSelectedMinutes}
-        />
-        
-        <button
-          onClick={handleCustomStart}
-          disabled={selectedHours === 0 && selectedMinutes === 0}
-          className="w-full py-4 bg-primary-blue text-white font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
-        >
-          Avvia il timer
-        </button>
+        {timerState.isActive ? (
+          <>
+            <div
+              className="flex items-end justify-center gap-3 mb-8 px-4"
+              style={{ height: '216px' }}
+            >
+              <div
+                className="flex-1 max-w-[140px] h-[216px] flex items-center justify-center font-custom-timer text-gray-900 border-b border-gray-300"
+                style={{ fontSize: '72px', fontWeight: 700, lineHeight: 1 }}
+              >
+                {countdownHH}
+              </div>
+              <span
+                className="text-gray-900 font-custom-timer"
+                style={{ fontSize: '72px', fontWeight: 700, lineHeight: 1, paddingBottom: '72px' }}
+              >
+                :
+              </span>
+              <div
+                className="flex-1 max-w-[140px] h-[216px] flex items-center justify-center font-custom-timer text-gray-900 border-b border-gray-300"
+                style={{ fontSize: '72px', fontWeight: 700, lineHeight: 1 }}
+              >
+                {countdownMM}
+              </div>
+              <span
+                className="text-gray-400 font-custom-timer ml-1"
+                style={{
+                  fontSize: '48px',
+                  fontWeight: 700,
+                  lineHeight: 1,
+                  paddingBottom: '0px',
+                  paddingTop: '95px',
+                  alignSelf: 'flex-end',
+                  verticalAlign: 'bottom',
+                  height: '100%',
+                }}
+              >
+                :{countdownSS}
+              </span>
+            </div>
+            <div className="flex justify-center gap-4">
+              {timerState.isPaused ? (
+                <button
+                  onClick={resumeTimer}
+                  className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white shadow-md hover:bg-green-600 transition-colors"
+                >
+                  <Play size={28} fill="currentColor" />
+                </button>
+              ) : (
+                <button
+                  onClick={pauseTimer}
+                  className="w-16 h-16 bg-amber-400 rounded-full flex items-center justify-center text-white shadow-md hover:bg-amber-500 transition-colors"
+                >
+                  <Pause size={28} fill="currentColor" />
+                </button>
+              )}
+              <button
+                onClick={stopTimer}
+                className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-white shadow-md hover:bg-red-600 transition-colors"
+              >
+                <Square size={28} fill="currentColor" />
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <TimePicker
+              hours={selectedHours}
+              minutes={selectedMinutes}
+              onHoursChange={setSelectedHours}
+              onMinutesChange={setSelectedMinutes}
+            />
+            <button
+              onClick={handleCustomStart}
+              disabled={selectedHours === 0 && selectedMinutes === 0}
+              className="w-full py-4 bg-primary-blue text-white font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+            >
+              Avvia il timer
+            </button>
+          </>
+        )}
       </div>
 
-      {history.length > 0 && (
+      {!timerState.isActive && history.length > 0 && (
         <div>
           <h2 className="text-lg font-bold text-gray-900 mb-4">Recenti</h2>
-          
           <div className="space-y-4">
             {history.map((item) => (
               <div key={item.id} className="flex items-center justify-between">
                 <div>
-                  <div className="text-3xl font-bold text-gray-900">{formatRecentDisplay(item.duration)}</div>
-                  <div className="text-sm text-gray-500">{formatRecentTime(item.duration)}</div>
+                  <div className="text-3xl font-bold text-gray-900">
+                    {formatRecentDisplay(item.duration)}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {formatRecentTime(item.duration)}
+                  </div>
                 </div>
                 <button
                   onClick={() => startTimer(item.duration)}

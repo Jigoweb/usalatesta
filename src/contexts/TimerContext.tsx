@@ -53,7 +53,16 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
     }
 
     if (savedHistory) {
-      setHistory(JSON.parse(savedHistory));
+      const parsed: TimerHistory[] = JSON.parse(savedHistory);
+      const seen = new Set<number>();
+      const deduped = parsed.filter((item) => {
+        if (seen.has(item.duration)) return false;
+        seen.add(item.duration);
+        return true;
+      });
+      const sanitized = deduped.slice(0, 4);
+      setHistory(sanitized);
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(sanitized));
     }
   }, []);
 
@@ -114,7 +123,7 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
       endTime: endTime,
     });
 
-    // Save to recent history
+    // Save to recent history (no duplicate durations, max 4)
     const newHistoryItem: TimerHistory = {
       id: Date.now().toString(),
       duration: minutes,
@@ -123,7 +132,8 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
     };
 
     setHistory((prev) => {
-      const updated = [newHistoryItem, ...prev.filter(item => item.id !== newHistoryItem.id)].slice(0, 10);
+      if (prev.some((item) => item.duration === minutes)) return prev;
+      const updated = [newHistoryItem, ...prev].slice(0, 4);
       localStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
       return updated;
     });
@@ -155,7 +165,8 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
     };
 
     setHistory((prev) => {
-      const updated = [newHistoryItem, ...prev.filter(item => item.id !== newHistoryItem.id)].slice(0, 10);
+      if (prev.some((item) => item.duration === finalState.duration)) return prev;
+      const updated = [newHistoryItem, ...prev].slice(0, 4);
       localStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
       return updated;
     });
