@@ -130,7 +130,7 @@ export default function Home() {
           {TIPS.map((tip) => (
             <div 
               key={tip.id}
-              className={`bg-gradient-to-br ${tip.color || 'from-gray-500 to-gray-700'} rounded-2xl p-6 relative overflow-visible shadow-md transform transition-transform hover:-translate-y-1 min-h-[496px]`}
+              className={`sticky top-20 bg-gradient-to-br ${tip.color || 'from-gray-500 to-gray-700'} rounded-2xl p-6 relative overflow-visible shadow-md transform transition-transform min-h-[496px]`}
             >
               <p className="text-white font-bold text-[40px] leading-[44px] tracking-[0.04em] pr-12 relative z-10">
                 {tip.text}

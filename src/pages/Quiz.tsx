@@ -12,6 +12,7 @@ export default function Quiz() {
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [showSummary, setShowSummary] = useState(false);
   const [direction, setDirection] = useState(0);
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleAnswer = (value: 0 | 1 | 2 | 3) => {
     setDirection(value > 1 ? 1 : -1); // Positive answers slide right, negative left
@@ -28,7 +29,11 @@ export default function Quiz() {
       
       setAnswers(newAnswers);
 
-      if (currentIndex < QUIZ_QUESTIONS.length - 1) {
+      if (isEditing) {
+        setShowSummary(true);
+        setIsEditing(false);
+        setDirection(0);
+      } else if (currentIndex < QUIZ_QUESTIONS.length - 1) {
         setCurrentIndex(currentIndex + 1);
         setDirection(0);
       } else {
@@ -72,6 +77,7 @@ export default function Quiz() {
                   onClick={() => {
                     setCurrentIndex(QUIZ_QUESTIONS.indexOf(q));
                     setShowSummary(false);
+                    setIsEditing(true);
                   }}
                   className="text-xs text-blue-400 mt-2 underline"
                 >
@@ -111,7 +117,7 @@ export default function Quiz() {
       </div>
 
       {/* Card Area */}
-      <div className="flex-1 flex flex-col justify-start items-center p-6 overflow-hidden space-y-6">
+      <div className="flex-1 flex flex-col justify-start items-center p-6 overflow-hidden relative">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
@@ -136,30 +142,32 @@ export default function Quiz() {
               </div>
               
               <div className="p-8">
-                <h2 className="text-xl font-bold text-gray-800 leading-relaxed">
+                <h2 className="text-base font-normal text-gray-800 leading-relaxed">
                   {currentQuestion.text}
                 </h2>
               </div>
             </div>
-
-            <div className="space-y-3">
-              {(Object.entries(SCORING) as [string, string][]).reverse().map(([value, label]) => (
-                <button
-                  key={value}
-                  onClick={() => handleAnswer(Number(value) as 0|1|2|3)}
-                  className={`w-full py-4 px-6 rounded-2xl border-2 font-bold text-center transition-all shadow-sm
-                    ${Number(value) === 0 ? 'border-white bg-white text-primary-blue hover:bg-gray-50' : ''}
-                    ${Number(value) === 1 ? 'border-white bg-white text-primary-blue hover:bg-gray-50' : ''}
-                    ${Number(value) === 2 ? 'border-white bg-white text-primary-blue hover:bg-gray-50' : ''}
-                    ${Number(value) === 3 ? 'border-white bg-white text-primary-blue hover:bg-gray-50' : ''}
-                  `}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
           </motion.div>
         </AnimatePresence>
+
+        <div className="absolute bottom-24 left-0 w-full px-6 flex justify-center z-10">
+          <div className="w-full max-w-sm space-y-3">
+            {(Object.entries(SCORING) as [string, string][]).reverse().map(([value, label]) => (
+              <button
+                key={value}
+                onClick={() => handleAnswer(Number(value) as 0|1|2|3)}
+                className={`w-full py-4 px-6 rounded-2xl border-2 font-bold text-center transition-all shadow-sm
+                  ${Number(value) === 0 ? 'border-white bg-white text-primary-blue hover:bg-gray-50' : ''}
+                  ${Number(value) === 1 ? 'border-white bg-white text-primary-blue hover:bg-gray-50' : ''}
+                  ${Number(value) === 2 ? 'border-white bg-white text-primary-blue hover:bg-gray-50' : ''}
+                  ${Number(value) === 3 ? 'border-white bg-white text-primary-blue hover:bg-gray-50' : ''}
+                `}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
