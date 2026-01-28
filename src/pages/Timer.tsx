@@ -1,11 +1,93 @@
-import { useState } from 'react';
-import { useTimer } from '../hooks/useTimer';
-import { Play, Pause, Square, Clock, RotateCcw } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { useTimer } from '../contexts/TimerContext';
+import { Play, Pause, Square } from 'lucide-react';
 import { cn } from '../utils/cn';
+
+// Componente per il picker scrollabile
+function TimePicker({ hours, minutes, onHoursChange, onMinutesChange }: {
+  hours: number;
+  minutes: number;
+  onHoursChange: (h: number) => void;
+  onMinutesChange: (m: number) => void;
+}) {
+  const hoursRef = useRef<HTMLDivElement>(null);
+  const minutesRef = useRef<HTMLDivElement>(null);
+  const itemHeight = 60;
+
+  useEffect(() => {
+    if (hoursRef.current) {
+      hoursRef.current.scrollTop = hours * itemHeight;
+    }
+  }, [hours]);
+
+  useEffect(() => {
+    if (minutesRef.current) {
+      minutesRef.current.scrollTop = minutes * itemHeight;
+    }
+  }, [minutes]);
+
+  const handleScroll = (ref: React.RefObject<HTMLDivElement>, onChange: (value: number) => void) => {
+    if (!ref.current) return;
+    const scrollTop = ref.current.scrollTop;
+    const selectedIndex = Math.round(scrollTop / itemHeight);
+    onChange(selectedIndex);
+    // Snap to position
+    ref.current.scrollTo({ top: selectedIndex * itemHeight, behavior: 'smooth' });
+  };
+
+  const renderNumbers = (max: number, selected: number, ref: React.RefObject<HTMLDivElement>, onChange: (value: number) => void) => {
+    const numbers = Array.from({ length: max + 1 }, (_, i) => i);
+    return (
+      <div className="relative flex-1">
+        {/* Overlay per l'effetto fade */}
+        <div className="absolute top-0 left-0 right-0 h-[90px] bg-gradient-to-b from-white to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-[90px] bg-gradient-to-t from-white to-transparent z-10 pointer-events-none"></div>
+        
+        <div
+          ref={ref}
+          className="overflow-y-auto scrollbar-hide snap-y snap-mandatory"
+          style={{ maxHeight: '180px' }}
+          onScroll={() => handleScroll(ref, onChange)}
+        >
+          <div className="py-[90px]">
+            {numbers.map((num) => {
+              const distance = Math.abs(num - selected);
+              const opacity = distance === 0 ? 1 : Math.max(0.2, 1 - distance * 0.3);
+              const scale = distance === 0 ? 1.1 : Math.max(0.9, 1 - distance * 0.05);
+              
+              return (
+                <div
+                  key={num}
+                  className={cn(
+                    "h-[60px] flex items-center justify-center text-5xl font-bold snap-center transition-all duration-200",
+                    num === selected ? "text-gray-900" : "text-gray-400"
+                  )}
+                  style={{ opacity, transform: `scale(${scale})` }}
+                >
+                  {num.toString().padStart(2, '0')}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="flex items-center justify-center gap-3 mb-8">
+      {renderNumbers(23, hours, hoursRef, onHoursChange)}
+      <span className="text-5xl font-bold text-gray-900">:</span>
+      {renderNumbers(59, minutes, minutesRef, onMinutesChange)}
+      <span className="text-3xl font-bold text-gray-400 ml-2">:00</span>
+    </div>
+  );
+}
 
 export default function Timer() {
   const { timerState, history, startTimer, pauseTimer, resumeTimer, stopTimer } = useTimer();
-  const [customTime, setCustomTime] = useState<string>('');
+  const [selectedHours, setSelectedHours] = useState<number>(0);
+  const [selectedMinutes, setSelectedMinutes] = useState<number>(0);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -14,14 +96,29 @@ export default function Timer() {
   };
 
   const handleCustomStart = () => {
-    const minutes = parseInt(customTime);
-    if (minutes > 0) {
-      startTimer(minutes);
-      setCustomTime('');
+    const totalMinutes = selectedHours * 60 + selectedMinutes;
+    if (totalMinutes > 0) {
+      startTimer(totalMinutes);
     }
   };
 
-  const presets = [15, 30, 45, 60];
+  const formatRecentTime = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    if (hours > 0 && mins > 0) {
+      return `${hours} ora, ${mins} min`;
+    } else if (hours > 0) {
+      return `${hours} ${hours === 1 ? 'ora' : 'ore'}`;
+    } else {
+      return `${mins} min`;
+    }
+  };
+
+  const formatRecentDisplay = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+  };
 
   if (timerState.isActive) {
     return (
@@ -71,61 +168,43 @@ export default function Timer() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 pb-24">
-      <h1 className="text-2xl font-bold text-primary-blue mb-6">Timer di gioco</h1>
+    <div className="min-h-screen bg-white p-6 pb-24">
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">Timer del giocatore</h1>
+      <p className="text-sm text-gray-600 mb-8">Scegli quanto far durare la tua sessione di gioco</p>
       
-      <div className="bg-white rounded-2xl p-6 shadow-sm mb-6">
-        <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-          <Clock className="mr-2 text-secondary-orange" size={20} />
-          Imposta durata
-        </h2>
+      <div className="mb-8">
+        <TimePicker
+          hours={selectedHours}
+          minutes={selectedMinutes}
+          onHoursChange={setSelectedHours}
+          onMinutesChange={setSelectedMinutes}
+        />
         
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          {presets.map((min) => (
-            <button
-              key={min}
-              onClick={() => startTimer(min)}
-              className="py-4 bg-blue-50 text-primary-blue font-bold rounded-xl hover:bg-primary-blue hover:text-white transition-colors"
-            >
-              {min} min
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center space-x-3">
-          <input
-            type="number"
-            placeholder="Minuti personalizzati"
-            value={customTime}
-            onChange={(e) => setCustomTime(e.target.value)}
-            className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-blue"
-          />
-          <button
-            onClick={handleCustomStart}
-            disabled={!customTime}
-            className="p-3 bg-primary-blue text-white rounded-xl disabled:opacity-50"
-          >
-            <Play size={24} fill="currentColor" />
-          </button>
-        </div>
+        <button
+          onClick={handleCustomStart}
+          disabled={selectedHours === 0 && selectedMinutes === 0}
+          className="w-full py-4 bg-primary-blue text-white font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+        >
+          Avvia il timer
+        </button>
       </div>
 
       {history.length > 0 && (
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-            <RotateCcw className="mr-2 text-gray-400" size={20} />
-            Recenti
-          </h2>
+        <div>
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Recenti</h2>
           
-          <div className="space-y-3">
+          <div className="space-y-4">
             {history.map((item) => (
-              <div key={item.id} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
-                <span className="text-gray-600 font-medium">{item.duration} minuti</span>
+              <div key={item.id} className="flex items-center justify-between">
+                <div>
+                  <div className="text-3xl font-bold text-gray-900">{formatRecentDisplay(item.duration)}</div>
+                  <div className="text-sm text-gray-500">{formatRecentTime(item.duration)}</div>
+                </div>
                 <button
                   onClick={() => startTimer(item.duration)}
-                  className="text-sm text-primary-blue font-semibold px-3 py-1 bg-blue-50 rounded-lg hover:bg-blue-100"
+                  className="w-12 h-12 rounded-full border-2 border-primary-blue flex items-center justify-center hover:bg-blue-50 transition-colors"
                 >
-                  Ripeti
+                  <Play size={20} fill="currentColor" className="text-primary-blue ml-1" />
                 </button>
               </div>
             ))}

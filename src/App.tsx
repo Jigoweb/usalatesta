@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { TimerProvider } from './contexts/TimerContext';
 import Layout from './components/Layout';
 import Splash from './pages/Splash';
 import Home from './pages/Home';
@@ -15,25 +16,27 @@ import ArticleDetail from './pages/ArticleDetail';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Splash />} />
-        
-        <Route element={<Layout />}>
-          <Route path="/home" element={<Home />} />
-          <Route path="/quiz" element={<Quiz />} />
-          <Route path="/quiz/result" element={<QuizResult />} />
-          <Route path="/timer" element={<Timer />} />
-          <Route path="/decalogo" element={<Decalogo />} />
-          <Route path="/support" element={<Support />} />
-          <Route path="/support/centers" element={<HelpCenters />} />
-          <Route path="/articles" element={<Articles />} />
-          <Route path="/articles/:id" element={<ArticleDetail />} />
-          <Route path="/chatbot" element={<Chatbot />} />
-          <Route path="/games" element={<Games />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <TimerProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Splash />} />
+          
+          <Route element={<Layout />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/quiz" element={<Quiz />} />
+            <Route path="/quiz/result" element={<QuizResult />} />
+            <Route path="/timer" element={<Timer />} />
+            <Route path="/decalogo" element={<Decalogo />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/support/centers" element={<HelpCenters />} />
+            <Route path="/articles" element={<Articles />} />
+            <Route path="/articles/:id" element={<ArticleDetail />} />
+            <Route path="/chatbot" element={<Chatbot />} />
+            <Route path="/games" element={<Games />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </TimerProvider>
   );
 }
 
