@@ -18,6 +18,7 @@ export default function Articles() {
         {ARTICLES.map((article) => (
           <div 
             key={article.id} 
+            onClick={() => navigate(`/articles/${article.id}`)}
             className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer flex flex-col"
           >
             <div className="h-48 w-full">

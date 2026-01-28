@@ -100,9 +100,10 @@ export default function Home() {
         </div>
         
         <div className="flex overflow-x-auto space-x-4 pb-4 pr-4 scrollbar-hide">
-          {ARTICLES.map((article) => (
+          {ARTICLES.slice(-4).map((article) => (
             <div 
               key={article.id}
+              onClick={() => navigate(`/articles/${article.id}`)}
               className="min-w-[200px] bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             >
               <div className="h-28 overflow-hidden">

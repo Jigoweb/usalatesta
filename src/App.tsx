@@ -11,6 +11,7 @@ import HelpCenters from './pages/HelpCenters';
 import Articles from './pages/Articles';
 import Chatbot from './pages/Chatbot';
 import Games from './pages/Games';
+import ArticleDetail from './pages/ArticleDetail';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/support" element={<Support />} />
           <Route path="/support/centers" element={<HelpCenters />} />
           <Route path="/articles" element={<Articles />} />
+          <Route path="/articles/:id" element={<ArticleDetail />} />
           <Route path="/chatbot" element={<Chatbot />} />
           <Route path="/games" element={<Games />} />
         </Route>
