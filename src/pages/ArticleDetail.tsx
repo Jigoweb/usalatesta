@@ -114,30 +114,48 @@ export default function ArticleDetail() {
         {/* Help Section */}
         <div className="mt-16 mb-10">
             <h3 className="text-2xl font-bold text-gray-800 mb-6">Cerchi aiuto?</h3>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
-                    <span className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Istituto Superiore di Sanità</span>
-                    <span className="text-base font-bold text-gray-800 leading-tight mb-4">Numero Verde<br/>Nazionale DGA</span>
-                    <a href="tel:800558822" className="flex items-center justify-center bg-green-50 text-green-600 border border-green-100 px-6 py-3 rounded-xl text-lg font-bold w-full hover:bg-green-100 transition-colors">
-                        <Phone size={18} className="mr-2 fill-current" />
-                        800 - 558822
-                    </a>
+              {/* Numero Verde Nazionale DGA */}
+              <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between h-full">
+                 <div>
+                    <span className="text-[10px] text-gray-400 block mb-1">Istituto Superiore di Sanità</span>
+                    <h4 className="text-base font-bold text-gray-900 leading-tight mb-6">Numero Verde<br/>Nazionale DGA</h4>
                  </div>
-                 
-                 {/* Duplicate card for layout balance or maybe different number if needed. 
-                     Using the same for now as per "template" request, mimicking the provided screenshot structure likely having 2 cards */}
-                 <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
-                    <span className="text-[10px] text-gray-400 uppercase tracking-wider mb-1">Emergenza</span>
-                    <span className="text-base font-bold text-gray-800 leading-tight mb-4">Pronto Intervento<br/>Nazionale</span>
-                    <a href="tel:112" className="flex items-center justify-center bg-red-50 text-red-600 border border-red-100 px-6 py-3 rounded-xl text-lg font-bold w-full hover:bg-red-100 transition-colors">
-                        <Phone size={18} className="mr-2 fill-current" />
-                        112
-                    </a>
+                 <a href="tel:800558822" className="flex items-center border border-green-500 rounded-xl overflow-hidden group">
+                    <div className="bg-green-500 p-2 flex items-center justify-center">
+                        <Phone className="text-white fill-current" size={20} />
+                    </div>
+                    <div className="flex-1 text-center py-2">
+                        <span className="text-[8px] block text-green-600 font-bold uppercase tracking-tighter leading-none mb-0.5">TELEFONO VERDE NAZIONALE</span>
+                        <span className="text-lg font-bold text-green-600 block leading-none">800 - 558822</span>
+                        <span className="text-[6px] block text-green-600 font-bold uppercase tracking-tighter leading-none mt-0.5">PROBLEMATICHE GIOCO D'AZZARDO</span>
+                    </div>
+                 </a>
+              </div>
+              
+              {/* Konsumer Italia */}
+              <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between h-full">
+                 <div>
+                    <span className="text-[10px] text-gray-400 block mb-1">Konsumer Italia</span>
+                    <h4 className="text-base font-bold text-gray-900 leading-tight mb-6">Non Dipendo,<br/>scelgo!</h4>
                  </div>
+                 <a href="tel:800558822" className="flex items-center border border-green-500 rounded-xl overflow-hidden group">
+                    <div className="bg-green-500 p-2 flex items-center justify-center">
+                        <Phone className="text-white fill-current" size={20} />
+                    </div>
+                    <div className="flex-1 text-center py-2">
+                        <span className="text-[8px] block text-green-600 font-bold uppercase tracking-tighter leading-none mb-0.5">TELEFONO VERDE NAZIONALE</span>
+                        <span className="text-lg font-bold text-green-600 block leading-none">800 - 558822</span>
+                        <span className="text-[6px] block text-green-600 font-bold uppercase tracking-tighter leading-none mt-0.5">PROBLEMATICHE GIOCO D'AZZARDO</span>
+                    </div>
+                 </a>
+              </div>
             </div>
-             <p className="text-[10px] text-gray-400 leading-normal text-center mt-4 max-w-xs mx-auto">
-                Il Disturbo da Gioco d'Azzardo (DGA) è una dipendenza comportamentale. Chiedere aiuto è il primo passo.
-             </p>
+            
+            <p className="text-[10px] text-gray-500 leading-tight mt-6 text-center max-w-lg mx-auto">
+               Il Disturbo da Gioco d'Azzardo (DGA) è una dipendenza comportamentale, riconosciuta nei Livelli Essenziali di Assistenza dal Sistema Sanitario Nazionale, e deve essere affrontata da professionisti, esattamente come ogni altra dipendenza.
+            </p>
         </div>
 
         {/* Related Articles */}

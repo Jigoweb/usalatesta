@@ -5,18 +5,35 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    @apply h-full w-full overflow-hidden;
+  }
+  
   body {
-    @apply font-sans antialiased text-slate-900 bg-slate-50;
+    @apply h-full w-full overflow-hidden font-sans antialiased text-slate-900 bg-slate-50;
+    overscroll-behavior-y: none; /* Previene il rimbalzo su iOS/Android */
+  }
+
+  #root {
+    @apply h-full w-full overflow-y-auto overflow-x-hidden;
+    -webkit-overflow-scrolling: touch; /* Momentum scroll su iOS */
+    /* Nasconde la scrollbar mantenendo la funzionalità */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+  }
+  
+  #root::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
   }
 }
 
 @layer utilities {
   .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
   }
   .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+    display: none;             /* Chrome, Safari and Opera */
   }
 }
 
