@@ -70,7 +70,7 @@ export default function Chatbot() {
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'Grazie per la tua domanda. Questa è una risposta di esempio. La funzionalità di chat completa sarà disponibile presto con l\'integrazione del backend.',
+        content: 'Grazie per la tua domanda. Questa è una risposta di esempio. La funzionalità di chat completa sarà disponibile presto.',
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, assistantMessage]);
