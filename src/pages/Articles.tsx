@@ -8,7 +8,7 @@ export default function Articles() {
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
       {/* Header */}
-      <div className="p-4 flex items-center bg-white shadow-sm sticky top-0 z-10">
+      <div className="p-4 flex items-center bg-white shadow-sm sticky top-0 z-50">
         <button onClick={() => navigate('/home')} className="mr-4">
           <ChevronLeft className="text-primary-blue" />
         </button>

@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft, Clock } from 'lucide-react';
+import { ChevronLeft, Clock, Phone } from 'lucide-react';
 import { ARTICLES } from '../data/articles';
-import CerchiAiuto from '../components/CerchiAiuto';
 
 export default function ArticleDetail() {
   const { id } = useParams();
@@ -39,7 +38,14 @@ export default function ArticleDetail() {
 
   return (
     <div className="min-h-screen bg-white pb-20 font-sans">
-      {/* Immersive Header */}
+      {/* Header */}
+      <div className="p-4 flex items-center bg-white shadow-sm sticky top-0 z-50">
+        <button onClick={() => navigate(-1)} className="mr-4">
+          <ChevronLeft className="text-primary-blue" />
+        </button>
+      </div>
+
+      {/* Hero Image */}
       <div className="relative h-72 w-full">
         <img 
           src={article.image} 
@@ -47,16 +53,6 @@ export default function ArticleDetail() {
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/10 pointer-events-none" />
-        
-        {/* Navbar */}
-        <div className="absolute top-0 left-0 w-full p-4 flex justify-between items-center z-10">
-          <button 
-            onClick={() => navigate(-1)} 
-            className="w-10 h-10 bg-white/20 backdrop-blur-md border border-white/30 rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all active:scale-95"
-          >
-            <ChevronLeft size={24} />
-          </button>
-        </div>
       </div>
 
       {/* Content Container - Overlapping the image */}

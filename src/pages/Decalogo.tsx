@@ -20,7 +20,7 @@ export default function Decalogo() {
   return (
     <div className="min-h-screen bg-white pb-20">
       {/* Header */}
-      <div className="p-4 flex items-center border-b border-gray-100 sticky top-0 bg-white/90 backdrop-blur-sm z-10">
+      <div className="p-4 flex items-center border-b border-gray-100 sticky top-0 bg-white z-50">
         <button onClick={() => navigate('/home')} className="mr-2">
           <ChevronLeft className="text-primary-blue" />
         </button>

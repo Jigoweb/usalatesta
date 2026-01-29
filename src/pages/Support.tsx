@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Download, Phone, MapPin } from 'lucide-react';
 import numeroVerdeImg from '../assets/images/immagine-numero.png';
 import manualePdf from '../dati/Codice-di-Gioco-Responsabile.pdf';
-import CerchiAiuto from '../components/CerchiAiuto';
 
 export default function Support() {
   const navigate = useNavigate();
@@ -10,7 +9,7 @@ export default function Support() {
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
       {/* Header */}
-      <div className="p-4 flex items-center bg-white shadow-sm">
+      <div className="p-4 flex items-center bg-white shadow-sm sticky top-0 z-50">
         <button onClick={() => navigate('/home')} className="mr-4">
           <ChevronLeft className="text-primary-blue" />
         </button>

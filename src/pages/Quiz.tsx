@@ -101,7 +101,7 @@ export default function Quiz() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* Header */}
-      <div className="p-4 flex items-center">
+      <div className="p-4 flex items-center bg-white sticky top-0 z-50 shadow-sm">
         <button onClick={() => navigate('/home')} className="mr-4">
           <ChevronLeft className="text-primary-blue" />
         </button>
