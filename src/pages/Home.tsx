@@ -172,8 +172,12 @@ export default function Home() {
           {TIPS.map((tip, index) => (
             <div 
               key={tip.id}
-              className={`sticky bg-gradient-to-br ${tip.color || 'from-gray-500 to-gray-700'} rounded-2xl p-6 relative overflow-visible shadow-md transform transition-transform h-[496px] flex flex-col`}
-              style={{ top: `calc(5rem + ${index * 1.5}rem)`, zIndex: 10 + index }}
+              className="sticky rounded-2xl p-6 relative overflow-visible shadow-md transform transition-transform h-[496px] flex flex-col"
+              style={{ 
+                top: `calc(5rem + ${index * 1.5}rem)`, 
+                zIndex: 10 + index,
+                background: tip.color || `linear-gradient(to bottom right, #64748b, #475569)`
+              }}
             >
               <p className="text-white font-bold text-[40px] leading-[44px] tracking-[0.04em] pr-12 relative z-10 flex-1">
                 {tip.text}

@@ -8,19 +8,19 @@ export default {
     extend: {
       colors: {
         primary: {
-          blue: '#1e3a8a', // Navy Blue
-          'light-blue': '#3b82f6', // Light Blue
-          gray: '#64748b',
+          blue: '#0B2A57', // Navy Blue
+          lightblue: '#65ADDE', // Light Blue
+          gray: '#9EA4AD',
         },
         secondary: {
-          orange: '#f97316',
-          bordeaux: '#9f1239',
+          orange: '#DA642C',
+          bordeaux: '#9D2050',
         },
         tertiary: {
-          ochre: '#d97706',
-          petrol: '#0e7490',
-          green: '#15803d',
-          purple: '#7e22ce',
+          ochre: '#ECAA45',
+          petrol: '#4195A4',
+          green: '#6AAB46',
+          purple: '#7A7FAD',
         }
       },
       fontFamily: {

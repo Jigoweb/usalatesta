@@ -47,17 +47,16 @@ export default function ArticleDetail() {
       </div>
 
       {/* Hero Image */}
-      <div className="relative h-72 w-full">
+      <div className="relative w-full">
         <img 
           src={article.image} 
           alt={article.title} 
-          className="w-full h-full object-cover"
+          className="w-full h-auto object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/10 pointer-events-none" />
       </div>
 
-      {/* Content Container - Overlapping the image */}
-      <div className="relative z-10 -mt-8 bg-white rounded-t-[2.5rem] px-6 pt-10 shadow-xl min-h-screen">
+      {/* Content Container */}
+      <div className="bg-white px-6 pt-10 min-h-screen">
         {/* Meta Tags */}
         <div className="flex items-center space-x-3 mb-6">
           <span className="bg-blue-50 text-primary-blue px-4 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider">
