@@ -169,12 +169,13 @@ export default function Home() {
         </div>
 
         <div className="space-y-4">
-          {TIPS.map((tip) => (
+          {TIPS.map((tip, index) => (
             <div 
               key={tip.id}
-              className={`sticky top-20 bg-gradient-to-br ${tip.color || 'from-gray-500 to-gray-700'} rounded-2xl p-6 relative overflow-visible shadow-md transform transition-transform min-h-[496px]`}
+              className={`sticky bg-gradient-to-br ${tip.color || 'from-gray-500 to-gray-700'} rounded-2xl p-6 relative overflow-visible shadow-md transform transition-transform h-[496px] flex flex-col`}
+              style={{ top: `calc(5rem + ${index * 1.5}rem)`, zIndex: 10 + index }}
             >
-              <p className="text-white font-bold text-[40px] leading-[44px] tracking-[0.04em] pr-12 relative z-10">
+              <p className="text-white font-bold text-[40px] leading-[44px] tracking-[0.04em] pr-12 relative z-10 flex-1">
                 {tip.text}
               </p>
               <span className="absolute bottom-6 right-6 text-[64px] leading-[64px] font-bold text-white opacity-10 select-none pointer-events-none tracking-normal">
