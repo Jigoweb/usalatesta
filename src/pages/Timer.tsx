@@ -180,6 +180,18 @@ export default function Timer() {
   const [selectedHours, setSelectedHours] = useState<number>(0);
   const [selectedMinutes, setSelectedMinutes] = useState<number>(0);
 
+  const PRESETS = [
+    { label: '15 min', hours: 0, minutes: 15 },
+    { label: '30 min', hours: 0, minutes: 30 },
+    { label: '1 ora', hours: 1, minutes: 0 },
+    { label: '2 ore', hours: 2, minutes: 0 },
+  ];
+
+  const applyPreset = (h: number, m: number) => {
+    setSelectedHours(h);
+    setSelectedMinutes(m);
+  };
+
   // Reset picker a 00:00 quando si torna alla schermata di selezione (dopo stop o fine timer)
   useEffect(() => {
     if (!timerState.isActive) {
@@ -300,6 +312,23 @@ export default function Timer() {
           </>
         ) : (
           <>
+            <div className="grid grid-cols-4 gap-2 mb-4">
+              {PRESETS.map((preset, index) => (
+                <button
+                  key={index}
+                  onClick={() => applyPreset(preset.hours, preset.minutes)}
+                  className={cn(
+                    "py-2 px-1 text-xs sm:text-sm font-bold rounded-lg border transition-all",
+                    selectedHours === preset.hours && selectedMinutes === preset.minutes
+                      ? "bg-primary-blue text-white border-primary-blue shadow-md"
+                      : "bg-white text-gray-600 border-gray-200 hover:border-primary-blue hover:text-primary-blue"
+                  )}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+
             <TimePicker
               hours={selectedHours}
               minutes={selectedMinutes}
