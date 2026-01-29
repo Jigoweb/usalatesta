@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Send } from 'lucide-react';
+import { Send } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -19,7 +18,6 @@ const SUGGESTIONS = [
 ];
 
 export default function Chatbot() {
-  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -36,8 +34,18 @@ export default function Chatbot() {
 
   useEffect(() => {
     if (textareaRef.current) {
+      // Reset height to auto to correctly calculate new scrollHeight
       textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 128)}px`;
+      // Set new height based on scrollHeight, max 128px
+      const newHeight = Math.min(textareaRef.current.scrollHeight, 128);
+      textareaRef.current.style.height = `${newHeight}px`;
+      
+      // Handle scrollbar visibility based on content height
+      if (textareaRef.current.scrollHeight > 128) {
+        textareaRef.current.style.overflowY = 'auto';
+      } else {
+        textareaRef.current.style.overflowY = 'hidden';
+      }
     }
   }, [input]);
 
@@ -89,14 +97,6 @@ export default function Chatbot() {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20 flex flex-col">
-      {/* Header */}
-      <div className="p-4 flex items-center bg-white shadow-sm sticky top-0 z-50">
-        <button onClick={() => navigate('/home')} className="mr-4">
-          <ChevronLeft className="text-primary-blue" size={24} />
-        </button>
-        <h1 className="text-xl font-bold text-primary-blue">Chatbot</h1>
-      </div>
-
       {/* Chat Area */}
       <div className="flex-1 overflow-y-auto px-4 py-4 pb-32 space-y-4">
         {showSuggestions ? (
@@ -169,16 +169,16 @@ export default function Chatbot() {
             onKeyDown={handleKeyDown}
             placeholder="Scrivi un messaggio..."
             rows={1}
-            className="flex-1 resize-none rounded-xl border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-lightblue focus:border-transparent max-h-32 overflow-y-auto"
+            className="flex-1 resize-none rounded-xl border border-gray-300 px-4 py-3 text-base leading-6 focus:outline-none focus:ring-2 focus:ring-primary-lightblue focus:border-transparent scrollbar-hide"
             style={{
-              minHeight: '44px',
+              minHeight: '48px',
               maxHeight: '128px',
             }}
           />
           <button
             onClick={() => handleSend()}
             disabled={!input.trim()}
-            className={`p-3 rounded-xl transition-colors ${
+            className={`p-3 rounded-xl transition-colors mb-[1px] ${
               input.trim()
                 ? 'bg-primary-blue text-white hover:bg-blue-900'
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
