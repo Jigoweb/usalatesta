@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import logoWhite from '../assets/images/usa-la-testa_logo-white.png';
@@ -12,6 +13,26 @@ import aComponentImg from '../assets/images/a_component.png';
 
 export default function Home() {
   const navigate = useNavigate();
+  const [tipsMinHeight, setTipsMinHeight] = useState<number>(0);
+  const tipRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const measure = () => {
+      const heights = tipRefs.current.filter(Boolean).map(el => (el as HTMLDivElement).scrollHeight);
+      if (heights.length) {
+        const max = Math.max(...heights);
+        setTipsMinHeight(max);
+      }
+    };
+    measure();
+    const onResize = () => {
+      measure();
+    };
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -48,7 +69,7 @@ export default function Home() {
               <img 
                 src={quizImg} 
                 alt="Quiz" 
-                className="absolute right-0 top-0 h-full w-1/2 object-cover object-center opacity-90 group-hover:scale-105 transition-transform duration-500"
+                className="absolute right-0 top-0 h-full w-1/2 translate-x-8 object-cover object-center opacity-90 group-hover:scale-105 transition-transform duration-500"
               />
             </div>
           </div>
@@ -77,7 +98,7 @@ export default function Home() {
               <img 
                 src={decalogoImg} 
                 alt="Decalogo" 
-                className="absolute bottom-0 right-0 w-24 h-24 object-contain translate-x-2 translate-y-2 group-hover:scale-105 transition-transform"
+                className="absolute bottom-0 right-0 w-32 h-32 object-contain translate-x-2 translate-y-2 group-hover:scale-105 transition-transform"
               />
               {/* Background 'A' Element */}
               <img 
@@ -114,7 +135,7 @@ export default function Home() {
               <img 
                 src={supportoImg} 
                 alt="Supporto" 
-                className="absolute bottom-0 right-0 w-24 h-24 object-contain translate-x-2 translate-y-2 group-hover:scale-105 transition-transform"
+                className="absolute bottom-0 right-0 w-32 h-32 object-contain translate-x-2 translate-y-6 group-hover:scale-105 transition-transform"
               />
               {/* Background 'A' Element */}
               <img 
@@ -130,7 +151,7 @@ export default function Home() {
       </div>
 
       {/* Articles Section */}
-      <div className="mt-6 pl-4">
+      <div className="mt-10 mb-10 pl-4">
         <div className="flex justify-between items-center pr-4 mb-4">
           <h2 className="text-xl font-bold text-primary-blue">Articoli</h2>
           <button 
@@ -160,9 +181,9 @@ export default function Home() {
       </div>
 
       {/* Tips Section */}
-      <div className="mt-2 px-4 pb-8">
+      <div className="mt-12 px-4 pb-12">
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-primary-blue mb-2">I nostri consigli</h2>
+          <h2 className="text-4xl font-black text-primary-blue mb-4">I nostri consigli</h2>
           <p className="text-gray-600 text-sm">
             Affinché il gioco rimanga un GIOCO, presta attenzione ai seguenti suggerimenti:
           </p>
@@ -172,9 +193,11 @@ export default function Home() {
           {TIPS.map((tip, index) => (
             <div 
               key={tip.id}
-              className="sticky rounded-2xl p-6 relative overflow-visible shadow-md transform transition-transform h-[496px] flex flex-col"
+              ref={el => { tipRefs.current[index] = el; }}
+              className="sticky rounded-2xl p-6 relative overflow-visible shadow-md transform transition-transform flex flex-col"
               style={{ 
-                top: `calc(5rem + ${index * 1.5}rem)`, 
+                minHeight: tipsMinHeight || undefined,
+                top: `calc(2rem + ${index * 1.5}rem)`, 
                 zIndex: 10 + index,
                 background: tip.color || `linear-gradient(to bottom right, #64748b, #475569)`
               }}
