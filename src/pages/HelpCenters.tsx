@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Search, MapPin, Phone, Globe } from 'lucide-react';
 import centersData from '../dati/C_17_bancheDati_32_0_0_file.json';
@@ -31,6 +31,11 @@ export default function HelpCenters() {
   const [region, setRegion] = useState('');
   const [city, setCity] = useState('');
 
+  useEffect(() => {
+    // Il container di scroll è #root (definito in index.css), non window
+    document.getElementById('root')?.scrollTo(0, 0);
+  }, []);
+
   const regions = useMemo(() => {
     return Array.from(new Set(rawCenters.map(c => c.region))).sort();
   }, []);
@@ -57,7 +62,7 @@ export default function HelpCenters() {
         </button>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="p-4 space-y-4 pt-4">
         <div className="bg-white p-4 rounded-xl shadow-sm space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Regione</label>

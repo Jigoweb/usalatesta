@@ -23,17 +23,19 @@ function App() {
           
           <Route element={<Layout />}>
             <Route path="/home" element={<Home />} />
-            <Route path="/quiz" element={<Quiz />} />
-            <Route path="/quiz/result" element={<QuizResult />} />
             <Route path="/timer" element={<Timer />} />
-            <Route path="/decalogo" element={<Decalogo />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="/support/centers" element={<HelpCenters />} />
-            <Route path="/articles" element={<Articles />} />
-            <Route path="/articles/:id" element={<ArticleDetail />} />
             <Route path="/chatbot" element={<Chatbot />} />
             <Route path="/games" element={<Games />} />
           </Route>
+
+          {/* Routes without BottomNav */}
+          <Route path="/quiz" element={<Quiz />} />
+          <Route path="/quiz/result" element={<QuizResult />} />
+          <Route path="/decalogo" element={<Decalogo />} />
+          <Route path="/support" element={<Support />} />
+          <Route path="/support/centers" element={<HelpCenters />} />
+          <Route path="/articles" element={<Articles />} />
+          <Route path="/articles/:id" element={<ArticleDetail />} />
         </Routes>
       </BrowserRouter>
     </TimerProvider>
