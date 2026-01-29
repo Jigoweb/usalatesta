@@ -197,7 +197,7 @@ export default function Home() {
               className="sticky rounded-2xl p-6 relative overflow-visible shadow-md transform transition-transform flex flex-col"
               style={{ 
                 minHeight: tipsMinHeight || undefined,
-                top: `calc(5rem + ${index * 1.5}rem)`, 
+                top: `calc(2rem + ${index * 1.5}rem)`, 
                 zIndex: 10 + index,
                 background: tip.color || `linear-gradient(to bottom right, #64748b, #475569)`
               }}
