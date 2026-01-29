@@ -56,7 +56,7 @@ export const TIPS: Tip[] = [
   },
   {
     id: 2,
-    text: "Non giocare mai con denaro ricevuto in prestito o destinato ad altri scopi (es. affitto, bollette, regali per i figli, …).",
+    text: "Non giocare mai con denaro ricevuto in prestito o destinato ad altri scopi (es. affitto, bollette, regali per i figli).",
     // Primary Blue con blob di Orange dal bottom-right (blob grande)
     color: createOrganicGradient(COLORS.primaryBlue, COLORS.secondaryOrange, 'bottom-right', 'large')
   },
