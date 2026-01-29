@@ -26,63 +26,105 @@ export default function Home() {
           {/* Quiz Card - Full Width */}
           <div 
             onClick={() => navigate('/quiz')}
-            className="col-span-2 bg-gradient-to-r from-[#c53a7b] via-[#2b3d78] to-[#2aa2c6] rounded-2xl p-4 relative overflow-hidden h-32 cursor-pointer shadow-md group border-2 border-white/30 hover:border-white/60 transition-colors"
+            className="col-span-2 rounded-2xl relative overflow-hidden h-32 cursor-pointer shadow-md group transition-transform hover:scale-[1.01]"
           >
-            <div className="relative z-10 w-2/3">
-              <h2 className="text-white font-bold text-xl mb-1">Quiz di autovalutazione</h2>
-              <p className="text-blue-100 text-xs">Approfondisci il tuo rapporto col gioco</p>
-            </div>
-            <img 
-              src={quizImg} 
-              alt="Quiz" 
-              className="absolute right-0 top-0 h-full w-1/2 object-cover object-center opacity-90 group-hover:scale-105 transition-transform duration-500"
+            {/* Background Layer */}
+            <div 
+              className="absolute inset-0 z-0"
+              style={{
+                background: 'linear-gradient(105deg, #0B2A57 55%, #B14D73 100%)'
+              }}
             />
+            
+            {/* Border Layer (Pseudo-border) */}
+            <div className="absolute inset-0 z-20 rounded-2xl border-2 border-white/30 group-hover:border-white/60 transition-colors pointer-events-none" />
+
+            {/* Content */}
+            <div className="relative z-10 p-4 h-full w-full">
+              <div className="relative z-10 w-2/3">
+                <h2 className="text-white font-bold text-xl mb-1">Quiz di autovalutazione</h2>
+                <p className="text-blue-100 text-xs">Approfondisci il tuo rapporto col gioco</p>
+              </div>
+              <img 
+                src={quizImg} 
+                alt="Quiz" 
+                className="absolute right-0 top-0 h-full w-1/2 object-cover object-center opacity-90 group-hover:scale-105 transition-transform duration-500"
+              />
+            </div>
           </div>
 
           {/* Decalogo Card */}
           <div 
             onClick={() => navigate('/decalogo')}
-            className="bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl p-4 relative overflow-hidden h-40 cursor-pointer shadow-md group border-2 border-white/30 hover:border-white/60 transition-colors"
+            className="rounded-2xl relative overflow-hidden h-40 cursor-pointer shadow-md group transition-transform hover:scale-[1.01]"
           >
-            <div className="relative z-10">
-              <h3 className="text-white font-bold text-lg leading-tight">Il decalogo del giocatore</h3>
+            {/* Background Layer */}
+            <div 
+              className="absolute inset-0 z-0"
+              style={{
+                background: 'linear-gradient(180deg, #0B2A57 30%, #84BDE5 100%)'
+              }}
+            />
+            
+            {/* Border Layer */}
+            <div className="absolute inset-0 z-20 rounded-2xl border-2 border-white/30 group-hover:border-white/60 transition-colors pointer-events-none" />
+
+            {/* Content */}
+            <div className="relative z-10 p-4 h-full w-full">
+              <div className="relative z-10">
+                <h3 className="text-white font-bold text-lg leading-tight">Il decalogo del giocatore</h3>
+              </div>
+              <img 
+                src={decalogoImg} 
+                alt="Decalogo" 
+                className="absolute bottom-0 right-0 w-24 h-24 object-contain translate-x-2 translate-y-2 group-hover:scale-105 transition-transform"
+              />
+              {/* Background 'A' Element */}
+              <img 
+                src={aComponentImg} 
+                alt="" 
+                className="absolute -left-10 -bottom-10 h-[120%] w-auto object-contain pointer-events-none z-0 opacity-20 select-none mix-blend-overlay"
+              />
+              {/* Soft triangular gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/10 pointer-events-none"></div>
             </div>
-            <img 
-              src={decalogoImg} 
-              alt="Decalogo" 
-              className="absolute bottom-0 right-0 w-24 h-24 object-contain translate-x-2 translate-y-2 group-hover:scale-105 transition-transform"
-            />
-            {/* Background 'A' Element */}
-            <img 
-              src={aComponentImg} 
-              alt="" 
-              className="absolute -left-10 -bottom-10 h-[120%] w-auto object-contain pointer-events-none z-0 opacity-20 select-none mix-blend-overlay"
-            />
-            {/* Soft triangular gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/10 pointer-events-none"></div>
           </div>
 
           {/* Supporto Card */}
           <div 
             onClick={() => navigate('/support')}
-            className="bg-gradient-to-br from-teal-600 to-teal-800 rounded-2xl p-4 relative overflow-hidden h-40 cursor-pointer shadow-md group border-2 border-white/30 hover:border-white/60 transition-colors"
+            className="rounded-2xl relative overflow-hidden h-40 cursor-pointer shadow-md group transition-transform hover:scale-[1.01]"
           >
-            <div className="relative z-10">
-              <h3 className="text-white font-bold text-lg leading-tight">Supporto e informazioni utili</h3>
+            {/* Background Layer */}
+            <div 
+              className="absolute inset-0 z-0"
+              style={{
+                background: 'linear-gradient(180deg, #0B2A57 30%, #A6CD90 100%)'
+              }}
+            />
+            
+            {/* Border Layer */}
+            <div className="absolute inset-0 z-20 rounded-2xl border-2 border-white/30 group-hover:border-white/60 transition-colors pointer-events-none" />
+
+            {/* Content */}
+            <div className="relative z-10 p-4 h-full w-full">
+              <div className="relative z-10">
+                <h3 className="text-white font-bold text-lg leading-tight">Supporto e informazioni utili</h3>
+              </div>
+              <img 
+                src={supportoImg} 
+                alt="Supporto" 
+                className="absolute bottom-0 right-0 w-24 h-24 object-contain translate-x-2 translate-y-2 group-hover:scale-105 transition-transform"
+              />
+              {/* Background 'A' Element */}
+              <img 
+                src={aComponentImg} 
+                alt="" 
+                className="absolute -left-10 -bottom-10 h-[120%] w-auto object-contain pointer-events-none z-0 opacity-20 select-none mix-blend-overlay"
+              />
+              {/* Soft triangular gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-transparent to-white/10 pointer-events-none"></div>
             </div>
-            <img 
-              src={supportoImg} 
-              alt="Supporto" 
-              className="absolute bottom-0 right-0 w-24 h-24 object-contain translate-x-2 translate-y-2 group-hover:scale-105 transition-transform"
-            />
-            {/* Background 'A' Element */}
-            <img 
-              src={aComponentImg} 
-              alt="" 
-              className="absolute -left-10 -bottom-10 h-[120%] w-auto object-contain pointer-events-none z-0 opacity-20 select-none mix-blend-overlay"
-            />
-            {/* Soft triangular gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-transparent to-white/10 pointer-events-none"></div>
           </div>
         </div>
       </div>
@@ -104,9 +146,9 @@ export default function Home() {
             <div 
               key={article.id}
               onClick={() => navigate(`/articles/${article.id}`)}
-              className="min-w-[200px] bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              className="min-w-[200px] w-[200px] bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             >
-              <div className="h-28 overflow-hidden">
+              <div className="aspect-[4/3] w-full overflow-hidden">
                 <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
               </div>
               <div className="p-3">

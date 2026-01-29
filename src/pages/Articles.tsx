@@ -21,7 +21,7 @@ export default function Articles() {
             onClick={() => navigate(`/articles/${article.id}`)}
             className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer flex flex-col"
           >
-            <div className="h-48 w-full">
+            <div className="aspect-[4/3] w-full overflow-hidden">
               <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
             </div>
             <div className="p-4 flex-1 flex flex-col">
