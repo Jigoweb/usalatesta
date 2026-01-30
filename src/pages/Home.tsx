@@ -63,7 +63,7 @@ export default function Home() {
             {/* Content */}
             <div className="relative z-10 p-4 h-full w-full">
               <div className="relative z-10 w-2/3">
-                <h2 className="text-white font-bold text-xl mb-1">Quiz di autovalutazione</h2>
+                <h2 className="text-white font-bold text-xl mb-1">Test di autovalutazione</h2>
                 <p className="text-blue-100 text-xs">Approfondisci il tuo rapporto col gioco</p>
               </div>
               <img 
@@ -95,16 +95,16 @@ export default function Home() {
               <div className="relative z-10">
                 <h3 className="text-white font-bold text-lg leading-tight">Il decalogo del giocatore</h3>
               </div>
-              <img 
-                src={decalogoImg} 
-                alt="Decalogo" 
-                className="absolute bottom-0 right-0 w-32 h-32 object-contain translate-x-2 translate-y-2 group-hover:scale-105 transition-transform"
-              />
               {/* Background 'A' Element */}
               <img 
                 src={aComponentImg} 
                 alt="" 
-                className="absolute -left-10 -bottom-10 h-[120%] w-auto object-contain pointer-events-none z-0 opacity-20 select-none mix-blend-overlay"
+                className="absolute -left-0 -bottom-0 h-[80%] w-auto object-contain pointer-events-none z-0 opacity-20 select-none mix-blend-overlay"
+              />
+              <img 
+                src={decalogoImg} 
+                alt="Decalogo" 
+                className="absolute bottom-0 right-0 w-36 h-36 object-contain translate-x-6 translate-y-6 group-hover:scale-105 transition-transform"
               />
               {/* Soft triangular gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/10 pointer-events-none"></div>
@@ -132,16 +132,16 @@ export default function Home() {
               <div className="relative z-10">
                 <h3 className="text-white font-bold text-lg leading-tight">Supporto e informazioni utili</h3>
               </div>
-              <img 
-                src={supportoImg} 
-                alt="Supporto" 
-                className="absolute bottom-0 right-0 w-32 h-32 object-contain translate-x-2 translate-y-6 group-hover:scale-105 transition-transform"
-              />
               {/* Background 'A' Element */}
               <img 
                 src={aComponentImg} 
                 alt="" 
-                className="absolute -left-10 -bottom-10 h-[120%] w-auto object-contain pointer-events-none z-0 opacity-20 select-none mix-blend-overlay"
+                className="absolute -left-0 -bottom-0 h-[80%] w-auto object-contain pointer-events-none z-0 opacity-20 select-none mix-blend-overlay"
+              />
+              <img 
+                src={supportoImg} 
+                alt="Supporto" 
+                className="absolute bottom-0 right-0 w-32 h-32 object-contain translate-x-2 translate-y-6 group-hover:scale-105 transition-transform"
               />
               {/* Soft triangular gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-transparent to-white/10 pointer-events-none"></div>
@@ -167,7 +167,7 @@ export default function Home() {
             <div 
               key={article.id}
               onClick={() => navigate(`/articles/${article.id}`)}
-              className="min-w-[200px] w-[200px] bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              className="min-w-[240px] w-[240px] bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             >
               <div className="aspect-[4/3] w-full overflow-hidden">
                 <img src={article.image} alt={article.title} className="w-full h-full object-cover" />

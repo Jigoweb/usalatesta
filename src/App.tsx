@@ -11,8 +11,8 @@ import Support from './pages/Support';
 import HelpCenters from './pages/HelpCenters';
 import Articles from './pages/Articles';
 import Chatbot from './pages/Chatbot';
-import Games from './pages/Games';
 import ArticleDetail from './pages/ArticleDetail';
+import Games from './pages/Games';
 
 function App() {
   return (

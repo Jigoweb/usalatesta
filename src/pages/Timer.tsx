@@ -25,16 +25,16 @@ function TimePicker({ hours, minutes, onHoursChange, onMinutesChange }: {
         requestAnimationFrame(() => {
           if (hoursRef.current && minutesRef.current) {
             // Calcola il padding necessario per centrare il primo elemento
-            const containerHeight = 216; // maxHeight del container
-            const paddingNeeded = (containerHeight - itemHeight) / 2;
+            // const containerHeight = 216; 
+            // const paddingNeeded = (containerHeight - itemHeight) / 2;
             
             // Imposta lo scroll iniziale a 0 (00:00) - il padding nel renderNumbers centrerà automaticamente
             hoursRef.current.scrollTop = 0;
             minutesRef.current.scrollTop = 0;
             
             // Forza un reflow per assicurarsi che lo scroll sia applicato
-            hoursRef.current.offsetHeight;
-            minutesRef.current.offsetHeight;
+            void hoursRef.current.offsetHeight;
+            void minutesRef.current.offsetHeight;
             
             initializedRef.current = true;
           }
@@ -92,7 +92,6 @@ function TimePicker({ hours, minutes, onHoursChange, onMinutesChange }: {
     const numbers = Array.from({ length: max + 1 }, (_, i) => i).filter(num => num % step === 0);
     const containerHeight = 216;
     const paddingValue = (containerHeight - itemHeight) / 2; // 72px per centrare il primo elemento
-    const selectionAreaTop = paddingValue; // La linea di selezione è alla stessa altezza del padding
     
     // Trova l'indice corretto nel array filtrato
     const selectedIndex = numbers.indexOf(selected);
