@@ -181,8 +181,8 @@ export default function Home() {
       </div>
 
       {/* Tips Section */}
-      <div className="mt-12 px-4 pb-12">
-        <div className="text-center mb-6">
+      <div className="mt-12 px-4 pb-12 relative">
+        <div className="text-center mb-8 sticky top-0 z-30 bg-slate-50 py-6 shadow-[0_10px_40px_-10px_rgba(255,255,255,1)]">
           <h2 className="text-4xl font-black text-primary-blue mb-4">I nostri consigli</h2>
           <p className="text-gray-600 text-sm">
             Affinché il gioco rimanga un GIOCO, presta attenzione ai seguenti suggerimenti:
@@ -194,22 +194,27 @@ export default function Home() {
             <div 
               key={tip.id}
               ref={el => { tipRefs.current[index] = el; }}
-              className="sticky rounded-2xl p-6 relative overflow-visible shadow-md transform transition-transform flex flex-col"
+              className="sticky rounded-2xl p-6 group overflow-visible shadow-md transform transition-transform flex flex-col"
               style={{ 
                 minHeight: tipsMinHeight || undefined,
-                top: `calc(2rem + ${index * 1.5}rem)`, 
+                top: `calc(180px + ${index * 10}px)`, 
                 zIndex: 10 + index,
                 background: tip.color || `linear-gradient(to bottom right, #64748b, #475569)`
               }}
             >
-              <p className="text-white font-bold text-[40px] leading-[44px] tracking-[0.04em] pr-12 relative z-10 flex-1">
+              {/* Border Layer */}
+              <div className="absolute inset-0 z-20 rounded-2xl border-2 border-white/30 group-hover:border-white/60 transition-colors pointer-events-none" />
+              
+              <p className="text-white font-semibold text-[26px] leading-tight tracking-[0.04em] pr-4 relative z-10 flex-1">
                 {tip.text}
               </p>
-              <span className="absolute bottom-6 right-6 text-[64px] leading-[64px] font-bold text-white opacity-10 select-none pointer-events-none tracking-normal">
+              <span className="absolute bottom-7 right-7 text-[64px] leading-none font-bold text-white opacity-10 select-none pointer-events-none tracking-normal z-0">
                 {String(tip.id).padStart(2, '0')}
               </span>
             </div>
           ))}
+          {/* Spacer to allow the last card to scroll up to its stacked position */}
+          <div className="h-[40vh]" />
         </div>
       </div>
     </div>
