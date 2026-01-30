@@ -244,17 +244,6 @@ export default function Timer() {
       />
       
       <div className="relative z-10 flex flex-col h-full">
-        <div className="flex-none">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Timer del giocatore</h1>
-          <p className="text-sm text-gray-600 mb-8">
-            {timerState.isActive
-              ? timerState.isPaused
-                ? 'Timer in pausa'
-                : 'Tempo rimanente'
-              : 'Scegli quanto far durare la tua sessione di gioco'}
-          </p>
-        </div>
-
       <div className="mb-8 flex-none">
         {timerState.isActive ? (
           <>

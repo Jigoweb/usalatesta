@@ -150,7 +150,7 @@ export default function Quiz() {
           </motion.div>
         </AnimatePresence>
 
-        <div className="absolute bottom-24 left-0 w-full px-6 flex justify-center z-10">
+        <div className="absolute bottom-8 left-0 w-full px-6 flex justify-center z-10">
           <div className="w-full max-w-sm space-y-3">
             {(Object.entries(SCORING) as [string, string][]).reverse().map(([value, label]) => (
               <button
