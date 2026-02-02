@@ -27,7 +27,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
   },
   {
     id: 7,
-    text: "Altre persone (familiari, amici, colleghi) ti hanno criticato per il tuo modo di giocare o ti hanno detto che avevi un problema?",
+    text: "Altre persone ti hanno criticato per il tuo modo di giocare o ti hanno detto che avevi un problema?",
   },
   {
     id: 8,
