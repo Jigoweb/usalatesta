@@ -166,7 +166,7 @@ export default function Home() {
           {ARTICLES.slice(-4).map((article) => (
             <div 
               key={article.id}
-              onClick={() => navigate(`/articles/${article.id}`)}
+              onClick={() => navigate(`/articles/${article.id}`, { state: { from: '/home' } })}
               className="min-w-[240px] w-[240px] bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             >
               <div className="aspect-[4/3] w-full overflow-hidden">

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft, Clock } from 'lucide-react';
 import { ARTICLES } from '../data/articles';
 import CerchiAiuto from '../components/CerchiAiuto';
@@ -7,7 +7,15 @@ import CerchiAiuto from '../components/CerchiAiuto';
 export default function ArticleDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const article = ARTICLES.find(a => a.id === id);
+
+  const handleBack = () => {
+    // If we have a source in state (e.g. from Home or Articles), go there
+    // Otherwise default to /articles
+    const from = location.state?.from || '/articles';
+    navigate(from);
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -41,7 +49,7 @@ export default function ArticleDetail() {
     <div className="min-h-screen bg-white pb-20 font-sans">
       {/* Header */}
       <div className="p-4 flex items-center bg-white shadow-sm sticky top-0 z-50">
-        <button onClick={() => navigate(-1)} className="mr-4">
+        <button onClick={handleBack} className="mr-4">
           <ChevronLeft className="text-primary-blue" />
         </button>
       </div>
@@ -120,7 +128,7 @@ export default function ArticleDetail() {
                 {nextArticles.map(nextArticle => (
                     <div 
                       key={nextArticle.id} 
-                      onClick={() => navigate(`/articles/${nextArticle.id}`)} 
+                      onClick={() => navigate(`/articles/${nextArticle.id}`, { state: { from: location.state?.from } })} 
                       className="cursor-pointer group flex flex-col h-full"
                     >
                         <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-3 relative bg-gray-100">
