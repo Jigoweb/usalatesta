@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft } from 'lucide-react';
@@ -13,6 +13,28 @@ export default function Quiz() {
   const [showSummary, setShowSummary] = useState(false);
   const [direction, setDirection] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
+
+  // Preload next images for smoother transition
+  useEffect(() => {
+    const preloadImages = () => {
+      const nextIndex = currentIndex + 1;
+      if (nextIndex < QUIZ_QUESTIONS.length) {
+        const img = new Image();
+        if (QUIZ_QUESTIONS[nextIndex].image) {
+          img.src = QUIZ_QUESTIONS[nextIndex].image!;
+        }
+      }
+      // Preload the one after next as well if possible
+      const nextNextIndex = currentIndex + 2;
+      if (nextNextIndex < QUIZ_QUESTIONS.length) {
+        const img = new Image();
+        if (QUIZ_QUESTIONS[nextNextIndex].image) {
+          img.src = QUIZ_QUESTIONS[nextNextIndex].image!;
+        }
+      }
+    };
+    preloadImages();
+  }, [currentIndex]);
 
   const handleAnswer = (value: 0 | 1 | 2 | 3) => {
     setDirection(value > 1 ? 1 : -1); // Positive answers slide right, negative left
@@ -134,11 +156,10 @@ export default function Quiz() {
             <div className="bg-white rounded-3xl shadow-xl overflow-hidden mb-6">
               <div className="h-48 bg-blue-100 relative">
                 <img 
-                  src={quizImg} 
+                  src={currentQuestion.image || quizImg} 
                   alt="Question illustration" 
-                  className="w-full h-full object-cover mix-blend-multiply opacity-80"
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-white/50 to-transparent" />
               </div>
               
               <div className="p-8">
