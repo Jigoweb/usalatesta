@@ -182,7 +182,7 @@ export default function Home() {
 
       {/* Tips Section */}
       <div className="mt-12 px-4 pb-12 relative">
-        <div className="text-center mb-8 sticky top-0 z-30 bg-slate-50 py-6 shadow-[0_10px_40px_-10px_rgba(255,255,255,1)]">
+        <div className="text-center mb-8">
           <h2 className="text-4xl font-black text-primary-blue mb-4">I nostri consigli</h2>
           <p className="text-gray-600 text-sm">
             Affinché il gioco rimanga un GIOCO, presta attenzione ai seguenti suggerimenti:
@@ -197,7 +197,7 @@ export default function Home() {
               className="sticky rounded-2xl p-6 group overflow-visible shadow-md transform transition-transform flex flex-col"
               style={{ 
                 minHeight: tipsMinHeight || undefined,
-                top: `calc(180px + ${index * 10}px)`, 
+                top: `calc(72px + ${index * 10}px)`, 
                 zIndex: 10 + index,
                 background: tip.color || `linear-gradient(to bottom right, #64748b, #475569)`
               }}
@@ -216,6 +216,18 @@ export default function Home() {
           {/* Spacer to allow the last card to scroll up to its stacked position */}
           <div className="h-[40vh]" />
         </div>
+      </div>
+
+
+
+      {/* Disclaimer "Usa la testa" - fuori dalla sezione Tips */}
+      <div className="px-4 py-6">
+        <p className="text-gray-700 text-sm leading-relaxed mb-3">
+          &ldquo;Usa la testa&rdquo; è il progetto di Gioco Responsabile del Gruppo NOVOMATIC Italia, nato per promuovere una cultura del gioco sano e consapevole e per ricordare che il gioco deve rimanere un&apos;attività di puro divertimento e svago.
+        </p>
+        <p className="text-gray-700 text-sm leading-relaxed">
+          Il progetto si propone come uno strumento di sensibilizzazione e prevenzione, offrendo risorse utili per riconoscere e gestire tempestivamente i segnali di gioco problematico.
+        </p>
       </div>
     </div>
   );

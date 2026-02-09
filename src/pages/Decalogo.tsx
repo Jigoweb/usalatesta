@@ -44,6 +44,16 @@ export default function Decalogo() {
             </div>
           ))}
         </div>
+
+        <p className="text-gray-700 leading-relaxed mt-8 mb-4">
+          Se senti che alcuni di questi comportamenti ti rispecchiano, puoi fare un breve test anonimo di autovalutazione per comprendere meglio il tuo rapporto con il gioco.
+        </p>
+        <button
+          onClick={() => navigate('/quiz')}
+          className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg hover:bg-blue-900 transition-colors"
+        >
+          VAI AL TEST
+        </button>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { Send } from 'lucide-react';
-import { ensureToken } from '../lib/vega-api';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ChevronLeft, Send } from 'lucide-react';
+import { ensureToken, getAssistant, extractFAQSuggestions } from '../lib/vega-api';
 import { useVegaChat } from '../hooks/useVegaChat';
 
 interface Message {
@@ -10,7 +11,7 @@ interface Message {
   timestamp: Date;
 }
 
-const SUGGESTIONS = [
+const FALLBACK_SUGGESTIONS = [
   'Cosa posso fare oggi?',
   'Come posso gestire meglio il mio tempo?',
   'Dammi consigli per il gioco responsabile',
@@ -23,11 +24,39 @@ const VEGA_USER = import.meta.env.VITE_VEGA_USER ?? '';
 const VEGA_PASSWORD = import.meta.env.VITE_VEGA_PASSWORD ?? '';
 const VEGA_ASSISTANT_ID = Number(import.meta.env.VITE_VEGA_ASSISTANT_ID ?? '310');
 
+/** Simple markdown renderer: converts **bold** to <strong>bold</strong> */
+function renderMarkdown(text: string): React.ReactNode {
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  const regex = /\*\*([^*]+)\*\*/g;
+  let match;
+
+  while ((match = regex.exec(text)) !== null) {
+    // Add text before the match
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+    // Add bold text
+    parts.push(<strong key={match.index}>{match[1]}</strong>);
+    lastIndex = regex.lastIndex;
+  }
+
+  // Add remaining text
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return parts.length > 0 ? <>{parts}</> : text;
+}
+
 export default function Chatbot() {
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [token, setToken] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState<string[]>(FALLBACK_SUGGESTIONS);
+  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -41,6 +70,7 @@ export default function Chatbot() {
         timestamp: new Date(),
       },
     ]);
+    setIsWaitingForResponse(false);
   }, []);
 
   const onVegaError = useCallback((msg: string) => {
@@ -72,7 +102,7 @@ export default function Chatbot() {
     return unsub;
   }, [onFinalMessage, handleFinalMessage]);
 
-  // Auth on mount
+  // Auth on mount and fetch assistant for suggestions
   useEffect(() => {
     if (!VEGA_USER || !VEGA_PASSWORD) {
       setAuthError('Configura VITE_VEGA_USER e VITE_VEGA_PASSWORD in .env');
@@ -80,10 +110,24 @@ export default function Chatbot() {
     }
     let cancelled = false;
     ensureToken(VEGA_USER, VEGA_PASSWORD)
-      .then((accessToken) => {
+      .then(async (accessToken) => {
         if (!cancelled) {
           if (import.meta.env.DEV) console.log('[Chatbot] Token ottenuto, lunghezza:', accessToken?.length);
           setToken(accessToken);
+          // Fetch assistant to get FAQ suggestions
+          try {
+            const assistant = await getAssistant(accessToken, VEGA_ASSISTANT_ID);
+            const faqSuggestions = extractFAQSuggestions(assistant);
+            if (faqSuggestions.length > 0) {
+              if (import.meta.env.DEV) console.log('[Chatbot] FAQ suggerimenti trovati:', faqSuggestions.length);
+              setSuggestions(faqSuggestions);
+            } else {
+              if (import.meta.env.DEV) console.log('[Chatbot] Nessuna FAQ trovata, uso suggerimenti di default');
+            }
+          } catch (err) {
+            if (import.meta.env.DEV) console.warn('[Chatbot] Errore nel caricamento assistente per FAQ:', err);
+            // Continue with fallback suggestions
+          }
         }
       })
       .catch((err: Error) => {
@@ -109,6 +153,13 @@ export default function Chatbot() {
     scrollToBottom();
   }, [messages, streamingText]);
 
+  // Track when we're waiting for response
+  useEffect(() => {
+    if (streamingText) {
+      setIsWaitingForResponse(false); // We got streaming, no longer waiting
+    }
+  }, [streamingText]);
+
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -133,6 +184,7 @@ export default function Chatbot() {
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     clearStreaming();
+    setIsWaitingForResponse(true);
     sendMessage(messageText);
   };
 
@@ -182,7 +234,7 @@ export default function Chatbot() {
               </p>
             </div>
             <div className="flex flex-wrap gap-2 justify-center">
-              {SUGGESTIONS.map((suggestion, index) => (
+              {suggestions.map((suggestion, index) => (
                 <button
                   key={index}
                   onClick={() => handleSuggestionClick(suggestion)}
@@ -211,7 +263,9 @@ export default function Chatbot() {
                   }`}
                 >
                   <p className="text-sm whitespace-pre-wrap break-words">
-                    {message.content}
+                    {message.role === 'assistant' 
+                      ? renderMarkdown(message.content)
+                      : message.content}
                   </p>
                   <span
                     className={`text-xs mt-1 block ${
@@ -229,27 +283,30 @@ export default function Chatbot() {
               <div className="flex justify-start">
                 <div className="max-w-[80%] rounded-2xl px-4 py-2 bg-white text-gray-800 shadow-sm">
                   <p className="text-sm whitespace-pre-wrap break-words">
-                    {streamingText}
+                    {renderMarkdown(streamingText)}
                   </p>
                 </div>
               </div>
             )}
-            {!streamingText && !isConnected && messages.length > 0 && (
+            {isWaitingForResponse && !streamingText && (
               <div className="flex justify-start">
                 <div className="bg-white rounded-2xl px-4 py-2 shadow-sm">
-                  <div className="flex space-x-1">
-                    <div
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: '0ms' }}
-                    />
-                    <div
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: '150ms' }}
-                    />
-                    <div
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: '300ms' }}
-                    />
+                  <div className="flex items-center gap-2">
+                    <div className="flex space-x-1">
+                      <div
+                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        style={{ animationDelay: '0ms' }}
+                      />
+                      <div
+                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        style={{ animationDelay: '150ms' }}
+                      />
+                      <div
+                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        style={{ animationDelay: '300ms' }}
+                      />
+                    </div>
+                    <span className="text-xs text-gray-500">Sto scrivendo...</span>
                   </div>
                 </div>
               </div>

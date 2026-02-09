@@ -113,18 +113,84 @@ export async function ensureToken(
   return data.access_token;
 }
 
+export interface AssistantDocument {
+  id: number;
+  file_type: string;
+  filename: string;
+  original_filename: string;
+  description: string;
+  content_type: string;
+  percentage_upload: number;
+  upload_complete: boolean;
+  upload_error: boolean;
+  s3_path: string;
+  faq_text: string;
+  uploaded_by: number | null;
+  user_created: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AssistantResponse {
+  id: number;
+  name: string;
+  description: string;
+  subtitle: string;
+  personality_id: number;
+  group_id: number | null;
+  status: string;
+  created_by: number | null;
+  aspect_id: number;
+  created_at: string;
+  updated_at: string | null;
+  documents: AssistantDocument[];
+  [key: string]: unknown;
+}
+
 /** Get assistant details (requires Bearer token). */
 export async function getAssistant(
   accessToken: string,
   assistantId: number
-): Promise<unknown> {
+): Promise<AssistantResponse> {
   const res = await fetch(`${BASE_URL}/api/v1/assistants/${assistantId}`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
   });
   if (!res.ok) throw new Error(`Get assistant failed: ${res.status}`);
-  return res.json();
+  return res.json() as Promise<AssistantResponse>;
+}
+
+/** Extract FAQ questions from assistant documents (from faq_text field). */
+export function extractFAQSuggestions(
+  assistant: AssistantResponse,
+  maxSuggestions: number = 6
+): string[] {
+  const suggestions: string[] = [];
+  const seen = new Set<string>();
+  
+  for (const doc of assistant.documents || []) {
+    if (!doc.faq_text || doc.faq_text.trim() === '') continue;
+    
+    // Parse FAQ format: "Q: question text\nanswer text\n\nQ: ..."
+    const faqText = doc.faq_text;
+    const questionMatches = faqText.match(/Q:\s*([^\n]+)/g);
+    
+    if (questionMatches) {
+      for (const match of questionMatches) {
+        const question = match.replace(/^Q:\s*/, '').trim();
+        if (question && question.length > 0 && !seen.has(question.toLowerCase())) {
+          seen.add(question.toLowerCase());
+          suggestions.push(question);
+          if (suggestions.length >= maxSuggestions) break;
+        }
+      }
+    }
+    
+    if (suggestions.length >= maxSuggestions) break;
+  }
+  
+  return suggestions;
 }
 
 /** Delete assistant memories / chat history (requires Bearer token). */
