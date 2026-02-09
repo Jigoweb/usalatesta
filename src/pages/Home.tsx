@@ -63,7 +63,7 @@ export default function Home() {
             {/* Content */}
             <div className="relative z-10 p-4 h-full w-full">
               <div className="relative z-10 w-2/3">
-                <h2 className="text-white font-bold text-xl mb-1">Quiz di autovalutazione</h2>
+                <h2 className="text-white font-bold text-xl mb-1">Test di autovalutazione</h2>
                 <p className="text-blue-100 text-xs">Approfondisci il tuo rapporto col gioco</p>
               </div>
               <img 
@@ -95,16 +95,16 @@ export default function Home() {
               <div className="relative z-10">
                 <h3 className="text-white font-bold text-lg leading-tight">Il decalogo del giocatore</h3>
               </div>
-              <img 
-                src={decalogoImg} 
-                alt="Decalogo" 
-                className="absolute bottom-0 right-0 w-32 h-32 object-contain translate-x-2 translate-y-2 group-hover:scale-105 transition-transform"
-              />
               {/* Background 'A' Element */}
               <img 
                 src={aComponentImg} 
                 alt="" 
-                className="absolute -left-10 -bottom-10 h-[120%] w-auto object-contain pointer-events-none z-0 opacity-20 select-none mix-blend-overlay"
+                className="absolute -left-0 -bottom-0 h-[80%] w-auto object-contain pointer-events-none z-0 opacity-20 select-none mix-blend-overlay"
+              />
+              <img 
+                src={decalogoImg} 
+                alt="Decalogo" 
+                className="absolute bottom-0 right-0 w-36 h-36 object-contain translate-x-6 translate-y-6 group-hover:scale-105 transition-transform"
               />
               {/* Soft triangular gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/10 pointer-events-none"></div>
@@ -132,16 +132,16 @@ export default function Home() {
               <div className="relative z-10">
                 <h3 className="text-white font-bold text-lg leading-tight">Supporto e informazioni utili</h3>
               </div>
-              <img 
-                src={supportoImg} 
-                alt="Supporto" 
-                className="absolute bottom-0 right-0 w-32 h-32 object-contain translate-x-2 translate-y-6 group-hover:scale-105 transition-transform"
-              />
               {/* Background 'A' Element */}
               <img 
                 src={aComponentImg} 
                 alt="" 
-                className="absolute -left-10 -bottom-10 h-[120%] w-auto object-contain pointer-events-none z-0 opacity-20 select-none mix-blend-overlay"
+                className="absolute -left-0 -bottom-0 h-[80%] w-auto object-contain pointer-events-none z-0 opacity-20 select-none mix-blend-overlay"
+              />
+              <img 
+                src={supportoImg} 
+                alt="Supporto" 
+                className="absolute bottom-0 right-0 w-32 h-32 object-contain translate-x-2 translate-y-6 group-hover:scale-105 transition-transform"
               />
               {/* Soft triangular gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-transparent to-white/10 pointer-events-none"></div>
@@ -166,8 +166,8 @@ export default function Home() {
           {ARTICLES.slice(-4).map((article) => (
             <div 
               key={article.id}
-              onClick={() => navigate(`/articles/${article.id}`)}
-              className="min-w-[200px] w-[200px] bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() => navigate(`/articles/${article.id}`, { state: { from: '/home' } })}
+              className="min-w-[240px] w-[240px] bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             >
               <div className="aspect-[4/3] w-full overflow-hidden">
                 <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
@@ -181,8 +181,8 @@ export default function Home() {
       </div>
 
       {/* Tips Section */}
-      <div className="mt-12 px-4 pb-12">
-        <div className="text-center mb-6">
+      <div className="mt-12 px-4 pb-12 relative">
+        <div className="text-center mb-8 sticky top-0 z-30 bg-slate-50 py-6 shadow-[0_10px_40px_-10px_rgba(255,255,255,1)]">
           <h2 className="text-4xl font-black text-primary-blue mb-4">I nostri consigli</h2>
           <p className="text-gray-600 text-sm">
             Affinché il gioco rimanga un GIOCO, presta attenzione ai seguenti suggerimenti:
@@ -194,22 +194,27 @@ export default function Home() {
             <div 
               key={tip.id}
               ref={el => { tipRefs.current[index] = el; }}
-              className="sticky rounded-2xl p-6 relative overflow-visible shadow-md transform transition-transform flex flex-col"
+              className="sticky rounded-2xl p-6 group overflow-visible shadow-md transform transition-transform flex flex-col"
               style={{ 
                 minHeight: tipsMinHeight || undefined,
-                top: `calc(2rem + ${index * 1.5}rem)`, 
+                top: `calc(180px + ${index * 10}px)`, 
                 zIndex: 10 + index,
                 background: tip.color || `linear-gradient(to bottom right, #64748b, #475569)`
               }}
             >
-              <p className="text-white font-bold text-[40px] leading-[44px] tracking-[0.04em] pr-12 relative z-10 flex-1">
+              {/* Border Layer */}
+              <div className="absolute inset-0 z-20 rounded-2xl border-2 border-white/30 group-hover:border-white/60 transition-colors pointer-events-none" />
+              
+              <p className="text-white font-semibold text-[26px] leading-tight tracking-[0.04em] pr-4 relative z-10 flex-1">
                 {tip.text}
               </p>
-              <span className="absolute bottom-6 right-6 text-[64px] leading-[64px] font-bold text-white opacity-10 select-none pointer-events-none tracking-normal">
+              <span className="absolute bottom-7 right-7 text-[64px] leading-none font-bold text-white opacity-10 select-none pointer-events-none tracking-normal z-0">
                 {String(tip.id).padStart(2, '0')}
               </span>
             </div>
           ))}
+          {/* Spacer to allow the last card to scroll up to its stacked position */}
+          <div className="h-[40vh]" />
         </div>
       </div>
     </div>

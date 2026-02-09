@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useTimer } from '../contexts/TimerContext';
 import { Play, Pause, Square } from 'lucide-react';
 import { cn } from '../utils/cn';
+import aComponentImg from '../assets/images/a_component.png';
 
 // Componente per il picker scrollabile in stile iOS
 function TimePicker({ hours, minutes, onHoursChange, onMinutesChange }: {
@@ -24,16 +25,16 @@ function TimePicker({ hours, minutes, onHoursChange, onMinutesChange }: {
         requestAnimationFrame(() => {
           if (hoursRef.current && minutesRef.current) {
             // Calcola il padding necessario per centrare il primo elemento
-            const containerHeight = 216; // maxHeight del container
-            const paddingNeeded = (containerHeight - itemHeight) / 2;
+            // const containerHeight = 216; 
+            // const paddingNeeded = (containerHeight - itemHeight) / 2;
             
             // Imposta lo scroll iniziale a 0 (00:00) - il padding nel renderNumbers centrerà automaticamente
             hoursRef.current.scrollTop = 0;
             minutesRef.current.scrollTop = 0;
             
             // Forza un reflow per assicurarsi che lo scroll sia applicato
-            hoursRef.current.offsetHeight;
-            minutesRef.current.offsetHeight;
+            void hoursRef.current.offsetHeight;
+            void minutesRef.current.offsetHeight;
             
             initializedRef.current = true;
           }
@@ -91,7 +92,6 @@ function TimePicker({ hours, minutes, onHoursChange, onMinutesChange }: {
     const numbers = Array.from({ length: max + 1 }, (_, i) => i).filter(num => num % step === 0);
     const containerHeight = 216;
     const paddingValue = (containerHeight - itemHeight) / 2; // 72px per centrare il primo elemento
-    const selectionAreaTop = paddingValue; // La linea di selezione è alla stessa altezza del padding
     
     // Trova l'indice corretto nel array filtrato
     const selectedIndex = numbers.indexOf(selected);
@@ -235,17 +235,16 @@ export default function Timer() {
   const countdownSS = (totalSec % 60).toString().padStart(2, '0');
 
   return (
-    <div className="min-h-screen bg-white p-6 pb-24">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Timer del giocatore</h1>
-      <p className="text-sm text-gray-600 mb-8">
-        {timerState.isActive
-          ? timerState.isPaused
-            ? 'Timer in pausa'
-            : 'Tempo rimanente'
-          : 'Scegli quanto far durare la tua sessione di gioco'}
-      </p>
-
-      <div className="mb-8">
+    <div className="fixed inset-0 bg-white p-6 pb-24 overflow-hidden">
+      {/* Decorative Background */}
+      <img 
+        src={aComponentImg} 
+        alt="" 
+        className="absolute -left-8 bottom-24 w-[70%] max-w-[350px] h-auto object-contain opacity-40 pointer-events-none select-none z-0 mix-blend-multiply" 
+      />
+      
+      <div className="relative z-10 flex flex-col h-full">
+      <div className="mb-8 flex-none">
         {timerState.isActive ? (
           <>
             <div
@@ -347,9 +346,9 @@ export default function Timer() {
       </div>
 
       {!timerState.isActive && history.length > 0 && (
-        <div>
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Recenti</h2>
-          <div className="space-y-4">
+        <div className="flex-1 min-h-0 flex flex-col">
+          <h2 className="text-lg font-bold text-gray-900 mb-4 flex-none">Recenti</h2>
+          <div className="flex-1 overflow-y-auto space-y-4 pr-1 scrollbar-hide">
             {history.map((item) => (
               <div key={item.id} className="flex items-center justify-between">
                 <div>
@@ -371,6 +370,7 @@ export default function Timer() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
