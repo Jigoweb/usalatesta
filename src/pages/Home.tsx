@@ -182,7 +182,7 @@ export default function Home() {
 
       {/* Tips Section */}
       <div className="mt-12 px-4 pb-12 relative">
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 sticky top-8">
           <h2 className="text-4xl font-black text-primary-blue mb-4">I nostri consigli</h2>
           <p className="text-gray-600 text-sm">
             Affinché il gioco rimanga un GIOCO, presta attenzione ai seguenti suggerimenti:
@@ -197,7 +197,7 @@ export default function Home() {
               className="sticky rounded-2xl p-6 group overflow-visible shadow-md transform transition-transform flex flex-col"
               style={{ 
                 minHeight: tipsMinHeight || undefined,
-                top: `calc(72px + ${index * 10}px)`, 
+                top: `calc(180px + ${index * 10}px)`, 
                 zIndex: 10 + index,
                 background: tip.color || `linear-gradient(to bottom right, #64748b, #475569)`
               }}
