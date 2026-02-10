@@ -125,9 +125,11 @@ export default function QuizResult() {
         </div>
 
         {/* Disclaimer */}
-        <p className="text-gray-600 text-sm leading-relaxed mb-8">
-          Ricorda che una diagnosi di questo tipo può essere effettuata solo da uno psicoterapeuta preparato. Questo test è uno strumento di auto diagnosi, che può comunque fornirti un&apos;utile indicazione per verificare se hai o meno problemi con il gioco d&apos;azzardo.
-        </p>
+        <div className="bg-primary-blue/5 border-l-4 border-primary-blue rounded-r-xl p-5 mb-8">
+          <p className="text-gray-700 text-sm leading-relaxed">
+            Ricorda che una diagnosi di questo tipo può essere effettuata solo da uno psicoterapeuta preparato. Questo test è uno strumento di auto diagnosi, che può comunque fornirti un&apos;utile indicazione per verificare se hai o meno problemi con il gioco d&apos;azzardo.
+          </p>
+        </div>
 
         {/* Source */}
         <p className="text-gray-400 text-xs text-center mb-8">
