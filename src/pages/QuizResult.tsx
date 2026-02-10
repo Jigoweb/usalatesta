@@ -141,7 +141,7 @@ export default function QuizResult() {
           {result.level === 'problematic' || result.level === 'moderate' ? (
             <button
               onClick={() => navigate('/support')}
-              className="w-full py-4 bg-secondary-orange text-white font-bold rounded-xl shadow-lg hover:bg-[#C55A26] transition-colors flex items-center justify-center"
+              className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg transition-colors flex items-center justify-center"
             >
               <Phone className="mr-2" size={20} />
               Richiedi Supporto

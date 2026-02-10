@@ -24,7 +24,6 @@ export default function Decalogo() {
         <button onClick={() => navigate('/home')} className="mr-2">
           <ChevronLeft className="text-primary-blue" />
         </button>
-        <div className="text-sm text-gray-400 mr-1">Home</div>
       </div>
 
       <div className="p-6">
@@ -52,7 +51,7 @@ export default function Decalogo() {
           onClick={() => navigate('/quiz')}
           className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg hover:bg-blue-900 transition-colors"
         >
-          VAI AL TEST
+          Vai al test
         </button>
       </div>
     </div>

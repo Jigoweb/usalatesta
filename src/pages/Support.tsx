@@ -64,7 +64,7 @@ export default function Support() {
                 className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
               >
                 <span className="font-bold text-gray-900 text-left pr-4">
-                  Numero Verde Nazionale per il Gioco d&apos;Azzardo Problematico – 800 558 822
+                  Numero Verde Nazionale per il Gioco d&apos;Azzardo Problematico
                 </span>
                 {expandedItems.has('numero-verde') ? (
                   <ChevronUp size={20} className="text-gray-600 shrink-0" />
