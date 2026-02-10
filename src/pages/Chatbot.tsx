@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Send } from 'lucide-react';
+import { ChevronLeft, Send, MessageSquare } from 'lucide-react';
 import { ensureToken, getAssistant, extractFAQSuggestions } from '../lib/vega-api';
 import { useVegaChat } from '../hooks/useVegaChat';
+import ComingSoonOverlay from '../components/ComingSoonOverlay';
 
 interface Message {
   id: string;
@@ -23,6 +24,7 @@ const FALLBACK_SUGGESTIONS = [
 const VEGA_USER = import.meta.env.VITE_VEGA_USER ?? '';
 const VEGA_PASSWORD = import.meta.env.VITE_VEGA_PASSWORD ?? '';
 const VEGA_ASSISTANT_ID = Number(import.meta.env.VITE_VEGA_ASSISTANT_ID ?? '310');
+const CHATBOT_COMING_SOON = import.meta.env.VITE_CHATBOT_COMING_SOON === 'true';
 
 /** Simple markdown renderer: converts **bold** to <strong>bold</strong> */
 function renderMarkdown(text: string): React.ReactNode {
@@ -212,6 +214,7 @@ export default function Chatbot() {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20 flex flex-col">
+      <ComingSoonOverlay enabled={CHATBOT_COMING_SOON} icon={MessageSquare} title="Chatbot" zIndex={45} />
       {/* Connection / error banner */}
       {errorMessage && (
         <div className="px-4 py-2 bg-red-50 text-red-800 text-sm border-b border-red-200">
