@@ -114,32 +114,56 @@ export default function HelpCenters() {
             </h2>
           )}
           
-          {filteredCenters.map((center, idx) => (
-            <div key={idx} className="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="font-bold text-primary-blue text-lg mb-2">{center.name}</h3>
-              
-              <div className="space-y-2 text-sm text-gray-600">
-                <div className="flex items-start">
-                  <MapPin size={16} className="mr-2 mt-0.5 text-gray-400 flex-shrink-0" />
-                  <span>{center.address}, {center.city} ({center.province})</span>
+          {filteredCenters.map((center, idx) => {
+            const fullAddress = `${center.address}, ${center.city} (${center.province})`;
+            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`;
+            
+            return (
+              <div key={idx} className="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                <h3 className="font-bold text-primary-blue text-lg mb-4">{center.name}</h3>
+                
+                <div className="space-y-2">
+                  {/* Telefono - Chiama direttamente */}
+                  {center.phone && (
+                    <a
+                      href={`tel:${center.phone}`}
+                      className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    >
+                      <Phone size={20} className="mr-3 text-primary-blue flex-shrink-0 group-hover:text-blue-600" />
+                      <span className="text-sm text-gray-700 font-medium">{center.phone}</span>
+                    </a>
+                  )}
+                  
+                  {/* Email - Apre client email */}
+                  {center.email && center.email !== '--------' && (
+                    <a
+                      href={`mailto:${center.email}`}
+                      className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    >
+                      <Globe size={20} className="mr-3 text-primary-blue flex-shrink-0 group-hover:text-blue-600" />
+                      <span className="text-sm text-gray-700 truncate flex-1">{center.email}</span>
+                    </a>
+                  )}
+                  
+                  {/* Divider */}
+                  {(center.phone || (center.email && center.email !== '--------')) && (
+                    <div className="border-t border-gray-200 my-2"></div>
+                  )}
+                  
+                  {/* Indirizzo - Apre Google Maps */}
+                  <a
+                    href={mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                  >
+                    <MapPin size={20} className="mr-3 mt-0.5 text-primary-blue flex-shrink-0 group-hover:text-blue-600" />
+                    <span className="text-sm text-gray-700 flex-1">{fullAddress}</span>
+                  </a>
                 </div>
-                
-                {center.phone && (
-                  <div className="flex items-center">
-                    <Phone size={16} className="mr-2 text-gray-400 flex-shrink-0" />
-                    <a href={`tel:${center.phone}`} className="text-blue-600 hover:underline">{center.phone}</a>
-                  </div>
-                )}
-                
-                {center.email && center.email !== '--------' && (
-                  <div className="flex items-center">
-                    <Globe size={16} className="mr-2 text-gray-400 flex-shrink-0" />
-                    <a href={`mailto:${center.email}`} className="text-blue-600 hover:underline truncate">{center.email}</a>
-                  </div>
-                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
           
           {region && filteredCenters.length === 0 && (
             <div className="text-center py-8 text-gray-500">
