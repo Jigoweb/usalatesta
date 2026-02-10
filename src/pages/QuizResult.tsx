@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { getRiskLevel } from '../data/quiz';
@@ -8,6 +8,17 @@ export default function QuizResult() {
   const navigate = useNavigate();
   const [score, setScore] = useState(0);
   const [result, setResult] = useState<ReturnType<typeof getRiskLevel>>({ level: 'none', label: '', color: '', textColor: '' });
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Reset scroll position immediately, before paint
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    if (containerRef.current) {
+      containerRef.current.scrollIntoView({ behavior: 'instant', block: 'start' });
+    }
+  }, []);
 
   useEffect(() => {
     const savedScore = localStorage.getItem('usalatesta_last_quiz_score');
@@ -18,6 +29,15 @@ export default function QuizResult() {
     } else {
       navigate('/quiz');
     }
+    
+    // Also reset scroll after a short delay to ensure it works
+    const timeoutId = setTimeout(() => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }, 100);
+    
+    return () => clearTimeout(timeoutId);
   }, [navigate]);
 
   const resultMessages = {
@@ -58,7 +78,7 @@ export default function QuizResult() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20">
+    <div ref={containerRef} className="min-h-screen bg-slate-50 pb-20">
       {/* Header */}
       <div className="p-4 flex items-center bg-white shadow-sm sticky top-0 z-50">
         <button onClick={() => navigate('/quiz')} className="mr-4">
