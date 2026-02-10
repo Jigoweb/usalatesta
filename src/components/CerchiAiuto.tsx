@@ -76,10 +76,10 @@ export default function CerchiAiuto({
       <button
         type="button"
         onClick={handleScopriCentri}
-        className="w-full bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex items-center justify-center gap-3 hover:bg-gray-50 transition-colors"
+        className="w-full bg-primary-blue text-white rounded-2xl border border-gray-200 shadow-sm p-4 flex items-center justify-center gap-3 transition-colors"
       >
-        <MapPin size={22} className="text-gray-900 shrink-0" strokeWidth={2} />
-        <span className="text-base font-bold text-gray-900">Scopri i Centri Aiuto</span>
+        <MapPin size={22} className="shrink-0" strokeWidth={2} />
+        <span className="text-base font-bold">Scopri i Centri Aiuto</span>
       </button>
 
       {showDisclaimer && (
