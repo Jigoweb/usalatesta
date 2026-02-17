@@ -25,7 +25,7 @@ function PhoneCard({
   imageAlt: string;
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-5 flex flex-col min-w-0">
+    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-4 pt-4 pb-0 sm:px-5 sm:pt-5 sm:pb-0 flex flex-col min-w-0">
       <span className="text-xs text-gray-400 mb-1">{subtitle}</span>
       <span className="text-sm sm:text-base font-normal text-gray-900 leading-tight mb-3 sm:mb-4">{title}</span>
       <div className="mt-auto w-full">
@@ -76,10 +76,10 @@ export default function CerchiAiuto({
       <button
         type="button"
         onClick={handleScopriCentri}
-        className="w-full bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex items-center justify-center gap-3 hover:bg-gray-50 transition-colors"
+        className="w-full bg-primary-blue text-white rounded-2xl border border-gray-200 shadow-sm p-4 flex items-center justify-center gap-3 transition-colors"
       >
-        <MapPin size={22} className="text-gray-900 shrink-0" strokeWidth={2} />
-        <span className="text-base font-bold text-gray-900">Scopri i Centri Aiuto</span>
+        <MapPin size={22} className="shrink-0" strokeWidth={2} />
+        <span className="text-base font-bold">Scopri i Centri Aiuto</span>
       </button>
 
       {showDisclaimer && (

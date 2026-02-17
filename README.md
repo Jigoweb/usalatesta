@@ -31,6 +31,20 @@ Applicazione PWA per la sensibilizzazione sul gioco d'azzardo responsabile.
    - Il server sarà disponibile su `http://localhost:5173` (o un'altra porta se quella è occupata)
    - Vite mostrerà l'URL esatto nel terminale
 
+4. **Chatbot Vega (opzionale)**  
+   Per usare il chatbot reale (API Vega), crea un file `.env` e imposta:
+   - `VITE_VEGA_USER` – email utente
+   - `VITE_VEGA_PASSWORD` – password
+   - `VITE_VEGA_ASSISTANT_ID` – ID assistente (default `310`)  
+   Documentazione API: [https://api.vegasystem.org/docs](https://api.vegasystem.org/docs)
+
+5. **Coming Soon Overlay (opzionale)**  
+   Per mostrare l'overlay "Presto disponibile" sulle pagine in sviluppo, aggiungi al file `.env`:
+   - `VITE_CHATBOT_COMING_SOON=true` – mostra overlay sulla pagina Chatbot
+   - `VITE_GAMES_COMING_SOON=true` – mostra overlay sulla pagina Giochi
+   
+   **Nota:** In locale, lascia queste variabili non impostate o imposta `false` per lavorare sulle pagine. In produzione, imposta `true` per mostrare il messaggio "coming soon".
+
 ## Test su Dispositivo Mobile
 
 Essendo un'app mobile-first, puoi testarla come se fossi su un dispositivo mobile in diversi modi:
