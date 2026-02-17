@@ -65,8 +65,8 @@ export const SCORING = {
 };
 
 export const getRiskLevel = (score: number) => {
-  if (score === 0) return { level: 'none', label: 'Nessun problema', color: 'bg-green-500' };
-  if (score <= 2) return { level: 'low', label: 'Rischio basso', color: 'bg-yellow-500' };
-  if (score <= 7) return { level: 'moderate', label: 'Rischio moderato', color: 'bg-orange-500' };
-  return { level: 'problematic', label: 'Gioco problematico', color: 'bg-red-600' };
+  if (score === 0) return { level: 'none', label: 'Nessun problema', color: 'bg-tertiary-green', textColor: 'text-tertiary-green' };
+  if (score <= 2) return { level: 'low', label: 'Rischio basso', color: 'bg-tertiary-ochre', textColor: 'text-tertiary-ochre' };
+  if (score <= 7) return { level: 'moderate', label: 'Rischio moderato', color: 'bg-secondary-orange', textColor: 'text-secondary-orange' };
+  return { level: 'problematic', label: 'Gioco problematico', color: 'bg-secondary-bordeaux', textColor: 'text-secondary-bordeaux' };
 };
