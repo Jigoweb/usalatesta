@@ -69,7 +69,7 @@ export default function Home() {
               <img 
                 src={quizImg} 
                 alt="Quiz" 
-                className="absolute right-0 top-0 h-full w-1/2 translate-x-8 object-cover object-center opacity-90 group-hover:scale-105 transition-transform duration-500"
+                className="absolute right-0 top-4 h-full w-1/2 translate-x-6 object-contain object-center opacity-90 group-hover:scale-105 transition-transform duration-500"
               />
             </div>
           </div>
