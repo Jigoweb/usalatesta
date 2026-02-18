@@ -8,7 +8,6 @@ import quizImg from '../assets/images/usa-la-testa_quizimg.PNG';
 
 export default function Quiz() {
   const navigate = useNavigate();
-  const [showIntroOverlay, setShowIntroOverlay] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [showSummary, setShowSummary] = useState(false);
@@ -117,36 +116,6 @@ export default function Quiz() {
         >
           Invia Risposte
         </button>
-      </div>
-    );
-  }
-
-  /* Intro overlay popup - mostra prima del test */
-  if (showIntroOverlay) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
-        <div className="p-4 flex items-center bg-white border-b border-gray-100">
-          <button onClick={() => navigate('/home')} className="mr-4">
-            <ChevronLeft className="text-primary-blue" />
-          </button>
-          <h1 className="text-lg font-bold text-primary-blue">Test di autovalutazione</h1>
-        </div>
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6 pt-20">
-          <div className="bg-white rounded-2xl p-6 max-w-md shadow-xl">
-            <p className="text-gray-800 font-medium text-base leading-relaxed mb-4">
-              Il gioco può creare dipendenza e danneggiare seriamente anche la sfera personale.
-            </p>
-            <p className="text-gray-600 text-sm leading-relaxed mb-6">
-              Compila anonimamente un breve test utile per comprendere meglio il tuo rapporto con il gioco.
-            </p>
-            <button
-              onClick={() => setShowIntroOverlay(false)}
-              className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg hover:bg-blue-900 transition-colors"
-            >
-              Inizia il test
-            </button>
-          </div>
-        </div>
       </div>
     );
   }

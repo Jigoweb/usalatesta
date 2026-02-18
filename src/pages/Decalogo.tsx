@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 
@@ -16,6 +17,7 @@ const RULES = [
 
 export default function Decalogo() {
   const navigate = useNavigate();
+  const [showQuizIntro, setShowQuizIntro] = useState(false);
 
   return (
     <div className="min-h-screen bg-white pb-20">
@@ -48,12 +50,37 @@ export default function Decalogo() {
           Se senti che alcuni di questi comportamenti ti rispecchiano, puoi fare un breve test anonimo di autovalutazione per comprendere meglio il tuo rapporto con il gioco.
         </p>
         <button
-          onClick={() => navigate('/quiz')}
+          onClick={() => setShowQuizIntro(true)}
           className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg hover:bg-blue-900 transition-colors"
         >
           Vai al test
         </button>
       </div>
+
+      {showQuizIntro && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6">
+          <div className="bg-white rounded-2xl p-6 max-w-md shadow-xl">
+            <p className="text-gray-800 font-medium text-base leading-relaxed mb-4">
+              Il gioco può creare dipendenza e danneggiare seriamente anche la sfera personale.
+            </p>
+            <p className="text-gray-600 text-sm leading-relaxed mb-6">
+              Compila anonimamente un breve test utile per comprendere meglio il tuo rapporto con il gioco.
+            </p>
+            <button
+              onClick={() => navigate('/quiz')}
+              className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg hover:bg-blue-900 transition-colors"
+            >
+              Inizia il test
+            </button>
+            <button
+              onClick={() => setShowQuizIntro(false)}
+              className="w-full py-3 mt-2 text-gray-500 text-sm font-medium hover:text-gray-700 transition-colors"
+            >
+              Annulla
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
