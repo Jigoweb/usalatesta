@@ -7,7 +7,7 @@ const games = [
     title: 'Il cervello',
     subtitle: 'Quando Giochi Come Funziona?',
     icon: Brain,
-    gradient: 'linear-gradient(135deg, #0B2A57 0%, #9D2050 100%)',
+    gradient: 'linear-gradient(105deg, #0B2A57 40%, #9D2050 100%)',
     accentColor: 'rgba(157, 32, 80, 0.3)',
     delay: 0.1,
   },
@@ -16,7 +16,7 @@ const games = [
     title: 'Labirinth',
     subtitle: 'Quanto Tempo è Passato?',
     icon: Clock,
-    gradient: 'linear-gradient(135deg, #0B2A57 0%, #4195A4 100%)',
+    gradient: 'linear-gradient(105deg, #0B2A57 40%, #4195A4 100%)',
     accentColor: 'rgba(65, 149, 164, 0.3)',
     delay: 0.2,
   },
@@ -93,7 +93,7 @@ export default function Games() {
         transition={{ duration: 0.6, delay: 0.5 }}
         className="px-4 mt-8"
       >
-        <div className="bg-primary-blue/5 border-l-4 border-primary-blue rounded-r-xl p-4">
+        <div className="bg-primary-blue/5 border-2 border-gray-200 rounded-2xl p-4">
           <p className="text-gray-600 text-sm leading-relaxed">
             Nuovi giochi interattivi saranno disponibili a breve per aiutarti a comprendere meglio i meccanismi del gioco responsabile.
           </p>

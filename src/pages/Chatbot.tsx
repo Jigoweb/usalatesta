@@ -239,7 +239,7 @@ export default function Chatbot() {
       <img
         src={aComponentImg}
         alt=""
-        className="absolute -left-8 bottom-24 w-[70%] max-w-[350px] h-auto object-contain opacity-40 pointer-events-none select-none z-0 mix-blend-multiply"
+        className="absolute -left-8 bottom-48 w-[70%] max-w-[350px] h-auto object-contain opacity-40 pointer-events-none select-none z-0 mix-blend-multiply"
       />
 
       {/* Privacy consent modal */}

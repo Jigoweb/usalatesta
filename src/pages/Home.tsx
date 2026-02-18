@@ -223,7 +223,7 @@ export default function Home() {
 
       {/* Disclaimer "Usa la testa" - fuori dalla sezione Tips */}
       <div className="px-4 py-6">
-        <div className="bg-primary-blue/5 border-l-4 border-primary-blue rounded-r-xl p-5">
+        <div className="bg-primary-blue/5 border-2 border-gray-200 rounded-2xl p-5">
           <p className="text-gray-700 text-sm leading-relaxed mb-3">
             &ldquo;Usa la testa&rdquo; è il progetto di Gioco Responsabile del Gruppo NOVOMATIC Italia, nato per promuovere una cultura del gioco sano e consapevole e per ricordare che il gioco deve rimanere un&apos;attività di puro divertimento e svago.
           </p>
