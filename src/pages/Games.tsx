@@ -24,7 +24,7 @@ const games = [
 
 export default function Games() {
   return (
-    <div className="min-h-screen bg-slate-50 pb-24">
+    <div className="bg-slate-50 pb-4">
       {/* Game Cards */}
       <div className="px-4 pt-6 space-y-5">
         {games.map((game) => {

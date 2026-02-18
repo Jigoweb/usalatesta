@@ -164,7 +164,7 @@ export async function getAssistant(
 /** Extract FAQ questions from assistant documents (from faq_text field). */
 export function extractFAQSuggestions(
   assistant: AssistantResponse,
-  maxSuggestions: number = 6
+  maxSuggestions?: number
 ): string[] {
   const suggestions: string[] = [];
   const seen = new Set<string>();
@@ -172,7 +172,6 @@ export function extractFAQSuggestions(
   for (const doc of assistant.documents || []) {
     if (!doc.faq_text || doc.faq_text.trim() === '') continue;
     
-    // Parse FAQ format: "Q: question text\nanswer text\n\nQ: ..."
     const faqText = doc.faq_text;
     const questionMatches = faqText.match(/Q:\s*([^\n]+)/g);
     
@@ -182,12 +181,12 @@ export function extractFAQSuggestions(
         if (question && question.length > 0 && !seen.has(question.toLowerCase())) {
           seen.add(question.toLowerCase());
           suggestions.push(question);
-          if (suggestions.length >= maxSuggestions) break;
+          if (maxSuggestions !== undefined && suggestions.length >= maxSuggestions) break;
         }
       }
     }
     
-    if (suggestions.length >= maxSuggestions) break;
+    if (maxSuggestions !== undefined && suggestions.length >= maxSuggestions) break;
   }
   
   return suggestions;
