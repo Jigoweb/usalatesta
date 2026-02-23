@@ -5,7 +5,7 @@ const games = [
   {
     id: 1,
     title: 'Il cervello',
-    subtitle: 'Quando Giochi Come Funziona?',
+    subtitle: 'Quando giochi come funziona?',
     icon: Brain,
     gradient: 'linear-gradient(105deg, #0B2A57 40%, #9D2050 100%)',
     accentColor: 'rgba(157, 32, 80, 0.3)',
@@ -14,7 +14,7 @@ const games = [
   {
     id: 2,
     title: 'Labirinth',
-    subtitle: 'Quanto Tempo è Passato?',
+    subtitle: 'Quanto tempo è passato?',
     icon: Clock,
     gradient: 'linear-gradient(105deg, #0B2A57 40%, #4195A4 100%)',
     accentColor: 'rgba(65, 149, 164, 0.3)',

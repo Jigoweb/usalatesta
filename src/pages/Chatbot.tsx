@@ -61,12 +61,15 @@ export default function Chatbot() {
     () => localStorage.getItem(PRIVACY_CONSENT_KEY) === 'true'
   );
   const welcomeSentRef = useRef(false);
+  const lastMessageWasFaqRef = useRef(false);
+  const allFaqsRef = useRef<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
+    allFaqsRef.current = allFaqs;
     if (allFaqs.length > 0) {
-      setSuggestions(pickRandom(allFaqs, 3));
+      setSuggestions(pickRandom(allFaqs, 4));
     }
   }, [allFaqs]);
 
@@ -80,6 +83,11 @@ export default function Chatbot() {
       },
     ]);
     setIsWaitingForResponse(false);
+
+    if (lastMessageWasFaqRef.current && allFaqsRef.current.length > 0) {
+      setSuggestions(pickRandom(allFaqsRef.current, 4));
+      lastMessageWasFaqRef.current = false;
+    }
   }, []);
 
   const onVegaError = useCallback((msg: string) => {
@@ -214,6 +222,7 @@ export default function Chatbot() {
   };
 
   const handleSuggestionClick = (suggestion: string) => {
+    lastMessageWasFaqRef.current = true;
     handleSend(suggestion);
   };
 
@@ -224,7 +233,7 @@ export default function Chatbot() {
 
   const isBusy = isWaitingForResponse || !!streamingText;
   const errorMessage = authError || wsError;
-  const canSend = isConnected && !!input.trim();
+  const canSend = isConnected && !!input.trim() && !isBusy;
 
   return (
     <div className="fixed inset-0 bg-slate-50 flex flex-col overflow-hidden">
