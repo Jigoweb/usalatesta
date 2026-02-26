@@ -7,15 +7,21 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js',
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+      includeAssets: ['favicon.svg', 'offline.html'],
       manifest: {
-        name: 'USA TESTA - Gioco Responsabile',
-        short_name: 'USA TESTA',
+        id: '/app',
+        name: 'USA LA TESTA - Gioco Responsabile',
+        short_name: 'USA LA TESTA',
         description: "App per la sensibilizzazione sul gioco d'azzardo responsabile",
+        start_url: "/",
         theme_color: '#1e3a8a',
         background_color: '#ffffff',
         display: 'standalone',
+        lang: 'it',
         orientation: 'portrait',
         icons: [
           {
@@ -33,6 +39,29 @@ export default defineConfig({
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
+          }
+        ],
+        screenshots: [
+          {
+            src: '/assets/pwa/screenshot-timer.png',
+            sizes: '576x1024',
+            type: 'image/png',
+            form_factor: 'narrow',
+            label: 'Timer'
+          },
+          {
+            src: '/assets/pwa/screenshot-quiz.png',
+            sizes: '576x1024',
+            type: 'image/png',
+            form_factor: 'narrow',
+            label: 'Test di autovalutazione'
+          },
+          {
+            src: '/assets/pwa/screenshot-home.png',
+            sizes: '576x1024',
+            type: 'image/png',
+            form_factor: 'narrow',
+            label: 'Home'
           }
         ]
       }
