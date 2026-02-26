@@ -132,8 +132,8 @@ export default function Support() {
             </div>
           </div>
 
-          <div className="bg-primary-blue/5 border-l-4 border-primary-blue rounded-r-xl p-5 mt-8">
-            <p className="text-gray-900 text-base leading-relaxed font-semibold">
+          <div className="bg-primary-blue/5 border-2 border-gray-200 rounded-2xl p-5 mt-8">
+            <p className="text-gray-700 text-sm leading-relaxed mb-3">
               Ricordati: chiedere aiuto è un atto di consapevolezza e di cura verso te stesso.
               Siamo qui per accompagnarti in un percorso di gioco responsabile e sereno.
             </p>

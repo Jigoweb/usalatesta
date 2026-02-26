@@ -14,6 +14,7 @@ import aComponentImg from '../assets/images/a_component.png';
 export default function Home() {
   const navigate = useNavigate();
   const [tipsMinHeight, setTipsMinHeight] = useState<number>(0);
+  const [showQuizIntro, setShowQuizIntro] = useState(false);
   const tipRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -46,7 +47,7 @@ export default function Home() {
         <div className="grid grid-cols-2 gap-4 relative z-10">
           {/* Quiz Card - Full Width */}
           <div 
-            onClick={() => navigate('/quiz')}
+            onClick={() => setShowQuizIntro(true)}
             className="col-span-2 rounded-2xl relative overflow-hidden h-32 cursor-pointer shadow-md group transition-transform hover:scale-[1.01]"
           >
             {/* Background Layer */}
@@ -222,7 +223,7 @@ export default function Home() {
 
       {/* Disclaimer "Usa la testa" - fuori dalla sezione Tips */}
       <div className="px-4 py-6">
-        <div className="bg-primary-blue/5 border-l-4 border-primary-blue rounded-r-xl p-5">
+        <div className="bg-primary-blue/5 border-2 border-gray-200 rounded-2xl p-5">
           <p className="text-gray-700 text-sm leading-relaxed mb-3">
             &ldquo;Usa la testa&rdquo; è il progetto di Gioco Responsabile del Gruppo NOVOMATIC Italia, nato per promuovere una cultura del gioco sano e consapevole e per ricordare che il gioco deve rimanere un&apos;attività di puro divertimento e svago.
           </p>
@@ -231,6 +232,31 @@ export default function Home() {
           </p>
         </div>
       </div>
+
+      {showQuizIntro && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6">
+          <div className="bg-white rounded-2xl p-6 max-w-md shadow-xl">
+            <p className="text-gray-800 font-medium text-base leading-relaxed mb-4">
+              Il gioco può creare dipendenza e danneggiare seriamente anche la sfera personale.
+            </p>
+            <p className="text-gray-600 text-sm leading-relaxed mb-6">
+              Compila anonimamente un breve test utile per comprendere meglio il tuo rapporto con il gioco.
+            </p>
+            <button
+              onClick={() => navigate('/quiz')}
+              className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg hover:bg-blue-900 transition-colors"
+            >
+              Inizia il test
+            </button>
+            <button
+              onClick={() => setShowQuizIntro(false)}
+              className="w-full py-3 mt-2 text-gray-500 text-sm font-medium hover:text-gray-700 transition-colors"
+            >
+              Annulla
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

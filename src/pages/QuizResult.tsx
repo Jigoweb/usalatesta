@@ -125,7 +125,7 @@ export default function QuizResult() {
         </div>
 
         {/* Disclaimer */}
-        <div className="bg-primary-blue/5 border-l-4 border-primary-blue rounded-r-xl p-5 mb-8">
+        <div className="bg-primary-blue/5 border-2 border-gray-200 rounded-2xl p-5 mb-8">
           <p className="text-gray-700 text-sm leading-relaxed">
             Ricorda che una diagnosi di questo tipo può essere effettuata solo da uno psicoterapeuta preparato. Questo test è uno strumento di auto diagnosi, che può comunque fornirti un&apos;utile indicazione per verificare se hai o meno problemi con il gioco d&apos;azzardo.
           </p>
