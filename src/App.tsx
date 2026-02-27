@@ -13,6 +13,7 @@ import Articles from './pages/Articles';
 import Chatbot from './pages/Chatbot';
 import ArticleDetail from './pages/ArticleDetail';
 import Games from './pages/Games';
+import Privacy from './pages/Privacy';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           </Route>
 
           {/* Routes without BottomNav */}
+          <Route path="/privacy" element={<Privacy />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/quiz/result" element={<QuizResult />} />
           <Route path="/decalogo" element={<Decalogo />} />

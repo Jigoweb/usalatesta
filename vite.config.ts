@@ -44,24 +44,38 @@ export default defineConfig({
         screenshots: [
           {
             src: '/assets/pwa/screenshot-timer.png',
-            sizes: '576x1024',
+            sizes: '1440x2560',
             type: 'image/png',
             form_factor: 'narrow',
             label: 'Timer'
           },
           {
             src: '/assets/pwa/screenshot-quiz.png',
-            sizes: '576x1024',
+            sizes: '1440x2560',
             type: 'image/png',
             form_factor: 'narrow',
             label: 'Test di autovalutazione'
           },
           {
             src: '/assets/pwa/screenshot-home.png',
-            sizes: '576x1024',
+            sizes: '1440x2560',
             type: 'image/png',
             form_factor: 'narrow',
             label: 'Home'
+          },
+          {
+            src: '/assets/pwa/screenshot-help.png',
+            sizes: '1440x2560',
+            type: 'image/png',
+            form_factor: 'narrow',
+            label: 'Help'
+          },
+          {
+            src: '/assets/pwa/screenshot-articles.png',
+            sizes: '1440x2560',
+            type: 'image/png',
+            form_factor: 'narrow',
+            label: 'Articles'
           }
         ]
       }

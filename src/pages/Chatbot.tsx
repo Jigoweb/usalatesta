@@ -270,12 +270,12 @@ export default function Chatbot() {
             </p>
             <p className="text-xs text-gray-500 mb-6 leading-relaxed">
               I tuoi dati saranno trattati in conformità con la nostra{' '}
-              <a
-                href="/privacy"
-                className="text-primary-blue underline hover:text-blue-900"
+              <span
+                onClick={() => navigate('/privacy')}
+                className="text-primary-blue underline hover:text-blue-900 cursor-pointer"
               >
                 informativa sulla privacy
-              </a>
+              </span>
               .
             </p>
             <div className="flex gap-3">

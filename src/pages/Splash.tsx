@@ -51,7 +51,7 @@ export default function Splash() {
           </div>
           <label htmlFor="consent" className="text-sm text-primary-blue leading-tight">
             dichiaro di essere maggiorenne e di aver letto e accettato le informative sulla{' '}
-            <a href="#" className="underline font-semibold">privacy policy</a>
+            <span onClick={() => navigate('/privacy')} className="underline font-semibold cursor-pointer">privacy policy</span>
           </label>
         </div>
 
