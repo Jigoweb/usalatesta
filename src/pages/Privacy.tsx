@@ -19,7 +19,7 @@ const Privacy: React.FC = () => {
           <h2 className="text-lg font-semibold text-primary-blue mb-2">Privacy – Informazioni per l’Utente</h2>
           <p>
             Benvenuto nell’app “Usa La Testa”, sviluppata da Novomatic Italia S.p.A.<br />
-            Prima di iniziare, invitiamo a leggere attentamente queste informazioni e regole d’uso.<br />
+            Prima di iniziare, ti invitiamo a leggere attentamente queste informazioni e regole d’uso.<br />
             Il proseguimento nell’utilizzo dell’app implica la presa visione e l’accettazione delle presenti condizioni.
           </p>
         </section>
@@ -56,7 +56,7 @@ const Privacy: React.FC = () => {
             </li>
           </ul>
           <p className="mt-2">
-            L’eventuale consenso alla geolocalizzazione verrà richiesto solo se deciderai di utilizzare la funzione
+            L’eventuale consenso alla geolocalizzazione ti verrà richiesto solo se deciderai di utilizzare la funzione
             “mappa”.
           </p>
         </section>

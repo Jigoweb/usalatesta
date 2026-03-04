@@ -10,6 +10,7 @@ import quizImg from '../assets/images/usa-la-testa_quizimg.PNG';
 import decalogoImg from '../assets/images/usa-la-testa_decalogo.png';
 import supportoImg from '../assets/images/usa-la-testa_supporto.png';
 import aComponentImg from '../assets/images/a_component.png';
+import loghiBalduzzi from '../assets/images/loghi-balduzzi.png';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -231,6 +232,11 @@ export default function Home() {
             Il progetto si propone come uno strumento di sensibilizzazione e prevenzione, offrendo risorse utili per riconoscere e gestire tempestivamente i segnali di gioco problematico.
           </p>
         </div>
+      </div>
+
+      {/* Loghi Istituzionali */}
+      <div className="px-4 pt-4 pb-24 flex justify-center">
+         <img src={loghiBalduzzi} alt="Loghi istituzionali" className="w-full max-w-md object-contain" />
       </div>
 
       {showQuizIntro && (
