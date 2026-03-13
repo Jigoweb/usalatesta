@@ -33,15 +33,7 @@ export default function Support() {
         <section>
           <h2 className="text-xl font-bold text-primary-blue mb-4">Informazioni utili</h2>
 
-          <a
-            href={manualePdf}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-between w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-4 shadow-sm hover:bg-gray-50 transition-colors mb-6"
-          >
-            <span className="font-bold text-gray-900">Scarica il manuale</span>
-            <ChevronRight size={20} className="text-gray-600 shrink-0" />
-          </a>
+
 
           <h3 className="text-lg font-bold text-gray-900 mb-3">Hai bisogno di supporto? Non sei solo.</h3>
           <p className="text-gray-700 text-base leading-relaxed mb-6">
@@ -137,6 +129,21 @@ export default function Support() {
               Ricordati: chiedere aiuto è un atto di consapevolezza e di cura verso te stesso.
               Siamo qui per accompagnarti in un percorso di gioco responsabile e sereno.
             </p>
+          </div>
+
+          <div className="mt-8">
+            <h3 className="text-sm font-semibold text-gray-500 mb-2 uppercase tracking-wide">Codice di Gioco Responsabile di NOVOMATIC Italia</h3>
+            <a
+              href={manualePdf}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between w-full bg-white border border-gray-200 rounded-xl px-5 py-5 shadow-md hover:shadow-lg transition-all transform active:scale-[0.98]"
+            >
+              <span className="font-bold text-primary-blue text-lg">Consulta il documento</span>
+              <div className="bg-primary-blue/10 p-2 rounded-full">
+                <ChevronRight size={24} className="text-primary-blue shrink-0" />
+              </div>
+            </a>
           </div>
         </section>
       </div>

@@ -114,7 +114,7 @@ export default function Quiz() {
           onClick={handleSubmit}
           className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg hover:bg-blue-900 transition-colors"
         >
-          Invia Risposte
+          Vedi Risultati
         </button>
       </div>
     );
