@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "app.vercel.traeusalatesta0vr4.twa",
+    "sha256_cert_fingerprints": ["81:89:40:18:6C:B0:77:51:07:2A:1B:49:A0:63:C2:0A:22:B4:3A:65:B4:E7:DD:05:BF:4C:B8:CF:B4:EC:04:8E"]
+  }
+}]
