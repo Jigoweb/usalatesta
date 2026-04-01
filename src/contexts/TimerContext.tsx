@@ -11,6 +11,54 @@ const DEFAULT_STATE: TimerState = {
   isPaused: false,
   startTime: null,
   endTime: null,
+  notifiedQuarters: [],
+};
+
+const sendPushNotification = (message: string) => {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.ready.then(registration => {
+      registration.showNotification('USA LA TESTA', {
+        body: message,
+        icon: '/pwa-192x192.png',
+        badge: '/pwa-192x192.png',
+        vibrate: [200, 100, 200]
+      });
+    }).catch(() => {
+      new Notification('USA LA TESTA', { body: message, icon: '/pwa-192x192.png' });
+    });
+  } else {
+    new Notification('USA LA TESTA', { body: message, icon: '/pwa-192x192.png' });
+  }
+};
+
+const checkNotifications = (prevState: TimerState, remainingSec: number): number[] => {
+  if (!prevState.duration) return prevState.notifiedQuarters || [];
+  const totalDurationSec = Math.floor(prevState.duration * 60);
+  const elapsedSec = totalDurationSec - remainingSec;
+  
+  const currentNotified = prevState.notifiedQuarters || [];
+  const newlyNotified = [...currentNotified];
+  
+  const notify = (quarter: number, message: string) => {
+     if (!currentNotified.includes(quarter)) {
+        newlyNotified.push(quarter);
+        sendPushNotification(message);
+     }
+  };
+
+  if (elapsedSec >= totalDurationSec * 0.25 && !currentNotified.includes(1)) {
+     notify(1, "È trascorso 1/4 del tempo. [Inserire frase motivazionale 1]");
+  }
+  if (elapsedSec >= totalDurationSec * 0.50 && !currentNotified.includes(2)) {
+     notify(2, "Siamo a metà del tempo. [Inserire frase motivazionale 2]");
+  }
+  if (elapsedSec >= totalDurationSec * 0.75 && !currentNotified.includes(3)) {
+     notify(3, "Manca 1/4 alla fine. [Inserire frase motivazionale 3]");
+  }
+  
+  return newlyNotified;
 };
 
 interface TimerContextType {
@@ -86,20 +134,24 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
               // Timer finished
               const finalState = { ...prev, timeRemaining: 0 };
               completeTimer(finalState);
+              sendPushNotification("Il timer è scaduto! Ottimo lavoro.");
               return DEFAULT_STATE;
             }
             
-            return { ...prev, timeRemaining: remaining };
+            const newNotified = checkNotifications(prev, remaining);
+            return { ...prev, timeRemaining: remaining, notifiedQuarters: newNotified };
           }
           
           const newRemaining = prev.timeRemaining - 1;
           if (newRemaining <= 0) {
             const finalState = { ...prev, timeRemaining: 0 };
             completeTimer(finalState);
+            sendPushNotification("Il timer è scaduto! Ottimo lavoro.");
             return DEFAULT_STATE;
           }
           
-          return { ...prev, timeRemaining: newRemaining };
+          const newNotifiedFallback = checkNotifications(prev, newRemaining);
+          return { ...prev, timeRemaining: newRemaining, notifiedQuarters: newNotifiedFallback };
         });
       }, 1000);
     }
@@ -110,6 +162,11 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
   }, [timerState.isActive, timerState.isPaused]);
 
   const startTimer = useCallback((minutes: number) => {
+    // Request notification permission on first timer start
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+
     const now = Date.now();
     const durationSec = minutes * 60;
     const endTime = now + durationSec * 1000;
@@ -121,6 +178,7 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
       isPaused: false,
       startTime: now,
       endTime: endTime,
+      notifiedQuarters: [],
     });
 
     // Save to recent history (no duplicate durations, max 4)

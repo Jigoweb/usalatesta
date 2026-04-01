@@ -5,6 +5,7 @@ export interface TimerState {
   isPaused: boolean;
   startTime: number | null;
   endTime: number | null;
+  notifiedQuarters?: number[];
 }
 
 export interface TimerHistory {
