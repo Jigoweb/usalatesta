@@ -14,22 +14,22 @@ const DEFAULT_STATE: TimerState = {
   notifiedQuarters: [],
 };
 
-const sendPushNotification = (message: string) => {
+const sendPushNotification = (title: string, message: string) => {
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
   
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.ready.then(registration => {
-      registration.showNotification('USA LA TESTA', {
+      registration.showNotification(title, {
         body: message,
         icon: '/pwa-192x192.png',
         badge: '/pwa-192x192.png',
         vibrate: [200, 100, 200]
       });
     }).catch(() => {
-      new Notification('USA LA TESTA', { body: message, icon: '/pwa-192x192.png' });
+      new Notification(title, { body: message, icon: '/pwa-192x192.png' });
     });
   } else {
-    new Notification('USA LA TESTA', { body: message, icon: '/pwa-192x192.png' });
+    new Notification(title, { body: message, icon: '/pwa-192x192.png' });
   }
 };
 
@@ -41,21 +41,16 @@ const checkNotifications = (prevState: TimerState, remainingSec: number): number
   const currentNotified = prevState.notifiedQuarters || [];
   const newlyNotified = [...currentNotified];
   
-  const notify = (quarter: number, message: string) => {
+  const notify = (quarter: number, title: string, message: string) => {
      if (!currentNotified.includes(quarter)) {
         newlyNotified.push(quarter);
-        sendPushNotification(message);
+        sendPushNotification(title, message);
      }
   };
 
-  if (elapsedSec >= totalDurationSec * 0.25 && !currentNotified.includes(1)) {
-     notify(1, "È trascorso 1/4 del tempo. [Inserire frase motivazionale 1]");
-  }
+  // Metà sessione (marcatore 2)
   if (elapsedSec >= totalDurationSec * 0.50 && !currentNotified.includes(2)) {
-     notify(2, "Siamo a metà del tempo. [Inserire frase motivazionale 2]");
-  }
-  if (elapsedSec >= totalDurationSec * 0.75 && !currentNotified.includes(3)) {
-     notify(3, "Manca 1/4 alla fine. [Inserire frase motivazionale 3]");
+     notify(2, "Sei a metà del tempo prefissato", "Gioca con equilibrio e mantieni il controllo.");
   }
   
   return newlyNotified;
@@ -134,7 +129,7 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
               // Timer finished
               const finalState = { ...prev, timeRemaining: 0 };
               completeTimer(finalState);
-              sendPushNotification("Il timer è scaduto! Ottimo lavoro.");
+              sendPushNotification("Il tempo di gioco è terminato ora", "È il momento di staccare un po’ e fare altro.");
               return DEFAULT_STATE;
             }
             
@@ -146,7 +141,7 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
           if (newRemaining <= 0) {
             const finalState = { ...prev, timeRemaining: 0 };
             completeTimer(finalState);
-            sendPushNotification("Il timer è scaduto! Ottimo lavoro.");
+            sendPushNotification("Il tempo di gioco è terminato ora", "È il momento di staccare un po’ e fare altro.");
             return DEFAULT_STATE;
           }
           
@@ -163,8 +158,16 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
 
   const startTimer = useCallback((minutes: number) => {
     // Request notification permission on first timer start
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
+    if ('Notification' in window) {
+      if (Notification.permission === 'granted') {
+        sendPushNotification("Hai scelto il tuo tempo di gioco", "Divertiti con equilibrio, ricordando che è solo un gioco.");
+      } else if (Notification.permission === 'default') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            sendPushNotification("Hai scelto il tuo tempo di gioco", "Divertiti con equilibrio, ricordando che è solo un gioco.");
+          }
+        });
+      }
     }
 
     const now = Date.now();
