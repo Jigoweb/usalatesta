@@ -36,6 +36,24 @@ export default function Home() {
     };
   }, []);
 
+  const [wpArticles, setWpArticles] = useState<any[]>([]);
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('https://www.usa-la-testa.it/wp-json/wp/v2/posts?_embed&per_page=8');
+        if (!res.ok) return;
+        const data = await res.json();
+        const mapped = data.map((p: any) => ({
+          id: String(p.id),
+          title: (p.title?.rendered || '').replace(/<[^>]+>/g, ''),
+          image: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
+        }));
+        setWpArticles(mapped);
+      } catch {}
+    };
+    load();
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header Section */}
@@ -165,7 +183,7 @@ export default function Home() {
         </div>
         
         <div className="flex overflow-x-auto space-x-4 pb-4 pr-4 scrollbar-hide">
-          {ARTICLES.slice(-4).map((article) => (
+          {(wpArticles.length ? wpArticles.slice(0,4) : ARTICLES.slice(-4)).map((article: any) => (
             <div 
               key={article.id}
               onClick={() => navigate(`/articles/${article.id}`, { state: { from: '/home' } })}

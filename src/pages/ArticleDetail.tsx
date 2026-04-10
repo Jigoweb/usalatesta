@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft, Clock } from 'lucide-react';
 import { ARTICLES } from '../data/articles';
@@ -9,6 +9,7 @@ export default function ArticleDetail() {
   const navigate = useNavigate();
   const location = useLocation();
   const article = ARTICLES.find(a => a.id === id);
+  const [wpArticle, setWpArticle] = useState<any | null>(null);
 
   const handleBack = () => {
     // If we have a source in state (e.g. from Home or Articles), go there
@@ -21,11 +22,30 @@ export default function ArticleDetail() {
     window.scrollTo(0, 0);
   }, [id]);
 
-  if (!article) {
+  useEffect(() => {
+    if (!article && id) {
+      (async () => {
+        try {
+          const res = await fetch(`https://www.usa-la-testa.it/wp-json/wp/v2/posts/${id}?_embed`);
+          if (!res.ok) return;
+          const p = await res.json();
+          setWpArticle({
+            title: p.title?.rendered || '',
+            content: p.content?.rendered || '',
+            image: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
+            category: 'Articoli',
+            readTime: Math.max(1, Math.round(((p.content?.rendered || '').replace(/<[^>]+>/g, '').split(/\s+/).length) / 200)),
+          });
+        } catch {}
+      })();
+    }
+  }, [article, id]);
+
+  if (!article && !wpArticle) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Articolo non trovato</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">Caricamento articolo…</h2>
           <button 
             onClick={() => navigate('/articles')}
             className="text-primary-blue font-bold hover:underline"
@@ -57,8 +77,8 @@ export default function ArticleDetail() {
       {/* Hero Image */}
       <div className="relative w-full">
         <img 
-          src={article.image} 
-          alt={article.title} 
+          src={(article ? article.image : wpArticle?.image) || ''} 
+          alt={(article ? article.title : wpArticle?.title) || 'Articolo'} 
           className="w-full h-auto object-cover"
         />
       </div>
@@ -68,52 +88,51 @@ export default function ArticleDetail() {
         {/* Meta Tags */}
         <div className="flex items-center space-x-3 mb-6">
           <span className="bg-blue-50 text-primary-blue px-4 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider">
-            {article.category}
+            {article ? article.category : wpArticle?.category}
           </span>
           <div className="flex items-center text-gray-400 text-xs font-medium">
             <Clock size={14} className="mr-1.5" />
-            <span>{article.readTime} min lettura</span>
+            <span>{article ? article.readTime : wpArticle?.readTime} min lettura</span>
           </div>
         </div>
 
         {/* Title */}
         <h1 className="text-3xl font-black text-primary-blue mb-8 leading-tight">
-          {article.title}
+          {article ? article.title : wpArticle?.title}
         </h1>
 
         {/* Article Body */}
         <div className="space-y-6 text-gray-600 leading-relaxed text-lg">
-          {article.content.split('\n\n').map((block, index) => {
-             const cleanBlock = block.trim();
-             if (!cleanBlock) return null;
-             
-             // Check for bold text (used as subheadings in the data)
-             // Pattern: **Text**
-             if (cleanBlock.startsWith('**') && cleanBlock.endsWith('**')) {
-               const text = cleanBlock.slice(2, -2);
-               // If it matches title exactly, skip it as we already rendered H1
-               if (text === article.title) return null;
-               
-               return (
-                 <h2 key={index} className="text-xl font-bold text-primary-blue mt-8 mb-2 leading-tight">
-                   {text}
-                 </h2>
-               );
-             }
-             
-             // Render paragraph with inline bold support
-             const parts = cleanBlock.split(/(\*\*.*?\*\*)/g);
-             return (
-               <p key={index}>
-                 {parts.map((part, i) => {
-                   if (part.startsWith('**') && part.endsWith('**')) {
-                     return <strong key={i} className="font-bold text-gray-800">{part.slice(2, -2)}</strong>;
-                   }
-                   return part;
-                 })}
-               </p>
-             );
-          })}
+          {article ? (
+            <>
+              {article.content.split('\n\n').map((block, index) => {
+                const cleanBlock = block.trim();
+                if (!cleanBlock) return null;
+                if (cleanBlock.startsWith('**') && cleanBlock.endsWith('**')) {
+                  const text = cleanBlock.slice(2, -2);
+                  if (text === article.title) return null;
+                  return (
+                    <h2 key={index} className="text-xl font-bold text-primary-blue mt-8 mb-2 leading-tight">
+                      {text}
+                    </h2>
+                  );
+                }
+                const parts = cleanBlock.split(/(\*\*.*?\*\*)/g);
+                return (
+                  <p key={index}>
+                    {parts.map((part, i) => {
+                      if (part.startsWith('**') && part.endsWith('**')) {
+                        return <strong key={i} className="font-bold text-gray-800">{part.slice(2, -2)}</strong>;
+                      }
+                      return part;
+                    })}
+                  </p>
+                );
+              })}
+            </>
+          ) : (
+            <div className="prose prose-lg max-w-none text-gray-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: wpArticle?.content || '' }} />
+          )}
         </div>
 
         <CerchiAiuto

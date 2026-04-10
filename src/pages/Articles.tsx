@@ -1,9 +1,31 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Clock } from 'lucide-react';
 import { ARTICLES } from '../data/articles';
 
 export default function Articles() {
   const navigate = useNavigate();
+  const [articles, setArticles] = useState(ARTICLES);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('https://www.usa-la-testa.it/wp-json/wp/v2/posts?_embed&per_page=10');
+        if (!res.ok) return;
+        const data = await res.json();
+        const mapped = data.map((p: any) => ({
+          id: String(p.id),
+          title: (p.title?.rendered || '').replace(/<[^>]+>/g, ''),
+          excerpt: (p.excerpt?.rendered || '').replace(/<[^>]+>/g, '').trim(),
+          image: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
+          category: 'Articoli',
+          readTime: Math.max(1, Math.round(((p.content?.rendered || '').replace(/<[^>]+>/g, '').split(/\s+/).length) / 200)),
+        }));
+        setArticles(mapped);
+      } catch {}
+    };
+    load();
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
@@ -15,7 +37,7 @@ export default function Articles() {
       </div>
 
       <div className="p-4 grid gap-4">
-        {ARTICLES.map((article) => (
+        {articles.map((article: any) => (
           <div 
             key={article.id} 
             onClick={() => navigate(`/articles/${article.id}`, { state: { from: '/articles' } })}
