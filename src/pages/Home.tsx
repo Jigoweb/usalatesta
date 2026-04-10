@@ -45,7 +45,7 @@ export default function Home() {
         const data = await res.json();
         const mapped = data.map((p: any) => ({
           id: String(p.id),
-          title: (p.title?.rendered || '').replace(/<[^>]+>/g, ''),
+          title: p.title?.rendered || '',
           image: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
         }));
         setWpArticles(mapped);
@@ -193,7 +193,10 @@ export default function Home() {
                 <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
               </div>
               <div className="p-3">
-                <h3 className="font-bold text-sm text-gray-800 line-clamp-2">{article.title}</h3>
+                <h3 
+                  className="font-bold text-sm text-gray-800 line-clamp-2"
+                  dangerouslySetInnerHTML={{ __html: article.title }}
+                />
               </div>
             </div>
           ))}

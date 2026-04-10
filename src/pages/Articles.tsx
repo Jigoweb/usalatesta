@@ -15,8 +15,8 @@ export default function Articles() {
         const data = await res.json();
         const mapped = data.map((p: any) => ({
           id: String(p.id),
-          title: (p.title?.rendered || '').replace(/<[^>]+>/g, ''),
-          excerpt: (p.excerpt?.rendered || '').replace(/<[^>]+>/g, '').trim(),
+          title: p.title?.rendered || '',
+          excerpt: p.excerpt?.rendered || '',
           image: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
           category: 'Articoli',
           readTime: Math.max(1, Math.round(((p.content?.rendered || '').replace(/<[^>]+>/g, '').split(/\s+/).length) / 200)),
@@ -54,8 +54,14 @@ export default function Articles() {
                 <Clock size={12} className="mr-1" />
                 {article.readTime} min lettura
               </div>
-              <h2 className="text-lg font-bold text-gray-800 mb-2">{article.title}</h2>
-              <p className="text-gray-600 text-sm line-clamp-2">{article.excerpt}</p>
+              <h2 
+                className="text-lg font-bold text-gray-800 mb-2 line-clamp-2" 
+                dangerouslySetInnerHTML={{ __html: article.title }} 
+              />
+              <div 
+                className="text-gray-600 text-sm line-clamp-2 prose-sm prose-p:m-0" 
+                dangerouslySetInnerHTML={{ __html: article.excerpt }} 
+              />
             </div>
           </div>
         ))}

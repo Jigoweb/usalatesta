@@ -97,9 +97,10 @@ export default function ArticleDetail() {
         </div>
 
         {/* Title */}
-        <h1 className="text-3xl font-black text-primary-blue mb-8 leading-tight">
-          {article ? article.title : wpArticle?.title}
-        </h1>
+        <h1 
+          className="text-3xl font-black text-primary-blue mb-8 leading-tight"
+          dangerouslySetInnerHTML={{ __html: article ? article.title : wpArticle?.title }}
+        />
 
         {/* Article Body */}
         <div className="space-y-6 text-gray-600 leading-relaxed text-lg">
