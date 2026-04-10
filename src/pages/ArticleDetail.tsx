@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft, Clock } from 'lucide-react';
 import { ARTICLES } from '../data/articles';
 import CerchiAiuto from '../components/CerchiAiuto';
+import { ArticleDetailSkeleton } from '../components/ArticleSkeletons';
 
 export default function ArticleDetail() {
   const { id } = useParams();
@@ -10,6 +11,7 @@ export default function ArticleDetail() {
   const location = useLocation();
   const article = ARTICLES.find(a => a.id === id);
   const [wpArticle, setWpArticle] = useState<any | null>(null);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>(article ? 'success' : 'idle');
 
   const handleBack = () => {
     // If we have a source in state (e.g. from Home or Articles), go there
@@ -24,10 +26,16 @@ export default function ArticleDetail() {
 
   useEffect(() => {
     if (!article && id) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      
+      setStatus('loading');
       (async () => {
         try {
-          const res = await fetch(`https://www.usa-la-testa.it/wp-json/wp/v2/posts/${id}?_embed`);
-          if (!res.ok) return;
+          const res = await fetch(`https://www.usa-la-testa.it/wp-json/wp/v2/posts/${id}?_embed`, {
+            signal: controller.signal
+          });
+          if (!res.ok) throw new Error('API request failed');
           const p = await res.json();
           setWpArticle({
             title: p.title?.rendered || '',
@@ -36,12 +44,26 @@ export default function ArticleDetail() {
             category: 'Articoli',
             readTime: Math.max(1, Math.round(((p.content?.rendered || '').replace(/<[^>]+>/g, '').split(/\s+/).length) / 200)),
           });
-        } catch {}
+          setStatus('success');
+        } catch (err) {
+          setStatus('error');
+        } finally {
+          clearTimeout(timeoutId);
+        }
       })();
+
+      return () => {
+        controller.abort();
+        clearTimeout(timeoutId);
+      };
     }
   }, [article, id]);
 
-  if (!article && !wpArticle) {
+  if (status === 'loading') {
+    return <ArticleDetailSkeleton />;
+  }
+
+  if (status === 'error' || (!article && !wpArticle && status !== 'idle')) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">

@@ -4,6 +4,7 @@ import { ChevronRight } from 'lucide-react';
 import logoWhite from '../assets/images/usa-la-testa_logo-white.png';
 import { ARTICLES } from '../data/articles';
 import { TIPS } from '../data/tips';
+import { HomeArticleSkeleton } from '../components/ArticleSkeletons';
 
 // Import images
 import quizImg from '../assets/images/usa-la-testa_quizimg.PNG';
@@ -37,11 +38,18 @@ export default function Home() {
   }, []);
 
   const [wpArticles, setWpArticles] = useState<any[]>([]);
+  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
+
   useEffect(() => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
     const load = async () => {
       try {
-        const res = await fetch('https://www.usa-la-testa.it/wp-json/wp/v2/posts?_embed&per_page=8');
-        if (!res.ok) return;
+        const res = await fetch('https://www.usa-la-testa.it/wp-json/wp/v2/posts?_embed&per_page=8', {
+          signal: controller.signal
+        });
+        if (!res.ok) throw new Error('API request failed');
         const data = await res.json();
         const mapped = data.map((p: any) => ({
           id: String(p.id),
@@ -49,9 +57,20 @@ export default function Home() {
           image: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
         }));
         setWpArticles(mapped);
-      } catch {}
+        setStatus('success');
+      } catch (err) {
+        setWpArticles(ARTICLES);
+        setStatus('error');
+      } finally {
+        clearTimeout(timeoutId);
+      }
     };
     load();
+
+    return () => {
+      controller.abort();
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   return (
@@ -182,24 +201,32 @@ export default function Home() {
           </button>
         </div>
         
-        <div className="flex overflow-x-auto space-x-4 pb-4 pr-4 scrollbar-hide">
-          {(wpArticles.length ? wpArticles.slice(0,4) : ARTICLES.slice(-4)).map((article: any) => (
-            <div 
-              key={article.id}
-              onClick={() => navigate(`/articles/${article.id}`, { state: { from: '/home' } })}
-              className="min-w-[240px] w-[240px] bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-            >
-              <div className="aspect-[4/3] w-full overflow-hidden">
-                <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+        <div className="flex overflow-x-auto space-x-4 pb-4 pr-4 scrollbar-hide transition-opacity duration-300">
+          {status === 'loading' ? (
+            <>
+              <HomeArticleSkeleton />
+              <HomeArticleSkeleton />
+              <HomeArticleSkeleton />
+            </>
+          ) : (
+            (wpArticles.length ? wpArticles.slice(0,4) : ARTICLES.slice(-4)).map((article: any) => (
+              <div 
+                key={article.id}
+                onClick={() => navigate(`/articles/${article.id}`, { state: { from: '/home' } })}
+                className="min-w-[240px] w-[240px] bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              >
+                <div className="aspect-[4/3] w-full overflow-hidden">
+                  <img src={article.image} alt="" className="w-full h-full object-cover" />
+                </div>
+                <div className="p-3">
+                  <h3 
+                    className="font-bold text-sm text-gray-800 line-clamp-2"
+                    dangerouslySetInnerHTML={{ __html: article.title }}
+                  />
+                </div>
               </div>
-              <div className="p-3">
-                <h3 
-                  className="font-bold text-sm text-gray-800 line-clamp-2"
-                  dangerouslySetInnerHTML={{ __html: article.title }}
-                />
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
 
