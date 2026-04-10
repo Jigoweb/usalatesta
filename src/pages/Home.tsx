@@ -5,6 +5,7 @@ import logoWhite from '../assets/images/usa-la-testa_logo-white.png';
 import { ARTICLES } from '../data/articles';
 import { TIPS } from '../data/tips';
 import { HomeArticleSkeleton } from '../components/ArticleSkeletons';
+import { ImageWithSkeleton } from '../components/ImageWithSkeleton';
 
 // Import images
 import quizImg from '../assets/images/usa-la-testa_quizimg.PNG';
@@ -46,16 +47,24 @@ export default function Home() {
 
     const load = async () => {
       try {
-        const res = await fetch('https://www.usa-la-testa.it/wp-json/wp/v2/posts?_embed&per_page=8', {
+        const res = await fetch('https://www.usa-la-testa.it/wp-json/wp/v2/posts?_embed&per_page=4', {
           signal: controller.signal
         });
         if (!res.ok) throw new Error('API request failed');
         const data = await res.json();
-        const mapped = data.map((p: any) => ({
-          id: String(p.id),
-          title: p.title?.rendered || '',
-          image: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
-        }));
+        const mapped = data.map((p: any) => {
+          const media = p._embedded?.['wp:featuredmedia']?.[0];
+          // Ottimizzazione: usa medium_large o medium se disponibili per alleggerire il peso, altrimenti l'originale
+          const optimizedImage = media?.media_details?.sizes?.medium_large?.source_url 
+                              || media?.media_details?.sizes?.medium?.source_url 
+                              || media?.source_url 
+                              || '';
+          return {
+            id: String(p.id),
+            title: p.title?.rendered || '',
+            image: optimizedImage,
+          };
+        });
         setWpArticles(mapped);
         setStatus('success');
       } catch (err) {
@@ -65,11 +74,16 @@ export default function Home() {
         clearTimeout(timeoutId);
       }
     };
-    load();
+    
+    // Defer the fetch to allow the main thread to render the UI first
+    const deferId = setTimeout(() => {
+      load();
+    }, 500);
 
     return () => {
       controller.abort();
       clearTimeout(timeoutId);
+      clearTimeout(deferId);
     };
   }, []);
 
@@ -215,8 +229,8 @@ export default function Home() {
                 onClick={() => navigate(`/articles/${article.id}`, { state: { from: '/home' } })}
                 className="min-w-[240px] w-[240px] bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
               >
-                <div className="aspect-[4/3] w-full overflow-hidden">
-                  <img src={article.image} alt="" className="w-full h-full object-cover" />
+                <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100">
+                  <ImageWithSkeleton src={article.image} alt="" />
                 </div>
                 <div className="p-3">
                   <h3 

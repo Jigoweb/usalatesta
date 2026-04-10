@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Clock } from 'lucide-react';
 import { ARTICLES } from '../data/articles';
 import { ArticleCardSkeleton } from '../components/ArticleSkeletons';
+import { ImageWithSkeleton } from '../components/ImageWithSkeleton';
 
 export default function Articles() {
   const navigate = useNavigate();
@@ -20,14 +21,22 @@ export default function Articles() {
         });
         if (!res.ok) throw new Error('API request failed');
         const data = await res.json();
-        const mapped = data.map((p: any) => ({
-          id: String(p.id),
-          title: p.title?.rendered || '',
-          excerpt: p.excerpt?.rendered || '',
-          image: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
-          category: 'Articoli',
-          readTime: Math.max(1, Math.round(((p.content?.rendered || '').replace(/<[^>]+>/g, '').split(/\s+/).length) / 200)),
-        }));
+        const mapped = data.map((p: any) => {
+          const media = p._embedded?.['wp:featuredmedia']?.[0];
+          // Use medium_large or medium sizes to save bandwidth
+          const optimizedImage = media?.media_details?.sizes?.medium_large?.source_url 
+                              || media?.media_details?.sizes?.medium?.source_url 
+                              || media?.source_url 
+                              || '';
+          return {
+            id: String(p.id),
+            title: p.title?.rendered || '',
+            excerpt: p.excerpt?.rendered || '',
+            image: optimizedImage,
+            category: 'Articoli',
+            readTime: Math.max(1, Math.round(((p.content?.rendered || '').replace(/<[^>]+>/g, '').split(/\s+/).length) / 200)),
+          };
+        });
         setArticles(mapped);
         setStatus('success');
       } catch (err) {
@@ -38,11 +47,16 @@ export default function Articles() {
         clearTimeout(timeoutId);
       }
     };
-    load();
+    
+    // Defer the fetch slightly to optimize initial page render
+    const deferId = setTimeout(() => {
+      load();
+    }, 300);
 
     return () => {
       controller.abort();
       clearTimeout(timeoutId);
+      clearTimeout(deferId);
     };
   }, []);
 
@@ -70,8 +84,8 @@ export default function Articles() {
               onClick={() => navigate(`/articles/${article.id}`, { state: { from: '/articles' } })}
               className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer flex flex-col"
             >
-              <div className="aspect-[4/3] w-full overflow-hidden">
-                <img src={article.image} alt="" className="w-full h-full object-cover" />
+              <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100">
+                <ImageWithSkeleton src={article.image} alt="" />
               </div>
               <div className="p-4 flex-1 flex flex-col">
                 <div className="flex items-center text-xs text-gray-500 mb-2">

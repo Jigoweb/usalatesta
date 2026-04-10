@@ -4,6 +4,7 @@ import { ChevronLeft, Clock } from 'lucide-react';
 import { ARTICLES } from '../data/articles';
 import CerchiAiuto from '../components/CerchiAiuto';
 import { ArticleDetailSkeleton } from '../components/ArticleSkeletons';
+import { ImageWithSkeleton } from '../components/ImageWithSkeleton';
 
 export default function ArticleDetail() {
   const { id } = useParams();
@@ -37,10 +38,15 @@ export default function ArticleDetail() {
           });
           if (!res.ok) throw new Error('API request failed');
           const p = await res.json();
+          const media = p._embedded?.['wp:featuredmedia']?.[0];
+          // In dettaglio usiamo l'immagine large o full per la massima qualità
+          const optimizedImage = media?.media_details?.sizes?.large?.source_url 
+                              || media?.source_url 
+                              || '';
           setWpArticle({
             title: p.title?.rendered || '',
             content: p.content?.rendered || '',
-            image: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
+            image: optimizedImage,
             category: 'Articoli',
             readTime: Math.max(1, Math.round(((p.content?.rendered || '').replace(/<[^>]+>/g, '').split(/\s+/).length) / 200)),
           });
@@ -97,11 +103,10 @@ export default function ArticleDetail() {
       </div>
 
       {/* Hero Image */}
-      <div className="relative w-full">
-        <img 
+      <div className="relative w-full aspect-[4/3] md:aspect-video bg-slate-100">
+        <ImageWithSkeleton 
           src={(article ? article.image : wpArticle?.image) || ''} 
-          alt={(article ? article.title : wpArticle?.title) || 'Articolo'} 
-          className="w-full h-auto object-cover"
+          alt="" 
         />
       </div>
 
@@ -174,9 +179,9 @@ export default function ArticleDetail() {
                       className="cursor-pointer group flex flex-col h-full"
                     >
                         <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-3 relative bg-gray-100">
-                             <img 
+                             <ImageWithSkeleton 
                                src={nextArticle.image} 
-                               alt={nextArticle.title}
+                               alt=""
                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                              />
                         </div>
