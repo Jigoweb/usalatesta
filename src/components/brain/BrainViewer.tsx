@@ -22,6 +22,12 @@ export default function BrainViewer({ step, onLoad, onARStatus }: BrainViewerPro
   const viewerRef = useRef<ModelViewerElement>(null);
   const modelLoadedRef = useRef(false);
 
+  // Keep latest props in refs so the one-time load handler sees current values
+  const latestRef = useRef({ step, onLoad, onARStatus });
+  useEffect(() => {
+    latestRef.current = { step, onLoad, onARStatus };
+  });
+
   const getMaterialsToHighlight = useCallback((areas: string[]) => {
     const names = new Set<string>();
     areas.forEach((area) => {
@@ -56,23 +62,33 @@ export default function BrainViewer({ step, onLoad, onARStatus }: BrainViewerPro
     [getMaterialsToHighlight]
   );
 
-  const handleLoad = useCallback(() => {
-    // Aggiungiamo un piccolo timeout per assicurarci che il motore di rendering 
-    // del model-viewer abbia effettivamente compilato e disegnato i materiali
-    setTimeout(() => {
-      modelLoadedRef.current = true;
-      applyMaterials(step);
-      onLoad?.();
-    }, 150);
-  }, [applyMaterials, step, onLoad]);
+  // Attach load listener via addEventListener — React's onLoad prop
+  // is unreliable for model-viewer's custom `load` event dispatch.
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    if (!viewer) return;
 
-  // Update materials and camera when step changes
+    const handleLoad = () => {
+      // Small delay so model-viewer has finalised its material objects
+      setTimeout(() => {
+        modelLoadedRef.current = true;
+        applyMaterials(latestRef.current.step);
+        latestRef.current.onLoad?.();
+      }, 100);
+    };
+
+    viewer.addEventListener('load', handleLoad);
+    return () => viewer.removeEventListener('load', handleLoad);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Update materials when step changes
   useEffect(() => {
     if (!modelLoadedRef.current) return;
     applyMaterials(step);
   }, [step, applyMaterials]);
 
-  // Update camera orbit when step changes
+  // Update camera imperatively so model-viewer reacts to step transitions
   useEffect(() => {
     const viewer = viewerRef.current;
     if (!viewer) return;
@@ -80,7 +96,7 @@ export default function BrainViewer({ step, onLoad, onARStatus }: BrainViewerPro
     viewer.setAttribute('camera-target', step.cameraTarget);
   }, [step.cameraOrbit, step.cameraTarget]);
 
-  // Handle animation play/pause
+  // Animation for ciliegie step
   useEffect(() => {
     const viewer = viewerRef.current;
     if (!viewer || !modelLoadedRef.current) return;
@@ -93,56 +109,72 @@ export default function BrainViewer({ step, onLoad, onARStatus }: BrainViewerPro
     }
   }, [step.playAnimation]);
 
-  const handleARStatus = useCallback(
-    (e: Event) => {
-      const customEvent = e as CustomEvent<{ status: string }>;
-      onARStatus?.(customEvent.detail?.status ?? '');
-    },
-    [onARStatus]
-  );
-
+  // AR status listener
   useEffect(() => {
     const viewer = viewerRef.current;
     if (!viewer) return;
+
+    const handleARStatus = (e: Event) => {
+      const customEvent = e as CustomEvent<{ status: string }>;
+      latestRef.current.onARStatus?.(customEvent.detail?.status ?? '');
+    };
+
     viewer.addEventListener('ar-status', handleARStatus);
     return () => viewer.removeEventListener('ar-status', handleARStatus);
-  }, [handleARStatus]);
+  }, []);
 
   return (
     <div className="relative w-full h-full">
-      {/* @ts-ignore — custom element handled via model-viewer.d.ts */}
+      {/* @ts-ignore — custom element registered via @google/model-viewer import */}
       <model-viewer
         ref={viewerRef}
         src="/models/cervello.glb"
         ios-src="/models/cervello.usdz"
-        ar
+        ar=""
         ar-modes="webxr scene-viewer quick-look"
         ar-scale="auto"
-        camera-controls
+        camera-controls=""
         touch-action="pan-y"
         interaction-prompt="none"
         shadow-intensity="0.8"
         environment-image="neutral"
         exposure="1.1"
+        camera-orbit={step.cameraOrbit}
+        camera-target={step.cameraTarget}
         min-camera-orbit="auto auto 1.2m"
         max-camera-orbit="auto auto 4m"
         field-of-view="35deg"
-        auto-rotate
+        auto-rotate=""
         auto-rotate-delay="5000"
         loading="eager"
-        poster="/assets/images/usa-la-testa_logo-white.png"
-        reveal="auto"
         alt="Modello 3D interattivo del cervello umano"
         style={{ width: '100%', height: '100%', background: 'transparent' }}
-        onLoad={handleLoad}
       >
         <button
           slot="ar-button"
-          className="absolute bottom-4 right-4 flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white text-sm font-semibold px-4 py-2.5 rounded-full border border-white/30 shadow-lg"
-          style={{ zIndex: 10 }}
+          style={{
+            position: 'absolute',
+            bottom: '1rem',
+            right: '1rem',
+            zIndex: 10,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            background: 'rgba(255,255,255,0.2)',
+            backdropFilter: 'blur(8px)',
+            color: 'white',
+            fontSize: '0.875rem',
+            fontWeight: '600',
+            padding: '0.625rem 1rem',
+            borderRadius: '9999px',
+            border: '1px solid rgba(255,255,255,0.3)',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
+            cursor: 'pointer',
+          }}
         >
           <svg
-            className="w-4 h-4"
+            width="16"
+            height="16"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
