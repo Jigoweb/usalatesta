@@ -13,6 +13,7 @@ import Articles from './pages/Articles';
 import Chatbot from './pages/Chatbot';
 import ArticleDetail from './pages/ArticleDetail';
 import Games from './pages/Games';
+import BrainExperience from './pages/BrainExperience';
 import Privacy from './pages/Privacy';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
           </Route>
 
           {/* Routes without BottomNav */}
+          <Route path="/games/cervello" element={<BrainExperience />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/quiz/result" element={<QuizResult />} />

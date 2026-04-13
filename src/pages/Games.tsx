@@ -1,15 +1,18 @@
-import { Brain, Clock, Lock } from 'lucide-react';
+import { Brain, Clock, Lock, ChevronRight, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const games = [
   {
     id: 1,
     title: 'Il cervello',
-    subtitle: 'Quando giochi come funziona?',
+    subtitle: 'Scopri come funziona il tuo cervello durante il gioco d\'azzardo.',
     icon: Brain,
     gradient: 'linear-gradient(105deg, #0B2A57 40%, #9D2050 100%)',
-    accentColor: 'rgba(157, 32, 80, 0.3)',
     delay: 0.1,
+    available: true,
+    route: '/games/cervello',
+    badge: 'AR + 3D',
   },
   {
     id: 2,
@@ -17,31 +20,33 @@ const games = [
     subtitle: 'Quanto tempo è passato?',
     icon: Clock,
     gradient: 'linear-gradient(105deg, #0B2A57 40%, #4195A4 100%)',
-    accentColor: 'rgba(65, 149, 164, 0.3)',
     delay: 0.2,
+    available: false,
+    route: null,
+    badge: null,
   },
 ];
 
 export default function Games() {
+  const navigate = useNavigate();
+
   return (
     <div className="bg-slate-50 pb-4">
       {/* Game Cards */}
       <div className="px-4 pt-6 space-y-5">
         {games.map((game) => {
           const Icon = game.icon;
-          return (
+          const card = (
             <motion.div
               key={game.id}
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: game.delay, ease: 'easeOut' }}
-              className="relative rounded-2xl overflow-hidden shadow-md group"
+              className={`relative rounded-2xl overflow-hidden shadow-md ${game.available ? 'cursor-pointer active:scale-[0.98] transition-transform' : ''}`}
+              onClick={() => game.available && game.route && navigate(game.route)}
             >
               {/* Background */}
-              <div
-                className="absolute inset-0 z-0"
-                style={{ background: game.gradient }}
-              />
+              <div className="absolute inset-0 z-0" style={{ background: game.gradient }} />
 
               {/* Decorative icon watermark */}
               <Icon
@@ -62,27 +67,38 @@ export default function Games() {
                     >
                       <Icon className="w-6 h-6 text-white" strokeWidth={1.8} />
                     </div>
-                    <div>
+                    <div className="flex-1">
                       <h2 className="text-white font-bold text-xl leading-tight">
                         {game.title}
                       </h2>
                     </div>
+                    {game.available && (
+                      <ChevronRight className="w-5 h-5 text-white/50" />
+                    )}
                   </div>
                   <p className="text-white/80 text-sm leading-relaxed">
                     {game.subtitle}
                   </p>
                 </div>
 
-                {/* Coming soon badge */}
                 <div className="mt-5 flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold px-3.5 py-2 rounded-full border border-white/20">
-                    <Lock className="w-3.5 h-3.5" />
-                    Presto disponibile
-                  </span>
+                  {game.available ? (
+                    <span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold px-3.5 py-2 rounded-full border border-white/20">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      {game.badge}
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold px-3.5 py-2 rounded-full border border-white/20">
+                      <Lock className="w-3.5 h-3.5" />
+                      Presto disponibile
+                    </span>
+                  )}
                 </div>
               </div>
             </motion.div>
           );
+
+          return card;
         })}
       </div>
 

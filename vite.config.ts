@@ -81,4 +81,5 @@ export default defineConfig({
       }
     })
   ],
+  assetsInclude: ['**/*.glb', '**/*.usdz'],
 })
