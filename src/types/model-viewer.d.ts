@@ -53,12 +53,18 @@ export interface ModelViewerElement extends HTMLElement {
   animationName: string;
 }
 
+export type AlphaMode = 'OPAQUE' | 'MASK' | 'BLEND';
+
 export interface ModelViewerMaterial {
   name: string;
+  alphaMode: AlphaMode;
+  alphaCutoff: number;
   pbrMetallicRoughness: {
     baseColorFactor: [number, number, number, number];
     setBaseColorFactor: (factor: [number, number, number, number]) => void;
   };
   setEmissiveFactor: (factor: [number, number, number]) => void;
   emissiveFactor: [number, number, number];
+  setAlphaMode: (mode: AlphaMode) => void;
+  setAlphaCutoff: (value: number) => void;
 }

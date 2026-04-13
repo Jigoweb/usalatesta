@@ -1,5 +1,117 @@
 import type { BrainStoryStep } from '../types/brain';
 
+// ─── Area types ──────────────────────────────────────────────────────────────
+
+export type AreaKey = 'accumbens' | 'ippocampo' | 'amygdala' | 'corteccia' | 'lobi' | 'ciliegie';
+
+export interface AreaConfig {
+  /**
+   * Material names to match (lowercase, case-insensitive comparison).
+   * Each entry maps to exactly ONE material in the GLB — this is the mechanism
+   * that lets us select a single material from a mesh with multiple materials
+   * (e.g. lobi_g has Mat_lobi AND Mat_lobo_frontale as separate primitives).
+   */
+  materials: string[];
+  /**
+   * Emissive glow [R, G, B] in linear light space (0–1).
+   * Palette USA LA TESTA: #0B2A57 · #9D2050 · #4195A4
+   */
+  emissive: [number, number, number];
+  /**
+   * Optional baseColorFactor override [R, G, B, A].
+   * When omitted, the original base colour is preserved and only
+   * the emissive channel is modified — useful for textured materials.
+   */
+  baseColor?: [number, number, number, number];
+}
+
+// ─── Per-area config with palette colours ─────────────────────────────────────
+//
+// Mesh → material reference from documento_cervello.pdf:
+//   ciliege_g      → Mat_ciliege
+//   corteccia_g    → Mat_corteccia
+//   ippocampo_g    → Mat_ippocampo
+//   accumbens_g    → Mat_accumbens
+//   amygdala_g     → Mat_amygdala
+//   lobi_g         → Mat_lobi  ·  Mat_lobo_frontale  ← TWO materials, one mesh
+//
+// The two-material mesh case is handled naturally: we store each material name
+// individually in its own AreaConfig. When the viewer iterates model.materials
+// it finds each by name and applies the correct treatment independently.
+
+export const AREA_CONFIG: Record<AreaKey, AreaConfig> = {
+  // Nucleo Accumbens — reward / dopamine centre
+  // Palette: teal #4195A4 → linear [0.255, 0.584, 0.643] — brighter for emissive
+  accumbens: {
+    materials: ['mat_accumbens'],
+    emissive: [0.25, 0.65, 0.76],
+  },
+
+  // Ippocampo — memory consolidation
+  // Warm amber — distinguishable from teal and blue
+  ippocampo: {
+    materials: ['mat_ippocampo'],
+    emissive: [0.78, 0.44, 0.04],
+  },
+
+  // Amigdala — emotional processing
+  // Palette: pink #9D2050 → linear [0.616, 0.125, 0.314] — boosted for visibility
+  amygdala: {
+    materials: ['mat_amygdala'],
+    emissive: [0.72, 0.10, 0.32],
+  },
+
+  // Corteccia Prefrontale — rational decision-making
+  // Highlights Mat_corteccia (cortex surface) AND Mat_lobo_frontale (frontal lobe).
+  // IMPORTANT: Mat_lobi shares the same lobi_g mesh as Mat_lobo_frontale but is
+  // NOT included here — it will be treated as a non-highlighted material and dimmed.
+  // Palette: primary blue #0B2A57 → linear [0.043, 0.165, 0.341] — boosted
+  corteccia: {
+    materials: ['mat_corteccia', 'mat_lobo_frontale'],
+    emissive: [0.05, 0.20, 0.80],
+  },
+
+  // Lobi generali (all lobes except frontal)
+  // Uses Mat_lobi only — deliberately excludes Mat_lobo_frontale which belongs
+  // to the `corteccia` area on the same lobi_g mesh.
+  lobi: {
+    materials: ['mat_lobi'],
+    emissive: [0.18, 0.40, 0.62],
+  },
+
+  // Ciliegie — gambling symbol / aspettativa
+  // Gold — evokes slot machine imagery
+  ciliegie: {
+    materials: ['mat_ciliegia', 'mat_gambo_ciliegia', 'mat_ciliege'],
+    emissive: [0.82, 0.58, 0.0],
+    baseColor: [1.0, 0.92, 0.4, 1.0],
+  },
+};
+
+// Pre-built reverse map: lowercase material name → AreaKey
+// Used by BrainViewer to look up which config to apply per material.
+export const MATERIAL_TO_AREA: ReadonlyMap<string, AreaKey> = new Map(
+  (Object.entries(AREA_CONFIG) as [AreaKey, AreaConfig][]).flatMap(
+    ([key, cfg]) => cfg.materials.map((m) => [m, key] as [string, AreaKey])
+  )
+);
+
+// ─── Step-level colour constants ──────────────────────────────────────────────
+
+/** Step 6 — cortocircuito: the entire brain turns red */
+export const RED_BASE: [number, number, number, number] = [0.85, 0.08, 0.08, 1.0];
+export const RED_EMISSIVE: [number, number, number] = [0.60, 0.0, 0.0];
+
+/**
+ * Alpha applied to non-highlighted materials when a step has active highlights.
+ * The material's own RGB is preserved so the texture remains readable; only
+ * the alpha channel is collapsed to create an X-ray / ghost effect.
+ * Range 0–1. Lower = more transparent.
+ */
+export const DIM_ALPHA = 0.10;
+
+// ─── Story steps ─────────────────────────────────────────────────────────────
+
 export const BRAIN_STEPS: BrainStoryStep[] = [
   {
     id: 1,
@@ -28,9 +140,7 @@ export const BRAIN_STEPS: BrainStoryStep[] = [
     cameraOrbit: '0deg 90deg 1.8m',
     cameraTarget: '0m -0.02m 0m',
     duration: 10,
-    overlay: {
-      dopamineBar: true,
-    },
+    overlay: { dopamineBar: true },
   },
   {
     id: 4,
@@ -40,9 +150,7 @@ export const BRAIN_STEPS: BrainStoryStep[] = [
     cameraOrbit: '20deg 70deg 2.2m',
     cameraTarget: '0m 0.05m 0m',
     duration: 12,
-    overlay: {
-      dopamineBar: true,
-    },
+    overlay: { dopamineBar: true },
   },
   {
     id: 5,
@@ -52,9 +160,7 @@ export const BRAIN_STEPS: BrainStoryStep[] = [
     cameraOrbit: '0deg 75deg 2.5m',
     cameraTarget: '0m 0.05m 0m',
     duration: 10,
-    overlay: {
-      icons: ['dna', 'heart', 'house'],
-    },
+    overlay: { icons: ['dna', 'heart', 'house'] },
   },
   {
     id: 6,
@@ -77,20 +183,3 @@ export const BRAIN_STEPS: BrainStoryStep[] = [
     duration: 8,
   },
 ];
-
-// Mapping from area key to possible material names in the GLB
-export const AREA_MATERIAL_MAP: Record<string, string[]> = {
-  accumbens: ['Mat_Accumbens', 'Mat_accumbens', 'Mat_Accumbens.001'],
-  ippocampo: ['Mat_ippocampo', 'Mat_Ippocampo'],
-  amygdala: ['Mat_Amygdala', 'Mat_amygdala'],
-  corteccia: ['Mat_corteccia', 'Mat_Corteccia'],
-  lobi: ['Mat_lobi', 'Mat_lobo_frontale'],
-  ciliegie: ['Mat_ciliegia', 'Mat_gambo_ciliegia', 'Mat_ciliege', 'Mat_Ciliege'],
-};
-
-export const HIGHLIGHT_COLOR: [number, number, number, number] = [1.0, 0.75, 0.2, 1.0];
-export const RED_COLOR: [number, number, number, number] = [0.85, 0.12, 0.12, 1.0];
-export const NORMAL_COLOR: [number, number, number, number] = [1.0, 1.0, 1.0, 1.0];
-export const HIGHLIGHT_EMISSIVE: [number, number, number] = [0.35, 0.2, 0.0];
-export const RED_EMISSIVE: [number, number, number] = [0.4, 0.0, 0.0];
-export const NORMAL_EMISSIVE: [number, number, number] = [0.0, 0.0, 0.0];
