@@ -159,7 +159,10 @@ export default function ArticleDetail() {
               })}
             </>
           ) : (
-            <div className="prose prose-lg max-w-none text-gray-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: wpArticle?.content || '' }} />
+            <div 
+              className="prose prose-lg prose-slate max-w-none prose-headings:text-primary-blue prose-headings:font-bold prose-p:text-gray-600 prose-p:leading-relaxed prose-a:text-primary-blue hover:prose-a:text-blue-800 prose-img:rounded-xl" 
+              dangerouslySetInnerHTML={{ __html: wpArticle?.content || '' }} 
+            />
           )}
         </div>
 
