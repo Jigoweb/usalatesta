@@ -6,6 +6,7 @@ import BrainIntro from '../components/brain/BrainIntro';
 import BrainViewer from '../components/brain/BrainViewer';
 import BrainStoryOverlay from '../components/brain/BrainStoryOverlay';
 import { useBrainExperience } from '../hooks/useBrainExperience';
+import { BRAIN_LAYOUT } from '../data/brainStory';
 
 export default function BrainExperience() {
   const navigate = useNavigate();
@@ -138,27 +139,20 @@ export default function BrainExperience() {
       style={{ background: 'linear-gradient(180deg, #0a1628 0%, #12203a 100%)' }}
     >
       {/* Header */}
-      <div className="absolute top-0 inset-x-0 z-30 pt-safe">
-        <div className="flex items-center justify-between px-4 pt-12 pb-2">
+      <div className="absolute top-0 inset-x-0 z-30 pt-safe pointer-events-none">
+        <div className="flex items-start justify-between px-4 pt-12 pb-2">
           <button
             onClick={() => navigate('/games')}
-            className="flex items-center justify-center w-9 h-9 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-colors"
+            className="pointer-events-auto flex items-center justify-center w-9 h-9 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
-
-          <span className="text-white/60 text-xs font-medium tracking-widest uppercase">
-            Il Cervello
-          </span>
-
-          <div className="w-9 h-9" />
         </div>
       </div>
 
       {/* 3D Viewer — clipped above the narrative overlay so model-viewer
-          frames the brain within the visible area, not behind the panel.
-          pb value must be ≥ max overlay height (~260px). */}
-      <div className="absolute inset-x-0 top-0 bottom-0 z-10" style={{ paddingBottom: 'max(260px, 32vh)' }}>
+          frames the brain within the visible area, not behind the panel. */}
+      <div className="absolute inset-x-0 top-0 bottom-0 z-10" style={{ paddingBottom: BRAIN_LAYOUT.panelHeight }}>
         <AnimatePresence>
           {!modelLoaded && (
             <motion.div

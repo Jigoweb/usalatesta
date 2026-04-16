@@ -143,6 +143,12 @@ export const RED_EMISSIVE: [number, number, number] = [0.60, 0.0, 0.0];
 /** Alpha for non-highlighted brain tissue when a step has active highlights */
 export const DIM_ALPHA = 0.10;
 
+/** Layout constants */
+export const BRAIN_LAYOUT = {
+  /** Height reserved at the bottom of the screen for the narrative panel */
+  panelHeight: 'max(260px, 32vh)',
+};
+
 // ─── 10 story steps ──────────────────────────────────────────────────────────
 
 export const BRAIN_STEPS: BrainStoryStep[] = [

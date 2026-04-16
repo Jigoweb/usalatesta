@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Play, Pause, Dna, Heart, Home } from 'lucide-react';
-import { useState, useEffect } from 'react';
 import type { BrainStoryStep } from '../../types/brain';
+import { BRAIN_LAYOUT } from '../../data/brainStory';
 import DopamineBar from './DopamineBar';
 
 interface BrainStoryOverlayProps {
@@ -29,7 +29,7 @@ const ICON_LABELS = {
 const ICON_POSITIONS: Record<string, { top?: string, bottom?: string, left?: string, right?: string, delay: number }> = {
   dna: { top: '15%', left: '10%', delay: 0.2 },
   house: { top: '45%', right: '12%', delay: 0.4 },
-  heart: { bottom: '40%', left: '15%', delay: 0.6 },
+  heart: { bottom: '15%', left: '15%', delay: 0.6 },
 };
 
 export default function BrainStoryOverlay({
@@ -57,7 +57,8 @@ export default function BrainStoryOverlay({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 pointer-events-none"
+            className="absolute inset-x-0 top-0 pointer-events-none"
+            style={{ height: `calc(100% - ${BRAIN_LAYOUT.panelHeight})` }}
           >
             {step.overlay.icons.map((icon) => {
               const Icon = ICON_MAP[icon as keyof typeof ICON_MAP];

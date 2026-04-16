@@ -315,7 +315,7 @@ export default function BrainViewer({ step, onLoad, onARStatus }: BrainViewerPro
           slot="ar-button"
           style={{
             position: 'absolute',
-            bottom: '1rem',
+            top: '3rem',
             right: '1rem',
             zIndex: 10,
             display: 'flex',
