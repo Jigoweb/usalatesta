@@ -91,7 +91,7 @@ export default function BrainIntro({ onStart }: BrainIntroProps) {
           transition={{ delay: 0.5, duration: 0.6 }}
           className="flex flex-wrap gap-2 justify-center mb-10"
         >
-          {['7 step interattivi', 'Modello 3D', 'Realtà Aumentata'].map((label) => (
+          {['10 step interattivi', 'Modello 3D', 'Realtà Aumentata'].map((label) => (
             <span
               key={label}
               className="text-white/80 text-xs font-medium px-3 py-1.5 rounded-full bg-white/10 border border-white/20"
