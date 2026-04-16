@@ -24,7 +24,7 @@ const sendPushNotification = (title: string, message: string) => {
         icon: '/pwa-192x192.png',
         badge: '/pwa-192x192.png',
         vibrate: [200, 100, 200]
-      });
+      } as NotificationOptions);
     }).catch(() => {
       new Notification(title, { body: message, icon: '/pwa-192x192.png' });
     });

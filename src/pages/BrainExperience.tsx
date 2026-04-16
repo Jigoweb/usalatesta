@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, RotateCcw, MessageCircle, HelpCircle } from 'lucide-react';
+import { X, RotateCcw, MessageCircle, HelpCircle, Brain } from 'lucide-react';
 import BrainIntro from '../components/brain/BrainIntro';
 import BrainViewer from '../components/brain/BrainViewer';
 import BrainStoryOverlay from '../components/brain/BrainStoryOverlay';
@@ -23,25 +23,28 @@ export default function BrainExperience() {
     restart,
   } = useBrainExperience();
 
-  // Preload the 3D model when the intro page is shown
+  // Preload the 3D model when the component mounts
   useEffect(() => {
-    if (state.phase === 'intro') {
-      const controller = new AbortController();
+    // Only start preload if we start in intro phase
+    if (state.phase !== 'intro') return;
+
+    const controller = new AbortController();
+    
+    // Hidden fetch to start downloading the .glb file into the browser's cache
+    fetch('/models/cervello.glb', { signal: controller.signal })
+      .catch(err => {
+         if (err.name === 'AbortError') {
+           console.log('Model preload aborted');
+         }
+      });
       
-      // Hidden fetch to start downloading the .glb file into the browser's cache
-      fetch('/models/cervello.glb', { signal: controller.signal })
-        .catch(err => {
-           if (err.name === 'AbortError') {
-             console.log('Model preload aborted');
-           }
-        });
-        
-      return () => {
-        // Abort the download if the user leaves the intro page before it finishes
-        controller.abort();
-      };
-    }
-  }, [state.phase]);
+    return () => {
+      // Abort the download only if the user leaves the BrainExperience entirely
+      // before it finishes, not when simply transitioning to the viewer phase
+      controller.abort();
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleModelLoad = () => {
     setModelLoaded(true);
@@ -72,7 +75,7 @@ export default function BrainExperience() {
             transition={{ type: 'spring', bounce: 0.4 }}
             className="w-20 h-20 rounded-3xl bg-white/10 border border-white/20 flex items-center justify-center mb-6"
           >
-            <span className="text-4xl">🧠</span>
+            <Brain className="w-10 h-10 text-white" strokeWidth={1.5} />
           </motion.div>
 
           <motion.h1
@@ -152,8 +155,10 @@ export default function BrainExperience() {
         </div>
       </div>
 
-      {/* 3D Viewer — fills most of the screen */}
-      <div className="absolute inset-0 z-10">
+      {/* 3D Viewer — clipped above the narrative overlay so model-viewer
+          frames the brain within the visible area, not behind the panel.
+          pb value must be ≥ max overlay height (~260px). */}
+      <div className="absolute inset-x-0 top-0 bottom-0 z-10" style={{ paddingBottom: 'max(260px, 32vh)' }}>
         <AnimatePresence>
           {!modelLoaded && (
             <motion.div
@@ -167,7 +172,7 @@ export default function BrainExperience() {
                 transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
                 className="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center mb-4"
               >
-                <span className="text-3xl">🧠</span>
+                <Brain className="w-8 h-8 text-white" strokeWidth={1.5} />
               </motion.div>
               <p className="text-white/60 text-sm">Caricamento modello 3D...</p>
             </motion.div>

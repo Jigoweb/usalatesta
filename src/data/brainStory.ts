@@ -2,184 +2,265 @@ import type { BrainStoryStep } from '../types/brain';
 
 // ─── Area types ──────────────────────────────────────────────────────────────
 
-export type AreaKey = 'accumbens' | 'ippocampo' | 'amygdala' | 'corteccia' | 'lobi' | 'ciliegie';
+export type AreaKey =
+  | 'accumbens'
+  | 'ippocampo'
+  | 'amygdala'
+  | 'corteccia'
+  | 'corteccia_inattiva'
+  | 'lobi'
+  | 'ciliegie'
+  | 'saette';
 
 export interface AreaConfig {
   /**
-   * Material names to match (lowercase, case-insensitive comparison).
-   * Each entry maps to exactly ONE material in the GLB — this is the mechanism
-   * that lets us select a single material from a mesh with multiple materials
-   * (e.g. lobi_g has Mat_lobi AND Mat_lobo_frontale as separate primitives).
+   * Material names to match — stored lowercase for case-insensitive comparison.
+   * Each entry targets exactly ONE material in the GLB, which is how we handle
+   * meshes with multiple materials (e.g. lobi_g has Mat_lobi AND Mat_lobo_frontale).
    */
   materials: string[];
   /**
-   * Emissive glow [R, G, B] in linear light space (0–1).
-   * Palette USA LA TESTA: #0B2A57 · #9D2050 · #4195A4
+   * Neutral materials: included in the highlight set (so they are NOT ghosted)
+   * but rendered at their snapshot colour with no emissive glow.
+   * Use for materials that share a mesh with a highlighted material but should
+   * remain at brain-pink baseline (e.g. mat_lobi when corteccia is active).
    */
+  neutralMaterials?: string[];
+  /** Emissive glow [R,G,B] linear (0–1). Palette: #0B2A57 · #9D2050 · #4195A4 */
   emissive: [number, number, number];
-  /**
-   * Optional baseColorFactor override [R, G, B, A].
-   * When omitted, the original base colour is preserved and only
-   * the emissive channel is modified — useful for textured materials.
-   */
+  /** Optional base-colour override [R,G,B,A] linear. Applies to ALL materials in this area. */
   baseColor?: [number, number, number, number];
+  /** Per-material base-colour overrides — takes precedence over baseColor. */
+  materialColors?: Record<string, [number, number, number, number]>;
 }
 
-// ─── Per-area config with palette colours ─────────────────────────────────────
+// ─── Per-area configs with palette colours ───────────────────────────────────
 //
-// Mesh → material reference from documento_cervello.pdf:
-//   ciliege_g      → Mat_ciliege
-//   corteccia_g    → Mat_corteccia
-//   ippocampo_g    → Mat_ippocampo
-//   accumbens_g    → Mat_accumbens
-//   amygdala_g     → Mat_amygdala
-//   lobi_g         → Mat_lobi  ·  Mat_lobo_frontale  ← TWO materials, one mesh
-//
-// The two-material mesh case is handled naturally: we store each material name
-// individually in its own AreaConfig. When the viewer iterates model.materials
-// it finds each by name and applies the correct treatment independently.
+// GLB mesh → material reference (documento_cervello.pdf):
+//   ciliege_g   → Mat_ciliege
+//   corteccia_g → Mat_corteccia
+//   ippocampo_g → Mat_ippocampo
+//   accumbens_g → Mat_accumbens
+//   amygdala_g  → Mat_amygdala
+//   lobi_g      → Mat_lobi  ·  Mat_lobo_frontale  ← 2 materials, 1 mesh
+//   saette_g    → Mat_saetta  ← new: near-miss / cortocircuito lightning
 
 export const AREA_CONFIG: Record<AreaKey, AreaConfig> = {
-  // Nucleo Accumbens — reward / dopamine centre
-  // Palette: teal #4195A4 → linear [0.255, 0.584, 0.643] — brighter for emissive
+  // Nucleo Accumbens — teal #4195A4 (dopamine / reward)
   accumbens: {
     materials: ['mat_accumbens'],
     emissive: [0.25, 0.65, 0.76],
   },
-
-  // Ippocampo — memory consolidation
-  // Warm amber — distinguishable from teal and blue
+  // Ippocampo — warm amber (memory)
   ippocampo: {
     materials: ['mat_ippocampo'],
     emissive: [0.78, 0.44, 0.04],
   },
-
-  // Amigdala — emotional processing
-  // Palette: pink #9D2050 → linear [0.616, 0.125, 0.314] — boosted for visibility
+  // Amigdala — pink #9D2050 (emotion / alarm)
   amygdala: {
     materials: ['mat_amygdala'],
     emissive: [0.72, 0.10, 0.32],
   },
-
-  // Corteccia Prefrontale — rational decision-making
-  // Highlights Mat_corteccia (cortex surface) AND Mat_lobo_frontale (frontal lobe).
-  // IMPORTANT: Mat_lobi shares the same lobi_g mesh as Mat_lobo_frontale but is
-  // NOT included here — it will be treated as a non-highlighted material and dimmed.
-  // Palette: primary blue #0B2A57 → linear [0.043, 0.165, 0.341] — boosted
+  // Corteccia Prefrontale — blue #0B2A57 (rational decision)
+  // Targets Mat_corteccia AND Mat_lobo_frontale from lobi_g.
+  // Mat_lobi shares the same mesh as Mat_lobo_frontale; it is listed as
+  // neutralMaterial so it is NOT ghosted but stays at brain-pink with no emissive.
   corteccia: {
     materials: ['mat_corteccia', 'mat_lobo_frontale'],
+    neutralMaterials: ['mat_lobi'],
     emissive: [0.05, 0.20, 0.80],
   },
-
-  // Lobi generali (all lobes except frontal)
-  // Uses Mat_lobi only — deliberately excludes Mat_lobo_frontale which belongs
-  // to the `corteccia` area on the same lobi_g mesh.
+  // Corteccia Prefrontale (Assopita) — light blue/grey
+  // Used in step 6 to show it's inactive/less active while other areas are active.
+  corteccia_inattiva: {
+    materials: ['mat_lobo_frontale'], 
+    neutralMaterials: ['mat_corteccia', 'mat_lobi'],
+    emissive: [0.0, 0.15, 0.35],
+    materialColors: {
+      'mat_lobo_frontale': [0.1, 0.3, 0.6, 1.0],
+    }
+  },
+  // Lobi generali — excludes Mat_lobo_frontale (corteccia area)
   lobi: {
     materials: ['mat_lobi'],
     emissive: [0.18, 0.40, 0.62],
   },
-
-  // Ciliegie — gambling symbol / aspettativa
-  // Gold — evokes slot machine imagery
+  // Ciliegie — red cherries (gambling symbol)
+  // CONDITIONAL: visible ONLY in step 2, hidden (alpha=0, MASK) in all other steps.
   ciliegie: {
     materials: ['mat_ciliegia', 'mat_gambo_ciliegia', 'mat_ciliege'],
-    emissive: [0.82, 0.58, 0.0],
-    baseColor: [1.0, 0.92, 0.4, 1.0],
+    emissive: [0.70, 0.02, 0.02],
+    baseColor: [0.9, 0.08, 0.08, 1.0],
+    materialColors: {
+      // Stem (gambo) — dark woody brown (wood color) + no emissive (to prevent it from glowing red)
+      'mat_gambo_ciliegia': [0.25, 0.12, 0.05, 1.0],
+    },
+  },
+  // Saette — yellow lightning (cortocircuito)
+  // CONDITIONAL: visible ONLY in step 7, hidden (alpha=0, MASK) in all other steps.
+  saette: {
+    materials: ['mat_saette'],
+    emissive: [1.0, 0.78, 0.0],
+    baseColor: [1.0, 0.92, 0.2, 1.0],
   },
 };
 
 // Pre-built reverse map: lowercase material name → AreaKey
-// Used by BrainViewer to look up which config to apply per material.
 export const MATERIAL_TO_AREA: ReadonlyMap<string, AreaKey> = new Map(
   (Object.entries(AREA_CONFIG) as [AreaKey, AreaConfig][]).flatMap(
     ([key, cfg]) => cfg.materials.map((m) => [m, key] as [string, AreaKey])
   )
 );
 
-// ─── Step-level colour constants ──────────────────────────────────────────────
+// ─── Conditional visibility ───────────────────────────────────────────────────
+// Materials in these areas are ALWAYS alpha-0 (invisible) except in the listed step IDs.
 
-/** Step 6 — cortocircuito: the entire brain turns red */
+export const CONDITIONAL_AREAS: Partial<Record<AreaKey, readonly number[]>> = {
+  ciliegie: [2],  // ciliegie visible only in step 2
+  saette:   [7],  // saette visible only in step 7 (cortocircuito)
+};
+
+// Reverse map for fast lookup: material name → conditional area key
+export const MATERIAL_TO_CONDITIONAL: ReadonlyMap<string, AreaKey> = new Map(
+  (Object.entries(CONDITIONAL_AREAS) as [AreaKey, readonly number[]][]).flatMap(
+    ([key]) => AREA_CONFIG[key].materials.map((m) => [m, key] as [string, AreaKey])
+  )
+);
+
+// ─── Colour constants ─────────────────────────────────────────────────────────
+
+/**
+ * Default brain tissue colour — light pink as a real brain, applied to all
+ * non-conditional materials on load (before snapshot is captured).
+ * sRGB ≈ #F0BCAF → linear space approximation.
+ */
+export const BRAIN_PINK: [number, number, number, number] = [0.90, 0.52, 0.44, 1.0];
+
+/** Step 7 — cortocircuito: entire brain turns red */
 export const RED_BASE: [number, number, number, number] = [0.85, 0.08, 0.08, 1.0];
 export const RED_EMISSIVE: [number, number, number] = [0.60, 0.0, 0.0];
 
-/**
- * Alpha applied to non-highlighted materials when a step has active highlights.
- * The material's own RGB is preserved so the texture remains readable; only
- * the alpha channel is collapsed to create an X-ray / ghost effect.
- * Range 0–1. Lower = more transparent.
- */
+/** Alpha for non-highlighted brain tissue when a step has active highlights */
 export const DIM_ALPHA = 0.10;
 
-// ─── Story steps ─────────────────────────────────────────────────────────────
+// ─── 10 story steps ──────────────────────────────────────────────────────────
 
 export const BRAIN_STEPS: BrainStoryStep[] = [
+  // ── 1 ────────────────────────────────────────────────────────────────────────
   {
     id: 1,
-    title: 'Il Sistema di Ricompensa',
-    text: 'Il tuo cervello è la macchina più complessa dell\'universo. Due cose guidano le azioni umane: le necessità e le ricompense. I circuiti cerebrali noti come "sistema di ricompensa" regolano come valutiamo e reagiamo a questi stimoli — e sono al cuore di tutto ciò che accade quando giochiamo.',
+    title: 'Come funziona il tuo cervello',
+    text: 'Il tuo cervello è la macchina più complessa dell\'universo. Due cose guidano le azioni umane: le necessità (cibo, sonno, evitare il dolore) e le ricompense. Qualsiasi oggetto, evento o attività può essere una ricompensa se ci motiva, ci fa imparare o suscita sensazioni piacevoli. Ma come fa il nostro cervello a calcolare il valore di una ricompensa e come viene tradotto in azione? La risposta sta nei circuiti cerebrali noti come "sistema di ricompensa".',
     highlightAreas: [],
-    cameraOrbit: '0deg 75deg 2.5m',
-    cameraTarget: '0m 0.05m 0m',
-    duration: 9,
+    cameraOrbit: '0deg 75deg 1.6m',
+    cameraTarget: '0m 0.0m 0m',
+    duration: 10,
   },
+
+  // ── 2 ────────────────────────────────────────────────────────────────────────
   {
     id: 2,
-    title: 'Il Gioco e l\'Aspettativa',
-    text: 'Ogni volta che anticipiamo una vincita, il cervello si attiva prima ancora di ottenerla. Non è la ricompensa in sé, ma l\'aspettativa di riceverla a creare la sensazione più potente. Il simbolo del gioco d\'azzardo si radica così nel nostro sistema nervoso.',
+    title: 'Il gioco e la dopamina',
+    text: 'Ogni volta che anticipiamo una vincita o un successo, il nostro cervello rilascia dopamina. La dopamina è il principale mezzo di comunicazione tra le diverse aree del cervello che gestiscono il piacere.',
     highlightAreas: ['ciliegie'],
-    cameraOrbit: '30deg 80deg 2m',
-    cameraTarget: '0m 0.02m 0m',
-    playAnimation: true,
+    animationName: 'Action',
+    cameraOrbit: '20deg 70deg 1.45m',
+    cameraTarget: '0m 0.04m 0m',
     duration: 8,
+    overlay: { dopamineLevel: 'bassa' },
   },
+
+  // ── 3 ────────────────────────────────────────────────────────────────────────
   {
     id: 3,
-    title: 'La Dopamina — il Messaggero',
-    text: 'Il processo parte dall\'area tegmentale ventrale e arriva al Nucleo Accumbens — il centro del piacere. Qui viene rilasciata la dopamina, il principale mezzo di comunicazione che gestisce il piacere e ci spinge all\'azione. Si attiva già nel momento in cui prevediamo di ottenere un premio.',
+    title: "L'inizio del processo",
+    text: "Il processo parte dall'area tegmentale ventrale e arriva al nucleo accumbens, con l'obiettivo di elaborare la sensazione di ricompensa e spingerci all'azione. La cosa interessante è che questi messaggeri chimici si attivano già nel momento in cui prevediamo di ottenere un premio, creando una forte aspettativa.",
     highlightAreas: ['accumbens'],
-    cameraOrbit: '0deg 90deg 1.8m',
-    cameraTarget: '0m -0.02m 0m',
+    cameraOrbit: '0deg 88deg 1.15m',
+    cameraTarget: '0m -0.04m 0m',
     duration: 10,
-    overlay: { dopamineBar: true },
   },
+
+  // ── 4 ────────────────────────────────────────────────────────────────────────
   {
     id: 4,
-    title: 'Il Percorso della Dopamina',
-    text: 'La dopamina potenzia la memoria nell\'Ippocampo, fissando i ricordi piacevoli in profondità. L\'Amigdala aggiunge la carica emotiva, mentre la Corteccia Prefrontale — il nostro centro razionale — pianifica nuovi modi per ripetere l\'esperienza gratificante. Con il tempo, questa zona tende a "sopirsi".',
-    highlightAreas: ['ippocampo', 'amygdala', 'corteccia'],
-    cameraOrbit: '20deg 70deg 2.2m',
-    cameraTarget: '0m 0.05m 0m',
-    duration: 12,
-    overlay: { dopamineBar: true },
+    title: "L'ippocampo",
+    text: "Oltre a generare motivazione, la dopamina agisce come un potenziatore della memoria e delle connessioni tra i neuroni all'interno dell'ippocampo, fissando i ricordi piacevoli in modo molto profondo.",
+    highlightAreas: ['ippocampo'],
+    cameraOrbit: '-15deg 95deg 1.15m',
+    cameraTarget: '0m -0.06m 0m',
+    duration: 9,
   },
+
+  // ── 5 ────────────────────────────────────────────────────────────────────────
   {
     id: 5,
-    title: 'I Fattori di Rischio',
-    text: 'Le cause del Disturbo da Gioco d\'Azzardo (DGA) possono avere origini diverse: una predisposizione genetica alla dipendenza da dopamina, fattori ambientali come amici o familiari che giocano, o lo stress come meccanismo di adattamento per affrontare i problemi.',
-    highlightAreas: [],
-    cameraOrbit: '0deg 75deg 2.5m',
-    cameraTarget: '0m 0.05m 0m',
-    duration: 10,
-    overlay: { icons: ['dna', 'heart', 'house'] },
+    title: "Il ruolo dell'amigdala",
+    text: "Contemporaneamente, coinvolge l'amigdala e la corteccia prefrontale per aggiungere una carica emotiva a queste esperienze e spingere la nostra mente a pianificare nuovi modi per ripetere quel comportamento gratificante.",
+    highlightAreas: ['amygdala'],
+    cameraOrbit: '42deg 80deg 1.25m',
+    cameraTarget: '0m -0.04m 0m',
+    duration: 9,
   },
+
+  // ── 6 ────────────────────────────────────────────────────────────────────────
   {
     id: 6,
-    title: 'Il Cortocircuito',
-    text: 'Il gioco con vincita in denaro crea un cortocircuito nel cervello. Il fenomeno del "Near-Miss" o "Quasi Vincita": quando ci si avvicina a una vincita senza ottenerla, il cervello rilascia quasi la stessa dopamina di una vittoria reale. Questo ti convince erroneamente che la prossima vincita sia vicina. Ma non si può influenzare il caso!',
-    highlightAreas: [],
-    allRed: true,
-    cameraOrbit: '0deg 75deg 2.5m',
-    cameraTarget: '0m 0.05m 0m',
-    duration: 12,
+    title: "L'aspettativa di vincita",
+    text: "Quando si gioca a livello celebrale si attivano dunque, attraverso la dopamina, diverse aree del cervello che creano emozioni, piacere e ricordi molto forti. Non è la ricompensa in sé, ma l'aspettativa di una ricompensa che influenza in modo più potente le reazioni emotive e i ricordi. Il giocatore assocerà il rilascio della dopamina e questa sensazione piacevole e vorrà ripetere l'esperienza per gratificarsi. La parte della corteccia prefrontale — la parte razionale del nostro cervello — tende a sopirsi pur di vivere questa scarica piacevole di dopamina.",
+    highlightAreas: ['accumbens', 'corteccia_inattiva'],
+    cameraOrbit: '10deg 73deg 1.5m',
+    cameraTarget: '0m 0.0m 0m',
+    duration: 13,
+    overlay: { dopamineLevel: 'media' },
   },
+
+  // ── 7 ────────────────────────────────────────────────────────────────────────
   {
     id: 7,
-    title: 'La Neuroplasticità — Puoi Guarire',
-    text: 'Le dinamiche del disturbo possono essere interrotte. Il nostro cervello è una macchina straordinaria che può rimodellarsi! Grazie alla neuroplasticità, il cervello può guarire. Il primo passo è riconoscere di avere un problema e chiedere aiuto ai professionisti.',
+    title: 'Il cortocircuito',
+    text: 'Tuttavia, nel tempo il cervello si adatta a questa costante stimolazione del sistema di ricompensa diventando sempre meno sensibile alla dopamina. Questo vuol dire che una persona che soffre di DGA — cioè Disturbo da Gioco d\'Azzardo — potrà sentire il bisogno di giocare sempre di più e con importi sempre più elevati per avere la stessa sensazione data dalla dopamina.',
+    highlightAreas: ['saette'],
+    animationName: 'saette_g|Take 001|BaseLayer',
+    allRed: true,
+    cameraOrbit: '0deg 75deg 1.6m',
+    cameraTarget: '0m 0.0m 0m',
+    duration: 12,
+    overlay: { dopamineLevel: 'alta' },
+  },
+
+  // ── 8 ────────────────────────────────────────────────────────────────────────
+  {
+    id: 8,
+    title: "La psicologia dell'errore",
+    text: 'Il gioco con vincita in denaro spesso crea un corto-circuito che è a tutti gli effetti un bug del nostro cervello. Parliamo del cosiddetto fenomeno del "Near-Miss" o "Quasi Vincita". Quando ci si avvicina ad una vincita, senza ottenerla, il cervello rilascia quasi la stessa dopamina di una vittoria reale. Questo ti convince erroneamente che il successo, la prossima vincita, sia vicina, spingendoti a giocare ancora. Invece, non si può influenzare il caso! Ricordalo sempre.',
+    highlightAreas: [],
+    cameraOrbit: '15deg 70deg 1.5m',
+    cameraTarget: '0m 0.02m 0m',
+    duration: 13,
+  },
+
+  // ── 9 ────────────────────────────────────────────────────────────────────────
+  {
+    id: 9,
+    title: 'Le cause scientifiche del DGA',
+    text: 'Le cause del DGA possono avere diverse origini: in alcuni casi si può avere una predisposizione genetica alla dipendenza da dopamina, mentre in altri il disturbo può svilupparsi a causa di fattori ambientali (ad esempio per via di amici o famigliari che giocano) o come meccanismo di adattamento per affrontare stress e problemi.',
+    highlightAreas: [],
+    cameraOrbit: '-10deg 72deg 1.7m',
+    cameraTarget: '0m 0.0m 0m',
+    duration: 11,
+    overlay: { icons: ['dna', 'house', 'heart'] },
+  },
+
+  // ── 10 ───────────────────────────────────────────────────────────────────────
+  {
+    id: 10,
+    title: 'Una macchina straordinaria: la neuroplasticità',
+    text: 'Le dinamiche connesse al disturbo però possono essere interrotte. Il nostro cervello è una macchina straordinaria, che si può rimodellare! Infatti, la buona notizia è che, grazie alla neuroplasticità, il cervello può guarire. Ma il primo passo è riconoscere di avere un problema e chiedere aiuto ai professionisti.',
     highlightAreas: [],
     allRed: false,
-    cameraOrbit: '0deg 75deg 2.5m',
-    cameraTarget: '0m 0.05m 0m',
-    duration: 8,
+    cameraOrbit: '0deg 75deg 1.6m',
+    cameraTarget: '0m 0.0m 0m',
+    duration: 9,
   },
 ];

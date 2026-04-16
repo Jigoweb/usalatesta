@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Play, Pause, Dna, Heart, Home } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import type { BrainStoryStep } from '../../types/brain';
 import DopamineBar from './DopamineBar';
 
@@ -15,14 +16,20 @@ interface BrainStoryOverlayProps {
 
 const ICON_MAP = {
   dna: Dna,
-  heart: Heart,
   house: Home,
+  heart: Heart,
 };
 
 const ICON_LABELS = {
   dna: 'Genetica',
-  heart: 'Ambiente',
-  house: 'Stress',
+  house: 'Ambiente',
+  heart: 'Stress',
+};
+
+const ICON_POSITIONS: Record<string, { top?: string, bottom?: string, left?: string, right?: string, delay: number }> = {
+  dna: { top: '15%', left: '10%', delay: 0.2 },
+  house: { top: '45%', right: '12%', delay: 0.4 },
+  heart: { bottom: '40%', left: '15%', delay: 0.6 },
 };
 
 export default function BrainStoryOverlay({
@@ -37,33 +44,42 @@ export default function BrainStoryOverlay({
   const isFirst = stepIndex === 0;
   const isLast = stepIndex === totalSteps - 1;
 
+  // Animazione testo lettera per lettera
+  const words = step.text.split(' ');
+
   return (
-    <div className="absolute inset-x-0 bottom-0 z-20 pointer-events-none">
-      {/* Risk icons overlay (step 5) */}
+    <div className="absolute inset-x-0 bottom-0 z-20 pointer-events-none h-full">
+      {/* Risk icons overlay (step 9) */}
       <AnimatePresence>
         {step.overlay?.icons && (
           <motion.div
             key="icons"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="flex justify-center gap-6 mb-4 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 pointer-events-none"
           >
             {step.overlay.icons.map((icon) => {
-              const Icon = ICON_MAP[icon];
-              const label = ICON_LABELS[icon];
+              const Icon = ICON_MAP[icon as keyof typeof ICON_MAP];
+              const label = ICON_LABELS[icon as keyof typeof ICON_LABELS];
+              const pos = ICON_POSITIONS[icon];
               return (
                 <motion.div
                   key={icon}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: 'spring', bounce: 0.5, delay: 0.2 }}
-                  className="flex flex-col items-center gap-1.5"
+                  className="absolute flex flex-col items-center gap-1.5"
+                  style={{ top: pos.top, bottom: pos.bottom, left: pos.left, right: pos.right }}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', bounce: 0.5, delay: pos.delay }}
                 >
-                  <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/25 flex items-center justify-center shadow-lg">
-                    <Icon className="w-6 h-6 text-white" strokeWidth={1.5} />
-                  </div>
-                  <span className="text-white/80 text-xs font-medium">{label}</span>
+                  <motion.div 
+                    className="w-14 h-14 flex items-center justify-center drop-shadow-lg"
+                    animate={{ y: [-4, 4, -4] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: pos.delay }}
+                  >
+                    <Icon className="w-10 h-10 text-white" strokeWidth={1.5} />
+                  </motion.div>
+                  <span className="text-white/80 text-sm font-semibold drop-shadow-md">{label}</span>
                 </motion.div>
               );
             })}
@@ -73,7 +89,7 @@ export default function BrainStoryOverlay({
 
       {/* Main narrative panel */}
       <motion.div
-        className="mx-3 mb-3 rounded-2xl overflow-hidden pointer-events-auto"
+        className="absolute bottom-3 inset-x-3 rounded-2xl overflow-hidden pointer-events-auto"
         style={{
           background: 'rgba(11, 42, 87, 0.85)',
           backdropFilter: 'blur(16px)',
@@ -121,27 +137,40 @@ export default function BrainStoryOverlay({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.35 }}
+              className="flex flex-col max-h-[160px]"
             >
-              <h2 className="text-white font-bold text-lg leading-tight mb-2">
+              <h2 className="text-white font-bold text-lg leading-tight mb-2 shrink-0">
                 {step.title}
               </h2>
-              <p className="text-white/75 text-sm leading-relaxed line-clamp-4">
-                {step.text}
-              </p>
+              <div className="overflow-y-auto pr-2 custom-scrollbar">
+                <p className="text-white/75 text-sm leading-relaxed pb-2">
+                  {words.map((word, i) => (
+                    <motion.span
+                      key={`${step.id}-${i}`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.25, delay: i * 0.05 }}
+                    >
+                      {word}{' '}
+                    </motion.span>
+                  ))}
+                </p>
+              </div>
             </motion.div>
           </AnimatePresence>
 
-          {/* Dopamine bar */}
+          {/* Dopamine bar — shown only when a level is explicitly set in the step */}
           <AnimatePresence>
-            {step.overlay?.dopamineBar && (
+            {step.overlay?.dopamineLevel && (
               <motion.div
-                key="dopamine"
+                key={`dopamine-${step.id}`}
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.4 }}
                 className="mt-3 overflow-hidden"
               >
-                <DopamineBar stepId={step.id} />
+                <DopamineBar level={step.overlay.dopamineLevel} />
               </motion.div>
             )}
           </AnimatePresence>

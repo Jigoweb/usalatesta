@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
+import '@testing-library/jest-dom';
 import Articles from '../Articles';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { ARTICLES } from '../../data/articles';

@@ -5,12 +5,12 @@ export interface BrainStoryStep {
   highlightAreas: string[];
   cameraOrbit: string;
   cameraTarget: string;
-  colorOverride?: Record<string, [number, number, number, number]>;
   allRed?: boolean;
-  playAnimation?: boolean;
+  animationName?: string;
   duration: number;
   overlay?: {
-    dopamineBar?: boolean;
+    /** Dopamine bar shown only when explicitly annotated in the script */
+    dopamineLevel?: 'bassa' | 'media' | 'alta';
     icons?: Array<'dna' | 'heart' | 'house'>;
   };
 }
