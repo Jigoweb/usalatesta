@@ -127,6 +127,10 @@ function applyStep(
         mat.pbrMetallicRoughness.setBaseColorFactor(perMatColor);
       } else if (cfg?.baseColor) {
         mat.pbrMetallicRoughness.setBaseColorFactor(cfg.baseColor);
+        // Se disponibile, riduciamo la riflessione speculare dell'ambiente
+        if (typeof (mat.pbrMetallicRoughness as any).setRoughnessFactor === 'function') {
+          (mat.pbrMetallicRoughness as any).setRoughnessFactor(0.8);
+        }
       } else if (snap) {
         // Keep the snapshot base (brain pink) so texture reads correctly;
         // emissive provides the palette-colour glow on top.

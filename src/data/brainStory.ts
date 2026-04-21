@@ -86,11 +86,11 @@ export const AREA_CONFIG: Record<AreaKey, AreaConfig> = {
     emissive: [0.18, 0.40, 0.62],
   },
   // Ciliegie — red cherries (gambling symbol)
-  // CONDITIONAL: visible ONLY in step 2, hidden (alpha=0, MASK) in all other steps.
+  // CONDITIONAL: visible ONLY in step 2, hidden (alpha=0, BLEND) in all other steps.
   ciliegie: {
-    materials: ['mat_ciliegia', 'mat_gambo_ciliegia', 'mat_ciliege'],
-    emissive: [0.70, 0.02, 0.02],
-    baseColor: [0.9, 0.08, 0.08, 1.0],
+    materials: ['mat_ciliegia', 'mat_gambo_ciliegia', 'mat_ciliege', 'mat_ciliegie'],
+    emissive: [0.6, 0.0, 0.0],
+    baseColor: [1.0, 0.0, 0.0, 1.0],
     materialColors: {
       // Stem (gambo) — dark woody brown (wood color) + no emissive (to prevent it from glowing red)
       'mat_gambo_ciliegia': [0.25, 0.12, 0.05, 1.0],
@@ -160,7 +160,8 @@ export const BRAIN_STEPS: BrainStoryStep[] = [
     highlightAreas: [],
     cameraOrbit: '0deg 75deg 1.6m',
     cameraTarget: '0m 0.0m 0m',
-    duration: 10,
+    duration: 31,
+    audioUrl: '/audio/1-come funziona il tuo cervello.mp3',
   },
 
   // ── 2 ────────────────────────────────────────────────────────────────────────
@@ -172,7 +173,8 @@ export const BRAIN_STEPS: BrainStoryStep[] = [
     animationName: 'Action',
     cameraOrbit: '20deg 70deg 1.45m',
     cameraTarget: '0m 0.04m 0m',
-    duration: 8,
+    duration: 13,
+    audioUrl: '/audio/2-il gioco e la dopamina.mp3',
     overlay: { dopamineLevel: 'bassa' },
   },
 
@@ -182,9 +184,10 @@ export const BRAIN_STEPS: BrainStoryStep[] = [
     title: "L'inizio del processo",
     text: "Il processo parte dall'area tegmentale ventrale e arriva al nucleo accumbens, con l'obiettivo di elaborare la sensazione di ricompensa e spingerci all'azione. La cosa interessante è che questi messaggeri chimici si attivano già nel momento in cui prevediamo di ottenere un premio, creando una forte aspettativa.",
     highlightAreas: ['accumbens'],
-    cameraOrbit: '0deg 88deg 1.15m',
-    cameraTarget: '0m -0.04m 0m',
-    duration: 10,
+    cameraOrbit: '0deg 88deg 1.1m',
+    cameraTarget: '0m -0.06m 0m',
+    duration: 18,
+    audioUrl: "/audio/3-l'inizio del processo.mp3",
   },
 
   // ── 4 ────────────────────────────────────────────────────────────────────────
@@ -193,9 +196,10 @@ export const BRAIN_STEPS: BrainStoryStep[] = [
     title: "L'ippocampo",
     text: "Oltre a generare motivazione, la dopamina agisce come un potenziatore della memoria e delle connessioni tra i neuroni all'interno dell'ippocampo, fissando i ricordi piacevoli in modo molto profondo.",
     highlightAreas: ['ippocampo'],
-    cameraOrbit: '-15deg 95deg 1.15m',
-    cameraTarget: '0m -0.06m 0m',
-    duration: 9,
+    cameraOrbit: '-15deg 95deg 1.1m',
+    cameraTarget: '0m -0.08m 0m',
+    duration: 11,
+    audioUrl: "/audio/4-l'iippocampo.mp3",
   },
 
   // ── 5 ────────────────────────────────────────────────────────────────────────
@@ -204,9 +208,10 @@ export const BRAIN_STEPS: BrainStoryStep[] = [
     title: "Il ruolo dell'amigdala",
     text: "Contemporaneamente, coinvolge l'amigdala e la corteccia prefrontale per aggiungere una carica emotiva a queste esperienze e spingere la nostra mente a pianificare nuovi modi per ripetere quel comportamento gratificante.",
     highlightAreas: ['amygdala'],
-    cameraOrbit: '42deg 80deg 1.25m',
-    cameraTarget: '0m -0.04m 0m',
-    duration: 9,
+    cameraOrbit: '42deg 82deg 1.2m',
+    cameraTarget: '0m -0.06m 0m',
+    duration: 12,
+    audioUrl: "/audio/5-il ruolo dell'Amigdala.mp3",
   },
 
   // ── 6 ────────────────────────────────────────────────────────────────────────
@@ -215,9 +220,10 @@ export const BRAIN_STEPS: BrainStoryStep[] = [
     title: "L'aspettativa di vincita",
     text: "Quando si gioca a livello celebrale si attivano dunque, attraverso la dopamina, diverse aree del cervello che creano emozioni, piacere e ricordi molto forti. Non è la ricompensa in sé, ma l'aspettativa di una ricompensa che influenza in modo più potente le reazioni emotive e i ricordi. Il giocatore assocerà il rilascio della dopamina e questa sensazione piacevole e vorrà ripetere l'esperienza per gratificarsi. La parte della corteccia prefrontale — la parte razionale del nostro cervello — tende a sopirsi pur di vivere questa scarica piacevole di dopamina.",
     highlightAreas: ['accumbens', 'corteccia_inattiva'],
-    cameraOrbit: '10deg 73deg 1.5m',
-    cameraTarget: '0m 0.0m 0m',
-    duration: 13,
+    cameraOrbit: '10deg 75deg 1.5m',
+    cameraTarget: '0m -0.02m 0m',
+    duration: 34,
+    audioUrl: "/audio/6-l'aspettativa di vincita.mp3",
     overlay: { dopamineLevel: 'media' },
   },
 
@@ -231,7 +237,8 @@ export const BRAIN_STEPS: BrainStoryStep[] = [
     allRed: true,
     cameraOrbit: '0deg 75deg 1.6m',
     cameraTarget: '0m 0.0m 0m',
-    duration: 12,
+    duration: 21,
+    audioUrl: "/audio/7-il cortocircuito.mp3",
     overlay: { dopamineLevel: 'alta' },
   },
 
@@ -241,9 +248,10 @@ export const BRAIN_STEPS: BrainStoryStep[] = [
     title: "La psicologia dell'errore",
     text: 'Il gioco con vincita in denaro spesso crea un corto-circuito che è a tutti gli effetti un bug del nostro cervello. Parliamo del cosiddetto fenomeno del "Near-Miss" o "Quasi Vincita". Quando ci si avvicina ad una vincita, senza ottenerla, il cervello rilascia quasi la stessa dopamina di una vittoria reale. Questo ti convince erroneamente che il successo, la prossima vincita, sia vicina, spingendoti a giocare ancora. Invece, non si può influenzare il caso! Ricordalo sempre.',
     highlightAreas: [],
-    cameraOrbit: '15deg 70deg 1.5m',
-    cameraTarget: '0m 0.02m 0m',
-    duration: 13,
+    cameraOrbit: '15deg 68deg 1.45m',
+    cameraTarget: '0m 0.04m 0m',
+    duration: 32,
+    audioUrl: "/audio/8-la psicologia dell'errore.mp3",
   },
 
   // ── 9 ────────────────────────────────────────────────────────────────────────
@@ -254,7 +262,8 @@ export const BRAIN_STEPS: BrainStoryStep[] = [
     highlightAreas: [],
     cameraOrbit: '-10deg 72deg 1.7m',
     cameraTarget: '0m 0.0m 0m',
-    duration: 11,
+    duration: 20,
+    audioUrl: "/audio/9-le cause scientifiche del DGA.mp3",
     overlay: { icons: ['dna', 'house', 'heart'] },
   },
 
@@ -267,6 +276,7 @@ export const BRAIN_STEPS: BrainStoryStep[] = [
     allRed: false,
     cameraOrbit: '0deg 75deg 1.6m',
     cameraTarget: '0m 0.0m 0m',
-    duration: 9,
-  },
+    duration: 22,
+    audioUrl: "/audio/10-una-macchina-straordinaria.mp3",
+  }
 ];

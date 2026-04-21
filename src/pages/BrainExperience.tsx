@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, RotateCcw, MessageCircle, HelpCircle, Brain } from 'lucide-react';
+import { X, RotateCcw, BookOpen, HelpCircle, Brain } from 'lucide-react';
 import BrainIntro from '../components/brain/BrainIntro';
 import BrainViewer from '../components/brain/BrainViewer';
 import BrainStoryOverlay from '../components/brain/BrainStoryOverlay';
@@ -112,11 +112,11 @@ export default function BrainExperience() {
             </button>
 
             <button
-              onClick={() => navigate('/chatbot')}
+              onClick={() => navigate('/articles')}
               className="w-full flex items-center justify-center gap-2.5 bg-white/15 text-white font-semibold py-4 rounded-2xl border border-white/20 hover:bg-white/20 active:scale-95 transition-all"
             >
-              <MessageCircle className="w-5 h-5" />
-              Parla con l'assistente
+              <BookOpen className="w-5 h-5" />
+              Leggi i nostri articoli
             </button>
 
             <button

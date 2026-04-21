@@ -8,6 +8,7 @@ export interface BrainStoryStep {
   allRed?: boolean;
   animationName?: string;
   duration: number;
+  audioUrl?: string;
   overlay?: {
     /** Dopamine bar shown only when explicitly annotated in the script */
     dopamineLevel?: 'bassa' | 'media' | 'alta';

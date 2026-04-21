@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.2.0/model-viewer.min.js"></script>
+</head>
+<body>
+  <model-viewer id="mv" src="./public/models/cervello.glb"></model-viewer>
+  <script>
+    const mv = document.getElementById('mv');
+    mv.addEventListener('load', () => {
+      const node = mv.model.getNodeByName('ciliegie_g');
+      console.log('NODE TYPE:', typeof node);
+      console.log('SCALE:', node.scale);
+      node.scale = [0, 0, 0]; // does it work?
+    });
+  </script>
+</body>
+</html>
