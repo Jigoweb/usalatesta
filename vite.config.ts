@@ -1,6 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { readFileSync } from 'fs'
+
+const pkg = JSON.parse(readFileSync('./package.json', 'utf-8'))
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -14,6 +17,7 @@ export default defineConfig({
       includeAssets: ['favicon.svg', 'offline.html'],
       manifest: {
         id: '/app',
+        version: pkg.version,
         name: 'USA LA TESTA - Gioco Responsabile',
         short_name: 'USA LA TESTA',
         description: "App per la sensibilizzazione sul gioco d'azzardo responsabile",
