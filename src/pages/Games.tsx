@@ -21,9 +21,9 @@ const games = [
     icon: Clock,
     gradient: 'linear-gradient(105deg, #0B2A57 40%, #4195A4 100%)',
     delay: 0.2,
-    available: false,
-    route: null,
-    badge: null,
+    available: true,
+    route: '/games/labyrinth',
+    badge: 'Sensori',
   },
 ];
 
