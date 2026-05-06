@@ -36,8 +36,8 @@ export default function LabyrinthExperience() {
     >
       {/* Top Navigation Bar - Only visible during gameplay */}
       {phase === 'playing' && (
-        <div className="absolute top-0 inset-x-0 z-50 pt-safe pointer-events-none">
-          <div className="flex items-start justify-between px-4 pt-12 pb-2">
+        <div className="absolute top-0 inset-x-0 z-50 pointer-events-none">
+          <div className="flex items-start justify-between px-6 pt-6 pb-2">
             <button
               onClick={handleExit}
               className="pointer-events-auto flex items-center justify-center w-9 h-9 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-colors"

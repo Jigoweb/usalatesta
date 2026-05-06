@@ -138,9 +138,9 @@ export default function BrainExperience() {
       className="fixed inset-0 z-50 flex flex-col overflow-hidden"
       style={{ background: 'linear-gradient(180deg, #0a1628 0%, #12203a 100%)' }}
     >
-      {/* Header */}
-      <div className="absolute top-0 inset-x-0 z-30 pt-safe pointer-events-none">
-        <div className="flex items-start justify-between px-4 pt-12 pb-2">
+      {/* Top Navigation Bar */}
+      <div className="absolute top-0 inset-x-0 z-50 pointer-events-none">
+        <div className="flex items-start justify-between px-6 pt-6 pb-2">
           <button
             onClick={() => navigate('/games')}
             className="pointer-events-auto flex items-center justify-center w-9 h-9 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-colors"

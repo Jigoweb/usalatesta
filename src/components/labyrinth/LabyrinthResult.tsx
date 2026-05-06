@@ -25,6 +25,48 @@ export default function LabyrinthResult({ realTimeMs, onRestart, onExit }: Labyr
   const timeDifference = Math.abs(estimatedTime - realTimeSeconds);
   const isOverestimated = estimatedTime > realTimeSeconds;
 
+  const getResultMessage = () => {
+    // Se lo scostamento è entro i 9 secondi, consideriamo la stima positiva (Messaggio 1 e 2)
+    if (timeDifference < 10) {
+      // Alterniamo i messaggi positivi in base a un fattore casuale o semplicemente
+      // ne scegliamo uno in base allo scostamento per variare (es. scostamento pari/dispari)
+      if (timeDifference % 2 === 0) {
+        return (
+          <>
+            <span className="block font-bold text-white mb-2">Hai stimato correttamente il tempo di gioco.</span>
+            Essere consapevoli di quanto tempo passa è un buon segnale: mantenere il controllo aiuta a vivere il gioco come un'esperienza di puro divertimento.
+          </>
+        );
+      } else {
+        return (
+          <>
+            <span className="block font-bold text-white mb-2">Ottima percezione del tempo!</span>
+            Riuscire a monitorare la durata del gioco è un aspetto importante di un approccio responsabile e consapevole.
+          </>
+        );
+      }
+    } 
+    // Se lo scostamento è dai 10 secondi in su, consideriamo la stima sbagliata (Messaggio 3 e 4)
+    else {
+      // Se l'utente ha sovrastimato o sottostimato, possiamo variare il messaggio
+      if (isOverestimated) {
+        return (
+          <>
+            <span className="block font-bold text-white mb-2">La tua stima del tempo non era corretta.</span>
+            Il coinvolgimento nel gioco può alterare la percezione della durata: fare pause regolari aiuta a giocare in modo più consapevole.
+          </>
+        );
+      } else {
+        return (
+          <>
+            <span className="block font-bold text-white mb-2">Il tempo è passato più velocemente di quanto pensassi.</span>
+            Durante il gioco può capitare di perdere la percezione del tempo: fermarsi e riflettere aiuta a mantenere il controllo.
+          </>
+        );
+      }
+    }
+  };
+
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEstimatedTime(parseInt(e.target.value, 10));
   };
@@ -168,12 +210,7 @@ export default function LabyrinthResult({ realTimeMs, onRestart, onExit }: Labyr
                 className="mt-6 pt-6 border-t border-white/10"
               >
                 <p className="text-white/90 text-sm leading-relaxed text-center font-medium">
-                  {timeDifference <= 3 
-                    ? "Wow, hai un orologio svizzero in testa! La tua percezione è stata molto precisa."
-                    : isOverestimated
-                      ? `Hai percepito il tempo scorrere più lentamente. Ti è sembrato durare ${timeDifference} secondi in più del reale!`
-                      : `Il tempo è volato! Sei stato talmente concentrato che ti sono sfuggiti ${timeDifference} secondi.`
-                  }
+                  {getResultMessage()}
                 </p>
               </motion.div>
             </div>
