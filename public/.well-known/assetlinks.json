@@ -2,7 +2,7 @@
   "relation": ["delegate_permission/common.handle_all_urls"],
   "target": {
     "namespace": "android_app",
-    "package_name": "app.vercel.traeusalatesta0vr4.twa",
+    "package_name": "it.usa_la_testa.app.twa",
     "sha256_cert_fingerprints": ["81:89:40:18:6C:B0:77:51:07:2A:1B:49:A0:63:C2:0A:22:B4:3A:65:B4:E7:DD:05:BF:4C:B8:CF:B4:EC:04:8E",
   "17:48:CD:37:19:6C:A2:85:D8:B0:8A:7E:89:7D:36:C0:94:A7:B5:C9:48:C2:63:80:C8:75:A4:0D:28:82:13:3B"]
   }
