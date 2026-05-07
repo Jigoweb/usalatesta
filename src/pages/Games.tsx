@@ -102,19 +102,6 @@ export default function Games() {
         })}
       </div>
 
-      {/* Footer message */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.5 }}
-        className="px-4 mt-8"
-      >
-        <div className="bg-primary-blue/5 border-2 border-gray-200 rounded-2xl p-4">
-          <p className="text-gray-600 text-sm leading-relaxed">
-            Nuovi giochi interattivi saranno disponibili a breve per aiutarti a comprendere meglio i meccanismi del gioco responsabile.
-          </p>
-        </div>
-      </motion.div>
     </div>
   );
 }
