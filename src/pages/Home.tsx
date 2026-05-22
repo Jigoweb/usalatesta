@@ -12,7 +12,7 @@ import quizImg from '../assets/images/usa-la-testa_quizimg.PNG';
 import decalogoImg from '../assets/images/usa-la-testa_decalogo.png';
 import supportoImg from '../assets/images/usa-la-testa_supporto.png';
 import aComponentImg from '../assets/images/a_component.png';
-import loghiBalduzzi from '../assets/images/loghi-balduzzi.png';
+import loghiBalduzzi from '../assets/images/loghi-balduzzi.jpeg';
 
 export default function Home() {
   const navigate = useNavigate();
