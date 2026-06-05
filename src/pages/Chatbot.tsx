@@ -16,8 +16,6 @@ const PRIVACY_CONSENT_KEY = 'usalatesta_chat_privacy_consent';
 const WELCOME_MESSAGE =
   'Ciao! Sono il tuo assistente virtuale di **Usa la Testa**. Sono qui per aiutarti con informazioni sul gioco responsabile. Come posso aiutarti oggi?';
 
-const VEGA_USER = import.meta.env.VITE_VEGA_USER ?? '';
-const VEGA_PASSWORD = import.meta.env.VITE_VEGA_PASSWORD ?? '';
 const VEGA_ASSISTANT_ID = Number(import.meta.env.VITE_VEGA_ASSISTANT_ID ?? '310');
 const CHATBOT_COMING_SOON = import.meta.env.VITE_CHATBOT_COMING_SOON === 'true';
 
@@ -120,12 +118,8 @@ export default function Chatbot() {
   }, [onFinalMessage, handleFinalMessage]);
 
   useEffect(() => {
-    if (!VEGA_USER || !VEGA_PASSWORD) {
-      setAuthError('Configura VITE_VEGA_USER e VITE_VEGA_PASSWORD in .env');
-      return;
-    }
     let cancelled = false;
-    ensureToken(VEGA_USER, VEGA_PASSWORD)
+    ensureToken()
       .then(async (accessToken) => {
         if (!cancelled) {
           if (import.meta.env.DEV)

@@ -38,17 +38,12 @@ function clearStoredToken() {
   sessionStorage.removeItem('vega_token');
 }
 
-/** Get access token (email + password). Uses application/x-www-form-urlencoded. */
-export async function getAccessToken(username: string, password: string): Promise<TokenResponse> {
-  const body = new URLSearchParams({
-    username,
-    password,
-  });
-  const res = await fetch(`${BASE_URL}/api/v1/auth/token`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: body.toString(),
-  });
+/**
+ * Get access token via server-side proxy.
+ * Credentials never leave the server — client only receives the short-lived token.
+ */
+export async function getAccessToken(): Promise<TokenResponse> {
+  const res = await fetch('/api/vega-token', { method: 'POST' });
   if (!res.ok) {
     const err = await res.text();
     throw new Error(err || `Auth failed: ${res.status}`);
@@ -61,19 +56,18 @@ export async function getAccessToken(username: string, password: string): Promis
     expires_in: (raw.expires_in ?? raw.expiresIn) as number | undefined,
   };
   if (!data.access_token) {
-    throw new Error('Risposta API senza access_token. Controlla formato risposta.');
+    throw new Error('Risposta API senza access_token.');
   }
   storeToken(data);
   return data;
 }
 
-/** Refresh access token using refresh_token. */
+/** Refresh access token via server-side proxy. */
 export async function refreshAccessToken(refreshToken: string): Promise<TokenResponse> {
-  const body = new URLSearchParams({ refresh_token: refreshToken });
-  const res = await fetch(`${BASE_URL}/api/v1/auth/refresh`, {
+  const res = await fetch('/api/vega-refresh', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: body.toString(),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refresh_token: refreshToken }),
   });
   if (!res.ok) {
     clearStoredToken();
@@ -91,11 +85,8 @@ export async function refreshAccessToken(refreshToken: string): Promise<TokenRes
   return data;
 }
 
-/** Ensure we have a valid access token (from cache or refresh). */
-export async function ensureToken(
-  username: string,
-  password: string
-): Promise<string> {
+/** Ensure we have a valid access token (from cache, refresh, or new login via proxy). */
+export async function ensureToken(): Promise<string> {
   const stored = getStoredToken();
   if (stored?.access_token) {
     if (stored.refresh_token) {
@@ -103,13 +94,13 @@ export async function ensureToken(
         const refreshed = await refreshAccessToken(stored.refresh_token);
         return refreshed.access_token;
       } catch {
-        // fallback to login
+        // fallback to new login
       }
     } else {
       return stored.access_token;
     }
   }
-  const data = await getAccessToken(username, password);
+  const data = await getAccessToken();
   return data.access_token;
 }
 
