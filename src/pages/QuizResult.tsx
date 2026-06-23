@@ -145,7 +145,7 @@ export default function QuizResult() {
           {result.level === 'problematic' || result.level === 'moderate' ? (
             isEmbed ? (
               <a
-                href="https://usa-la-testa.it/support"
+                href="https://www.usa-la-testa.it/informazioni-utili-2/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg transition-colors flex items-center justify-center"
