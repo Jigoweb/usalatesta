@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { getRiskLevel } from '../data/quiz';
 import { Home, Phone } from 'lucide-react';
+import { useIsEmbed } from '../hooks/useIsEmbed';
 
 export default function QuizResult() {
   const navigate = useNavigate();
+  const { isEmbed } = useIsEmbed();
   const [score, setScore] = useState(0);
   const [result, setResult] = useState<ReturnType<typeof getRiskLevel>>({ level: 'none', label: '', color: '', textColor: '' });
   const containerRef = useRef<HTMLDivElement>(null);
@@ -27,7 +29,7 @@ export default function QuizResult() {
       setScore(scoreNum);
       setResult(getRiskLevel(scoreNum));
     } else {
-      navigate('/quiz');
+      navigate(`/quiz${isEmbed ? '?embed=true' : ''}`);
     }
     
     // Also reset scroll after a short delay to ensure it works
@@ -80,11 +82,13 @@ export default function QuizResult() {
   return (
     <div ref={containerRef} className="min-h-screen bg-slate-50 pb-20">
       {/* Header */}
-      <div className="p-4 flex items-center bg-white shadow-sm sticky top-0 z-50">
-        <button onClick={() => navigate('/quiz')} className="mr-4">
-          <ChevronLeft className="text-primary-blue" />
-        </button>
-      </div>
+      {!isEmbed && (
+        <div className="p-4 flex items-center bg-white shadow-sm sticky top-0 z-50">
+          <button onClick={() => navigate('/quiz')} className="mr-4">
+            <ChevronLeft className="text-primary-blue" />
+          </button>
+        </div>
+      )}
 
       {/* Content Container */}
       <div className="px-4 pt-8 pb-8 max-w-2xl mx-auto">
@@ -139,22 +143,46 @@ export default function QuizResult() {
         {/* Action Buttons */}
         <div className="space-y-3">
           {result.level === 'problematic' || result.level === 'moderate' ? (
-            <button
-              onClick={() => navigate('/support')}
-              className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg transition-colors flex items-center justify-center"
-            >
-              <Phone className="mr-2" size={20} />
-              Richiedi Supporto
-            </button>
+            isEmbed ? (
+              <a
+                href="https://usa-la-testa.it/support"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg transition-colors flex items-center justify-center"
+              >
+                <Phone className="mr-2" size={20} />
+                Richiedi Supporto
+              </a>
+            ) : (
+              <button
+                onClick={() => navigate('/support')}
+                className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg transition-colors flex items-center justify-center"
+              >
+                <Phone className="mr-2" size={20} />
+                Richiedi Supporto
+              </button>
+            )
           ) : null}
           
-          <button
-            onClick={() => navigate('/home')}
-            className="w-full py-4 border-2 border-primary-blue text-primary-blue font-bold rounded-xl hover:bg-primary-blue/5 transition-colors flex items-center justify-center"
-          >
-            <Home className="mr-2" size={20} />
-            Torna alla Home
-          </button>
+          {isEmbed ? (
+            <a
+              href="https://usa-la-testa.it"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-4 border-2 border-primary-blue text-primary-blue font-bold rounded-xl hover:bg-primary-blue/5 transition-colors flex items-center justify-center"
+            >
+              <Home className="mr-2" size={20} />
+              Vai al sito web
+            </a>
+          ) : (
+            <button
+              onClick={() => navigate('/home')}
+              className="w-full py-4 border-2 border-primary-blue text-primary-blue font-bold rounded-xl hover:bg-primary-blue/5 transition-colors flex items-center justify-center"
+            >
+              <Home className="mr-2" size={20} />
+              Torna alla Home
+            </button>
+          )}
         </div>
       </div>
     </div>

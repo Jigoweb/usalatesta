@@ -5,6 +5,21 @@
       "headers": [
         { "key": "Content-Type", "value": "application/json" }
       ]
+    },
+    {
+      "source": "/((?!quiz).*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Content-Security-Policy", "value": "frame-ancestors 'self';" }
+      ]
+    },
+    {
+      "source": "/quiz(.*)",
+      "headers": [
+        { "key": "Content-Security-Policy", "value": "frame-ancestors *;" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" }
+      ]
     }
   ],
   "rewrites": [

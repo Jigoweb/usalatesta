@@ -5,9 +5,11 @@ import { ChevronLeft } from 'lucide-react';
 import { QUIZ_QUESTIONS, SCORING } from '../data/quiz';
 import { QuizAnswer } from '../types';
 import quizImg from '../assets/images/usa-la-testa_quizimg.PNG';
+import { useIsEmbed } from '../hooks/useIsEmbed';
 
 export default function Quiz() {
   const navigate = useNavigate();
+  const { isEmbed } = useIsEmbed();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [showSummary, setShowSummary] = useState(false);
@@ -68,7 +70,12 @@ export default function Quiz() {
     const totalScore = answers.reduce((acc, curr) => acc + curr.value, 0);
     // In a real app, save to context or local storage
     localStorage.setItem('usalatesta_last_quiz_score', totalScore.toString());
-    navigate('/quiz/result');
+    
+    if (isEmbed) {
+      navigate(`/quiz/result?embed=true`);
+    } else {
+      navigate('/quiz/result');
+    }
   };
 
   const currentQuestion = QUIZ_QUESTIONS[currentIndex];
@@ -77,9 +84,11 @@ export default function Quiz() {
     return (
       <div className="min-h-screen bg-slate-50 p-6 pb-24">
         <div className="flex items-center mb-6">
-          <button onClick={() => setShowSummary(false)} className="mr-4">
-            <ChevronLeft className="text-primary-blue" />
-          </button>
+          {!isEmbed && (
+            <button onClick={() => setShowSummary(false)} className="mr-4">
+              <ChevronLeft className="text-primary-blue" />
+            </button>
+          )}
           <h1 className="text-2xl font-bold text-primary-blue">Riepilogo</h1>
         </div>
 
@@ -124,9 +133,11 @@ export default function Quiz() {
     <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* Header */}
       <div className="p-4 flex items-center bg-white sticky top-0 z-50 shadow-sm">
-        <button onClick={() => navigate('/home')} className="mr-4">
-          <ChevronLeft className="text-primary-blue" />
-        </button>
+        {!isEmbed && (
+          <button onClick={() => navigate('/home')} className="mr-4">
+            <ChevronLeft className="text-primary-blue" />
+          </button>
+        )}
         <div className="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
           <div 
             className="bg-primary-blue h-full transition-all duration-300"
