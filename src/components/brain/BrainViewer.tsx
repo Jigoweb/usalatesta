@@ -288,6 +288,9 @@ export default function BrainViewer({ step, onLoad, onARStatus }: BrainViewerPro
   }, []);
 
   // ── Render ───────────────────────────────────────────────────────────────────
+  // We determine if we're on iOS (including iPadOS).
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
   return (
     <div className="relative w-full h-full">
       {/* @ts-ignore — custom element registered by @google/model-viewer import */}
@@ -322,7 +325,7 @@ export default function BrainViewer({ step, onLoad, onARStatus }: BrainViewerPro
             top: '3rem',
             right: '1rem',
             zIndex: 10,
-            display: 'flex',
+            display: isIOS ? 'none' : 'flex', // Nascondiamo il bottone nativo di model-viewer su iOS
             alignItems: 'center',
             gap: '0.5rem',
             background: 'rgba(255,255,255,0.18)',
@@ -348,6 +351,36 @@ export default function BrainViewer({ step, onLoad, onARStatus }: BrainViewerPro
           Visualizza in AR
         </button>
       </model-viewer>
+
+      {/* Pulsante custom (solo per iOS) fuori dallo scope di model-viewer per forzare il download dell'USDZ */}
+      {isIOS && (
+        <a
+          href="/models/cervello.usdz"
+          rel="ar"
+          className="absolute z-20 flex items-center gap-2 text-white text-sm font-semibold cursor-pointer"
+          style={{
+            top: '3rem',
+            right: '1rem',
+            background: 'rgba(255,255,255,0.18)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            padding: '0.625rem 1rem',
+            borderRadius: '9999px',
+            border: '1px solid rgba(255,255,255,0.28)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.35)',
+            fontFamily: 'inherit',
+            textDecoration: 'none'
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+            <path d="M2 17l10 5 10-5" />
+            <path d="M2 12l10 5 10-5" />
+          </svg>
+          Visualizza in AR
+        </a>
+      )}
     </div>
   );
 }

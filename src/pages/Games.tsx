@@ -16,7 +16,7 @@ const games = [
   },
   {
     id: 2,
-    title: 'Labirinth',
+    title: 'Labyrinth',
     subtitle: 'Quanto tempo è passato?',
     icon: Clock,
     gradient: 'linear-gradient(105deg, #0B2A57 40%, #4195A4 100%)',

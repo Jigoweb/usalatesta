@@ -1,7 +1,7 @@
-# Piano Tecnico di Implementazione — "Labirinth: Quanto Tempo è Passato?"
+# Piano Tecnico di Implementazione — "Labyrinth: Quanto Tempo è Passato?"
 
 **Progetto:** USA LA TESTA — PWA Gioco Responsabile
-**Feature:** Esperienza Interattiva "Labirinth" (Percezione del Tempo)
+**Feature:** Esperienza Interattiva "Labyrinth" (Percezione del Tempo)
 **Data:** 28 Aprile 2026
 **Stack:** React 18 + TypeScript + Tailwind CSS + Framer Motion + `generate-maze`
 
@@ -9,7 +9,7 @@
 
 ## 1. Obiettivo dell'Esperienza
 
-"Labirinth" è un mini-gioco interattivo (PWA) progettato per dimostrare tangibilmente come un'attività altamente immersiva possa distorcere la percezione del tempo. 
+"Labyrinth" è un mini-gioco interattivo (PWA) progettato per dimostrare tangibilmente come un'attività altamente immersiva possa distorcere la percezione del tempo. 
 L'utente dovrà guidare una sfera in un labirinto 2D (generato proceduralmente) inclinando fisicamente lo smartphone (Giroscopio). Al termine del livello, prima di mostrare il tempo effettivo impiegato, verrà richiesto all'utente di **stimare** il tempo trascorso. Il confronto tra tempo reale e percepito fungerà da parallelismo educativo con le sessioni di gioco d'azzardo.
 
 ---

@@ -77,7 +77,7 @@ export default function LabyrinthIntro({ onStart, onExit }: LabyrinthIntroProps)
             Mini-Gioco Sensoriale
           </p>
           <h1 className="text-4xl font-bold text-white mb-3 leading-tight">
-            Labirinth
+            Labyrinth
           </h1>
           <p className="text-white/70 text-base leading-relaxed max-w-xs mx-auto">
             Guida la sfera nel labirinto inclinando il telefono. Alla fine, ti chiederemo di stimare il tempo trascorso.
