@@ -4,6 +4,9 @@ import LabyrinthIntro from '../components/labyrinth/LabyrinthIntro';
 import LabyrinthGame from '../components/labyrinth/LabyrinthGame';
 import LabyrinthResult from '../components/labyrinth/LabyrinthResult';
 import { X } from 'lucide-react';
+import { trackEvent } from '../utils/analytics';
+
+const EXPERIENCE_NAME = 'labyrinth';
 
 type ExperiencePhase = 'intro' | 'playing' | 'result';
 
@@ -13,10 +16,12 @@ export default function LabyrinthExperience() {
   const [realTimeMs, setRealTimeMs] = useState<number>(0);
 
   const handleStart = () => {
+    trackEvent('experience_start', { experience_name: EXPERIENCE_NAME });
     setPhase('playing');
   };
 
   const handleGameComplete = (time: number) => {
+    trackEvent('experience_end', { experience_name: EXPERIENCE_NAME });
     setRealTimeMs(time);
     setPhase('result');
   };

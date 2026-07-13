@@ -5,6 +5,7 @@ import { ARTICLES } from '../data/articles';
 import CerchiAiuto from '../components/CerchiAiuto';
 import { ArticleDetailSkeleton } from '../components/ArticleSkeletons';
 import { ImageWithSkeleton } from '../components/ImageWithSkeleton';
+import { trackEvent } from '../utils/analytics';
 
 export default function ArticleDetail() {
   const { id } = useParams();
@@ -194,8 +195,8 @@ export default function ArticleDetail() {
                     </div>
                 ))}
             </div>
-             <button 
-               onClick={() => navigate('/articles')} 
+             <button
+               onClick={() => { trackEvent('blog_cta_leggiAltro'); navigate('/articles'); }}
                className="w-full mt-8 py-4 border-2 border-gray-100 rounded-2xl text-gray-500 font-bold text-sm hover:bg-gray-50 hover:text-gray-800 transition-all uppercase tracking-wide"
              >
                 Leggi altro

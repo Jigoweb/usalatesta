@@ -6,6 +6,7 @@ import { ARTICLES } from '../data/articles';
 import { TIPS } from '../data/tips';
 import { HomeArticleSkeleton } from '../components/ArticleSkeletons';
 import { ImageWithSkeleton } from '../components/ImageWithSkeleton';
+import { trackEvent } from '../utils/analytics';
 
 // Import images
 import quizImg from '../assets/images/usa-la-testa_quizimg.PNG';
@@ -98,8 +99,8 @@ export default function Home() {
         {/* Main Cards Grid */}
         <div className="grid grid-cols-2 gap-4 relative z-10">
           {/* Quiz Card - Full Width */}
-          <div 
-            onClick={() => setShowQuizIntro(true)}
+          <div
+            onClick={() => { trackEvent('test_tap'); setShowQuizIntro(true); }}
             className="col-span-2 rounded-2xl relative overflow-hidden h-32 cursor-pointer shadow-md group transition-transform hover:scale-[1.01]"
           >
             {/* Background Layer */}
@@ -165,8 +166,8 @@ export default function Home() {
           </div>
 
           {/* Supporto Card */}
-          <div 
-            onClick={() => navigate('/support')}
+          <div
+            onClick={() => { trackEvent('supporto_tapCTA'); navigate('/support'); }}
             className="rounded-2xl relative overflow-hidden h-40 cursor-pointer shadow-md group transition-transform hover:scale-[1.01]"
           >
             {/* Background Layer */}
@@ -311,7 +312,7 @@ export default function Home() {
               Compila anonimamente un breve test utile per comprendere meglio il tuo rapporto con il gioco.
             </p>
             <button
-              onClick={() => navigate('/quiz')}
+              onClick={() => { trackEvent('test_start'); navigate('/quiz'); }}
               className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg hover:bg-blue-900 transition-colors"
             >
               Inizia il test

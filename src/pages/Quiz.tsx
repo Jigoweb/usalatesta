@@ -6,6 +6,7 @@ import { QUIZ_QUESTIONS, SCORING } from '../data/quiz';
 import { QuizAnswer } from '../types';
 import quizImg from '../assets/images/usa-la-testa_quizimg.PNG';
 import { useIsEmbed } from '../hooks/useIsEmbed';
+import { trackEvent } from '../utils/analytics';
 
 export default function Quiz() {
   const navigate = useNavigate();
@@ -40,7 +41,8 @@ export default function Quiz() {
 
   const handleAnswer = (value: 0 | 1 | 2 | 3) => {
     setDirection(value > 1 ? 1 : -1); // Positive answers slide right, negative left
-    
+    trackEvent('test_progress', { step_number: currentIndex + 1 });
+
     setTimeout(() => {
       const newAnswers = [...answers];
       const existingIndex = newAnswers.findIndex(a => a.questionId === QUIZ_QUESTIONS[currentIndex].id);
@@ -70,7 +72,8 @@ export default function Quiz() {
     const totalScore = answers.reduce((acc, curr) => acc + curr.value, 0);
     // In a real app, save to context or local storage
     localStorage.setItem('usalatesta_last_quiz_score', totalScore.toString());
-    
+    trackEvent('test_end', { score: totalScore });
+
     if (isEmbed) {
       navigate(`/quiz/result?embed=true`);
     } else {

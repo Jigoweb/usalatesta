@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
+import { trackEvent } from '../utils/analytics';
 
 const RULES = [
   "Al centro della mia vita non c’è solo il gioco d’azzardo. Non dimentico di coltivare i miei interessi e di dedicare tempo ai miei familiari e amici.",
@@ -50,7 +51,7 @@ export default function Decalogo() {
           Se senti che alcuni di questi comportamenti ti rispecchiano, puoi fare un breve test anonimo di autovalutazione per comprendere meglio il tuo rapporto con il gioco.
         </p>
         <button
-          onClick={() => setShowQuizIntro(true)}
+          onClick={() => { trackEvent('test_tap'); setShowQuizIntro(true); }}
           className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg hover:bg-blue-900 transition-colors"
         >
           Vai al test
@@ -67,7 +68,7 @@ export default function Decalogo() {
               Compila anonimamente un breve test utile per comprendere meglio il tuo rapporto con il gioco.
             </p>
             <button
-              onClick={() => navigate('/quiz')}
+              onClick={() => { trackEvent('test_start'); navigate('/quiz'); }}
               className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg hover:bg-blue-900 transition-colors"
             >
               Inizia il test

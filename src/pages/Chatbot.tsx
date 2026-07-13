@@ -5,6 +5,7 @@ import { ensureToken, getAssistant, extractFAQSuggestions } from '../lib/vega-ap
 import { useVegaChat } from '../hooks/useVegaChat';
 import ComingSoonOverlay from '../components/ComingSoonOverlay';
 import aComponentImg from '../assets/images/a_component.png';
+import { trackEvent } from '../utils/analytics';
 
 interface Message {
   id: string;
@@ -195,6 +196,8 @@ export default function Chatbot() {
     const messageText = text || input.trim();
     if (!messageText) return;
     if (!isConnected) return;
+
+    trackEvent('chat_messageSend');
 
     const userMessage: Message = {
       id: Date.now().toString(),

@@ -1,6 +1,9 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import type { BrainExperienceState } from '../types/brain';
 import { BRAIN_STEPS } from '../data/brainStory';
+import { trackEvent } from '../utils/analytics';
+
+const EXPERIENCE_NAME = 'cervello';
 
 export function useBrainExperience() {
   const [state, setState] = useState<BrainExperienceState>({
@@ -119,6 +122,7 @@ export function useBrainExperience() {
   }, [state.isPlaying, state.currentStep, state.phase, scheduleAutoAdvance, clearTimer]);
 
   const startExperience = useCallback(() => {
+    trackEvent('experience_start', { experience_name: EXPERIENCE_NAME });
     setState((prev) => ({
       ...prev,
       phase: 'experience',
@@ -160,6 +164,7 @@ export function useBrainExperience() {
   }, []);
 
   const restart = useCallback(() => {
+    trackEvent('experience_start', { experience_name: EXPERIENCE_NAME });
     clearTimer();
     setState((prev) => ({
       ...prev,
@@ -168,6 +173,15 @@ export function useBrainExperience() {
       phase: 'experience',
     }));
   }, [clearTimer]);
+
+  // Traccia la fine dell'esperienza quando la fase transita a 'complete'
+  const prevPhaseRef = useRef(state.phase);
+  useEffect(() => {
+    if (prevPhaseRef.current !== 'complete' && state.phase === 'complete') {
+      trackEvent('experience_end', { experience_name: EXPERIENCE_NAME });
+    }
+    prevPhaseRef.current = state.phase;
+  }, [state.phase]);
 
   return {
     state,

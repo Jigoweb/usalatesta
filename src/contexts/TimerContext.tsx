@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { TimerState, TimerHistory } from '../types';
+import { trackEvent } from '../utils/analytics';
 
 const STORAGE_KEY = 'usalatesta_timer_state';
 const HISTORY_KEY = 'usalatesta_timer_history';
@@ -157,6 +158,8 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
   }, [timerState.isActive, timerState.isPaused]);
 
   const startTimer = useCallback((minutes: number) => {
+    trackEvent('countdown_start', { timing_set: minutes });
+
     // Request notification permission on first timer start
     if ('Notification' in window) {
       if (Notification.permission === 'granted') {
@@ -214,10 +217,14 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const stopTimer = useCallback(() => {
-    setTimerState(DEFAULT_STATE);
+    setTimerState((prev) => {
+      if (prev.isActive) trackEvent('countdown_end', { end_type: 'stopped' });
+      return DEFAULT_STATE;
+    });
   }, []);
 
   const completeTimer = (finalState: TimerState) => {
+    trackEvent('countdown_end', { end_type: 'ended' });
     const newHistoryItem: TimerHistory = {
       id: Date.now().toString(),
       duration: finalState.duration,

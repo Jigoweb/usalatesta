@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MapPin } from 'lucide-react';
 import telVerdeImg from '../assets/images/immagine-numero.png';
 import tel661501Img from '../assets/images/numero-verde-661501.jpg';
+import { trackEvent } from '../utils/analytics';
 
 interface CerchiAiutoProps {
   /** Callback quando si clicca "Scopri i Centri Aiuto". Se non passato, naviga a /support/centers. */
@@ -47,6 +48,7 @@ export default function CerchiAiuto({
   const navigate = useNavigate();
 
   const handleScopriCentri = () => {
+    trackEvent('supporto_scopriCentri');
     if (onScopriCentriClick) {
       onScopriCentriClick();
     } else {
