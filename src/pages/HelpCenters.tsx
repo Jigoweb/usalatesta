@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Search, MapPin, Phone, Mail } from 'lucide-react';
 import centersData from '../dati/C_17_bancheDati_32_0_0_file.json';
 import { konsumerCenters } from '../dati/konsumerData';
-import { trackEvent } from '../utils/analytics';
+import { trackOutboundClick } from '../utils/analytics';
 
 // ─── SerD data ────────────────────────────────────────────────────────────────
 // Raw JSON fields: __EMPTY_3=Regione, __EMPTY_9=Comune, __EMPTY_6=SerD code,
@@ -163,7 +163,14 @@ export default function HelpCenters() {
                   {isKonsumer && center.phoneGreen && (
                     <a
                       href={`tel:${center.phoneGreen.replace(/\s/g, '')}`}
-                      onClick={() => trackEvent('supporto_chiamaCentro', { regione: center.region, comune: center.city })}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        trackOutboundClick(
+                          'supporto_chiamaCentro',
+                          { regione: center.region, comune: center.city },
+                          `tel:${center.phoneGreen!.replace(/\s/g, '')}`
+                        );
+                      }}
                       className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors group"
                     >
                       <Phone size={18} className="mr-3 text-emerald-600 flex-shrink-0" />
@@ -178,7 +185,14 @@ export default function HelpCenters() {
                   {center.phone && (
                     <a
                       href={`tel:${center.phone.replace(/\s/g, '')}`}
-                      onClick={() => trackEvent('supporto_chiamaCentro', { regione: center.region, comune: center.city })}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        trackOutboundClick(
+                          'supporto_chiamaCentro',
+                          { regione: center.region, comune: center.city },
+                          `tel:${center.phone!.replace(/\s/g, '')}`
+                        );
+                      }}
                       className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors group"
                     >
                       <Phone size={18} className="mr-3 text-primary-blue flex-shrink-0" />
@@ -207,7 +221,15 @@ export default function HelpCenters() {
                     href={mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={() => trackEvent('supporto_vediMaps', { regione: center.region, comune: center.city })}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      trackOutboundClick(
+                        'supporto_vediMaps',
+                        { regione: center.region, comune: center.city },
+                        mapsUrl,
+                        { target: '_blank' }
+                      );
+                    }}
                     className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors group"
                   >
                     <MapPin size={18} className="mr-3 mt-0.5 text-primary-blue flex-shrink-0" />

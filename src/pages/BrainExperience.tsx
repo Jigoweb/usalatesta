@@ -7,6 +7,7 @@ import BrainViewer from '../components/brain/BrainViewer';
 import BrainStoryOverlay from '../components/brain/BrainStoryOverlay';
 import { useBrainExperience } from '../hooks/useBrainExperience';
 import { BRAIN_LAYOUT } from '../data/brainStory';
+import { trackEvent } from '../utils/analytics';
 
 export default function BrainExperience() {
   const navigate = useNavigate();
@@ -104,7 +105,10 @@ export default function BrainExperience() {
             className="w-full max-w-xs space-y-3"
           >
             <button
-              onClick={() => navigate('/support')}
+              onClick={() => {
+                trackEvent('supporto_tapCTA');
+                navigate('/support');
+              }}
               className="w-full flex items-center justify-center gap-2.5 bg-white text-slate-900 font-bold py-4 rounded-2xl shadow-xl hover:bg-white/90 active:scale-95 transition-all"
             >
               <HelpCircle className="w-5 h-5" />

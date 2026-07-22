@@ -27,6 +27,7 @@ export default function LabyrinthExperience() {
   };
 
   const handleRestart = () => {
+    trackEvent('experience_start', { experience_name: EXPERIENCE_NAME });
     setPhase('playing');
   };
 

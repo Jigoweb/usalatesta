@@ -4,6 +4,7 @@ import { ChevronLeft } from 'lucide-react';
 import { getRiskLevel } from '../data/quiz';
 import { Home, Phone } from 'lucide-react';
 import { useIsEmbed } from '../hooks/useIsEmbed';
+import { trackEvent } from '../utils/analytics';
 
 export default function QuizResult() {
   const navigate = useNavigate();
@@ -148,6 +149,7 @@ export default function QuizResult() {
                 href="https://www.usa-la-testa.it/informazioni-utili-2/"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackEvent('supporto_tapCTA')}
                 className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg transition-colors flex items-center justify-center"
               >
                 <Phone className="mr-2" size={20} />
@@ -155,7 +157,7 @@ export default function QuizResult() {
               </a>
             ) : (
               <button
-                onClick={() => navigate('/support')}
+                onClick={() => { trackEvent('supporto_tapCTA'); navigate('/support'); }}
                 className="w-full py-4 bg-primary-blue text-white font-bold rounded-xl shadow-lg transition-colors flex items-center justify-center"
               >
                 <Phone className="mr-2" size={20} />

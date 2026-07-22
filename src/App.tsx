@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { TimerProvider } from './contexts/TimerContext';
 import Layout from './components/Layout';
+import AnalyticsPageViews from './components/AnalyticsPageViews';
 import Splash from './pages/Splash';
 import Home from './pages/Home';
 import Quiz from './pages/Quiz';
@@ -21,6 +22,7 @@ function App() {
   return (
     <TimerProvider>
       <BrowserRouter>
+        <AnalyticsPageViews />
         <Routes>
           <Route path="/" element={<Splash />} />
           
