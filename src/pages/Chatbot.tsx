@@ -1,358 +1,196 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Send, MessageSquare } from 'lucide-react';
-import { ensureToken, getAssistant, extractFAQSuggestions } from '../lib/vega-api';
-import { useVegaChat } from '../hooks/useVegaChat';
+import { MessageSquare, ShieldCheck } from 'lucide-react';
 import ComingSoonOverlay from '../components/ComingSoonOverlay';
 
-interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-}
-
-const FALLBACK_SUGGESTIONS = [
-  'Cosa posso fare oggi?',
-  'Come posso gestire meglio il mio tempo?',
-  'Dammi consigli per il gioco responsabile',
-  'Come riconosco i segnali di allarme?',
-  'Quali sono le risorse disponibili?',
-  'Come posso aiutare qualcuno che conosco?',
-];
-
-const VEGA_USER = import.meta.env.VITE_VEGA_USER ?? '';
-const VEGA_PASSWORD = import.meta.env.VITE_VEGA_PASSWORD ?? '';
-const VEGA_ASSISTANT_ID = Number(import.meta.env.VITE_VEGA_ASSISTANT_ID ?? '310');
+const PRIVACY_CONSENT_KEY = 'usalatesta_chat_privacy_consent';
 const CHATBOT_COMING_SOON = import.meta.env.VITE_CHATBOT_COMING_SOON === 'true';
 
-/** Simple markdown renderer: converts **bold** to <strong>bold</strong> */
-function renderMarkdown(text: string): React.ReactNode {
-  const parts: React.ReactNode[] = [];
-  let lastIndex = 0;
-  const regex = /\*\*([^*]+)\*\*/g;
-  let match;
+const ASSET_BASE =
+  import.meta.env.VITE_USALATESTA_ASSET_BASE ??
+  'https://blue-grass-07f595203.7.azurestaticapps.net';
+const TOKEN_URL =
+  import.meta.env.VITE_USALATESTA_TOKEN_URL ??
+  'https://novoapim-dev-001.azure-api.net/usalatesta/generate';
+const PARTNER_KEY = import.meta.env.VITE_USALATESTA_PARTNER_KEY ?? '';
+const USE_MOCK = import.meta.env.VITE_USALATESTA_USE_MOCK === 'true';
 
-  while ((match = regex.exec(text)) !== null) {
-    // Add text before the match
-    if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index));
+const STYLE_ID = 'usalatesta-widget-css';
+const SCRIPT_ID = 'usalatesta-widget-js';
+
+const DEFAULT_QUICK_ACTIONS = [
+  'Come imposto un limite di spesa?',
+  'Quali sono i segnali di gioco problematico?',
+];
+
+declare global {
+  interface Window {
+    UsalatestaConfig?: {
+      useMockTransport: boolean;
+      directLineTokenUrl: string;
+      partnerKey: string;
+      sendStartConversationEvent: boolean;
+      locale?: string;
+      quickActions?: string[];
+      enableVoice?: boolean;
+      mountSelector?: string;
+    };
+  }
+}
+
+function parseQuickActions(): string[] {
+  const raw = import.meta.env.VITE_USALATESTA_QUICK_ACTIONS;
+  if (!raw?.trim()) return DEFAULT_QUICK_ACTIONS;
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (Array.isArray(parsed) && parsed.every((x) => typeof x === 'string')) {
+      return parsed;
     }
-    // Add bold text
-    parts.push(<strong key={match.index}>{match[1]}</strong>);
-    lastIndex = regex.lastIndex;
+  } catch {
+    /* fall through */
   }
-
-  // Add remaining text
-  if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex));
-  }
-
-  return parts.length > 0 ? <>{parts}</> : text;
+  return DEFAULT_QUICK_ACTIONS;
 }
 
 export default function Chatbot() {
   const navigate = useNavigate();
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const [token, setToken] = useState<string | null>(null);
-  const [authError, setAuthError] = useState<string | null>(null);
-  const [suggestions, setSuggestions] = useState<string[]>(FALLBACK_SUGGESTIONS);
-  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [hasConsent, setHasConsent] = useState(
+    () => localStorage.getItem(PRIVACY_CONSENT_KEY) === 'true'
+  );
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  const handleFinalMessage = useCallback((text: string) => {
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: Date.now().toString(),
-        role: 'assistant',
-        content: text,
-        timestamp: new Date(),
-      },
-    ]);
-    setIsWaitingForResponse(false);
-  }, []);
-
-  const onVegaError = useCallback((msg: string) => {
-    setAuthError((prev) => prev || msg);
-  }, []);
-  const onVegaConnected = useCallback(() => {
-    setAuthError(null);
-  }, []);
-
-  const {
-    connect,
-    disconnect,
-    sendMessage,
-    isConnected,
-    isConnecting,
-    error: wsError,
-    streamingText,
-    clearStreaming,
-    onFinalMessage,
-  } = useVegaChat({
-    accessToken: token ?? '',
-    assistantId: VEGA_ASSISTANT_ID,
-    onError: onVegaError,
-    onConnected: onVegaConnected,
-  });
+  const isConfigured = USE_MOCK || Boolean(PARTNER_KEY.trim());
 
   useEffect(() => {
-    const unsub = onFinalMessage(handleFinalMessage);
-    return unsub;
-  }, [onFinalMessage, handleFinalMessage]);
+    if (!hasConsent || !isConfigured) return;
 
-  // Auth on mount and fetch assistant for suggestions
-  useEffect(() => {
-    if (!VEGA_USER || !VEGA_PASSWORD) {
-      setAuthError('Configura VITE_VEGA_USER e VITE_VEGA_PASSWORD in .env');
-      return;
+    setLoadError(null);
+
+    // Config must be on window before the ESM widget evaluates (read once, then frozen).
+    window.UsalatestaConfig = {
+      useMockTransport: USE_MOCK,
+      directLineTokenUrl: TOKEN_URL,
+      partnerKey: PARTNER_KEY,
+      sendStartConversationEvent: true,
+      locale: 'it-IT',
+      quickActions: parseQuickActions(),
+      enableVoice: false,
+      mountSelector: '#usalatesta-root',
+    };
+
+    if (!document.getElementById(STYLE_ID)) {
+      const link = document.createElement('link');
+      link.id = STYLE_ID;
+      link.rel = 'stylesheet';
+      link.href = `${ASSET_BASE}/usalatesta.css`;
+      document.head.appendChild(link);
     }
-    let cancelled = false;
-    ensureToken(VEGA_USER, VEGA_PASSWORD)
-      .then(async (accessToken) => {
-        if (!cancelled) {
-          if (import.meta.env.DEV) console.log('[Chatbot] Token ottenuto, lunghezza:', accessToken?.length);
-          setToken(accessToken);
-          // Fetch assistant to get FAQ suggestions
-          try {
-            const assistant = await getAssistant(accessToken, VEGA_ASSISTANT_ID);
-            const faqSuggestions = extractFAQSuggestions(assistant);
-            if (faqSuggestions.length > 0) {
-              if (import.meta.env.DEV) console.log('[Chatbot] FAQ suggerimenti trovati:', faqSuggestions.length);
-              setSuggestions(faqSuggestions);
-            } else {
-              if (import.meta.env.DEV) console.log('[Chatbot] Nessuna FAQ trovata, uso suggerimenti di default');
-            }
-          } catch (err) {
-            if (import.meta.env.DEV) console.warn('[Chatbot] Errore nel caricamento assistente per FAQ:', err);
-            // Continue with fallback suggestions
-          }
-        }
-      })
-      .catch((err: Error) => {
-        if (!cancelled) setAuthError(err.message || 'Errore di autenticazione');
-      });
+
+    // Cache-bust so SPA remounts re-run the auto-mounting ESM entry.
+    document.getElementById(SCRIPT_ID)?.remove();
+    const script = document.createElement('script');
+    script.id = SCRIPT_ID;
+    script.type = 'module';
+    script.src = `${ASSET_BASE}/usalatesta.js?t=${Date.now()}`;
+    script.onerror = () => {
+      setLoadError('Impossibile caricare il chatbot. Riprova più tardi.');
+    };
+    document.body.appendChild(script);
+
     return () => {
-      cancelled = true;
+      script.remove();
+      const root = document.getElementById('usalatesta-root');
+      if (root) root.replaceChildren();
     };
-  }, []);
+  }, [hasConsent, isConfigured]);
 
-  // Connect WebSocket when we have token
-  useEffect(() => {
-    if (!token) return;
-    connect();
-    return () => disconnect();
-  }, [token, connect, disconnect]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const handleConsent = () => {
+    localStorage.setItem(PRIVACY_CONSENT_KEY, 'true');
+    setHasConsent(true);
   };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, streamingText]);
-
-  // Track when we're waiting for response
-  useEffect(() => {
-    if (streamingText) {
-      setIsWaitingForResponse(false); // We got streaming, no longer waiting
-    }
-  }, [streamingText]);
-
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      const newHeight = Math.min(textareaRef.current.scrollHeight, 128);
-      textareaRef.current.style.height = `${newHeight}px`;
-      textareaRef.current.style.overflowY =
-        textareaRef.current.scrollHeight > 128 ? 'auto' : 'hidden';
-    }
-  }, [input]);
-
-  const handleSend = (text?: string) => {
-    const messageText = text || input.trim();
-    if (!messageText) return;
-    if (!isConnected) return;
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: messageText,
-      timestamp: new Date(),
-    };
-    setMessages((prev) => [...prev, userMessage]);
-    setInput('');
-    clearStreaming();
-    setIsWaitingForResponse(true);
-    sendMessage(messageText);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  const handleSuggestionClick = (suggestion: string) => {
-    handleSend(suggestion);
-  };
-
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('it-IT', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const showSuggestions = messages.length === 0;
-  const errorMessage = authError || wsError;
-  const canSend = isConnected && !!input.trim();
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20 flex flex-col">
-      <ComingSoonOverlay enabled={CHATBOT_COMING_SOON} icon={MessageSquare} title="Chatbot" zIndex={45} />
-      {/* Connection / error banner */}
-      {errorMessage && (
-        <div className="px-4 py-2 bg-red-50 text-red-800 text-sm border-b border-red-200">
-          {errorMessage}
-        </div>
-      )}
-      {!errorMessage && isConnecting && (
-        <div className="px-4 py-2 bg-blue-50 text-primary-blue text-sm border-b border-blue-200">
-          Connessione in corso...
-        </div>
-      )}
+    <div className="fixed inset-0 bottom-16 bg-slate-50 flex flex-col overflow-hidden">
+      <ComingSoonOverlay
+        enabled={CHATBOT_COMING_SOON}
+        icon={MessageSquare}
+        title="Chatbot"
+        zIndex={45}
+      />
 
-      {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 pb-32 space-y-4">
-        {showSuggestions ? (
-          <div className="space-y-6">
-            <div className="text-center pt-8">
-              <p className="text-gray-600 text-sm">
-                Scrivi una domanda per iniziare
-              </p>
+      {!hasConsent && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-blue-50 rounded-xl">
+                <ShieldCheck className="text-primary-blue" size={24} />
+              </div>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Privacy e consenso
+              </h2>
             </div>
-            <div className="flex flex-wrap gap-2 justify-center">
-              {suggestions.map((suggestion, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleSuggestionClick(suggestion)}
-                  disabled={!isConnected}
-                  className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:bg-gray-50 hover:border-primary-lightblue transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {suggestion}
-                </button>
-              ))}
+            <p className="text-sm text-gray-600 mb-3 leading-relaxed">
+              Per utilizzare il chatbot, è necessario acconsentire al
+              trattamento dei tuoi dati. Le conversazioni vengono elaborate per
+              fornirti risposte pertinenti sul gioco responsabile.
+            </p>
+            <p className="text-xs text-gray-500 mb-6 leading-relaxed">
+              I tuoi dati saranno trattati in conformità con la nostra{' '}
+              <span
+                onClick={() => navigate('/privacy')}
+                className="text-primary-blue underline hover:text-blue-900 cursor-pointer"
+              >
+                informativa sulla privacy
+              </span>
+              .
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => navigate(-1)}
+                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Torna indietro
+              </button>
+              <button
+                onClick={handleConsent}
+                className="flex-1 px-4 py-2.5 bg-primary-blue text-white rounded-xl text-sm font-medium hover:bg-blue-900 transition-colors"
+              >
+                Acconsento
+              </button>
             </div>
           </div>
-        ) : (
-          <>
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${
-                  message.role === 'user' ? 'justify-end' : 'justify-start'
-                }`}
-              >
-                <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                    message.role === 'user'
-                      ? 'bg-primary-blue text-white'
-                      : 'bg-white text-gray-800 shadow-sm'
-                  }`}
-                >
-                  <p className="text-sm whitespace-pre-wrap break-words">
-                    {message.role === 'assistant' 
-                      ? renderMarkdown(message.content)
-                      : message.content}
-                  </p>
-                  <span
-                    className={`text-xs mt-1 block ${
-                      message.role === 'user'
-                        ? 'text-blue-100'
-                        : 'text-gray-400'
-                    }`}
-                  >
-                    {formatTime(message.timestamp)}
-                  </span>
-                </div>
-              </div>
-            ))}
-            {streamingText && (
-              <div className="flex justify-start">
-                <div className="max-w-[80%] rounded-2xl px-4 py-2 bg-white text-gray-800 shadow-sm">
-                  <p className="text-sm whitespace-pre-wrap break-words">
-                    {renderMarkdown(streamingText)}
-                  </p>
-                </div>
-              </div>
-            )}
-            {isWaitingForResponse && !streamingText && (
-              <div className="flex justify-start">
-                <div className="bg-white rounded-2xl px-4 py-2 shadow-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="flex space-x-1">
-                      <div
-                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                        style={{ animationDelay: '0ms' }}
-                      />
-                      <div
-                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                        style={{ animationDelay: '150ms' }}
-                      />
-                      <div
-                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                        style={{ animationDelay: '300ms' }}
-                      />
-                    </div>
-                    <span className="text-xs text-gray-500">Sto scrivendo...</span>
-                  </div>
-                </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </>
-        )}
-      </div>
-
-      {/* Composer */}
-      <div className="bg-white border-t border-gray-200 p-4 fixed bottom-16 left-0 right-0 z-40">
-        <div className="flex items-end gap-2">
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={
-              isConnected
-                ? 'Scrivi un messaggio...'
-                : 'Connessione in corso...'
-            }
-            rows={1}
-            disabled={!isConnected}
-            className="flex-1 resize-none rounded-xl border border-gray-300 px-4 py-3 text-base leading-6 focus:outline-none focus:ring-2 focus:ring-primary-lightblue focus:border-transparent scrollbar-hide disabled:bg-gray-100 disabled:cursor-not-allowed"
-            style={{
-              minHeight: '48px',
-              maxHeight: '128px',
-            }}
-          />
-          <button
-            onClick={() => handleSend()}
-            disabled={!canSend}
-            className={`p-3 rounded-xl transition-colors mb-[1px] ${
-              canSend
-                ? 'bg-primary-blue text-white hover:bg-blue-900'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-            }`}
-          >
-            <Send size={20} />
-          </button>
         </div>
-      </div>
+      )}
+
+      {hasConsent && !isConfigured && (
+        <div className="relative z-10 flex-1 flex items-center justify-center px-6 text-center">
+          <p className="text-sm text-gray-600">
+            Chatbot non configurato. Imposta{' '}
+            <code className="text-xs bg-gray-100 px-1 rounded">
+              VITE_USALATESTA_PARTNER_KEY
+            </code>{' '}
+            oppure abilita il mock con{' '}
+            <code className="text-xs bg-gray-100 px-1 rounded">
+              VITE_USALATESTA_USE_MOCK=true
+            </code>
+            .
+          </p>
+        </div>
+      )}
+
+      {loadError && (
+        <div className="relative z-10 px-4 py-2 bg-red-50 text-red-800 text-sm border-b border-red-200">
+          {loadError}
+        </div>
+      )}
+
+      {hasConsent && isConfigured && (
+        <div
+          id="usalatesta-root"
+          className="relative z-10 flex-1 w-full min-h-0"
+          style={{ height: '100%' }}
+        />
+      )}
     </div>
   );
 }

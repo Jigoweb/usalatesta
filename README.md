@@ -31,12 +31,16 @@ Applicazione PWA per la sensibilizzazione sul gioco d'azzardo responsabile.
    - Il server sarà disponibile su `http://localhost:5173` (o un'altra porta se quella è occupata)
    - Vite mostrerà l'URL esatto nel terminale
 
-4. **Chatbot Vega (opzionale)**  
-   Per usare il chatbot reale (API Vega), crea un file `.env` e imposta:
-   - `VITE_VEGA_USER` – email utente
-   - `VITE_VEGA_PASSWORD` – password
-   - `VITE_VEGA_ASSISTANT_ID` – ID assistente (default `310`)  
-   Documentazione API: [https://api.vegasystem.org/docs](https://api.vegasystem.org/docs)
+4. **Chatbot embed Usa la Testa**  
+   Il chatbot su `/chatbot` carica il widget ufficiale (Azure SWA + APIM / Direct Line). Crea un file `.env` (vedi `.env.example`):
+   - `VITE_USALATESTA_ASSET_BASE` – CDN del widget (default SWA di dev)
+   - `VITE_USALATESTA_TOKEN_URL` – endpoint APIM `…/usalatesta/generate`
+   - `VITE_USALATESTA_PARTNER_KEY` – subscription key APIM (obbligatoria se mock disattivo)
+   - `VITE_USALATESTA_USE_MOCK=true` – chat mock locale senza rete
+   - `VITE_USALATESTA_QUICK_ACTIONS` – opzionale, JSON array di chip
+
+   **Requisiti esterni:** Origin della pagina host in whitelist APIM (match esatto hostname).  
+   Su Vercel impostare `VITE_USALATESTA_PARTNER_KEY` e fare redeploy (le `VITE_*` sono incluse a build time).
 
 5. **Coming Soon Overlay (opzionale)**  
    Per mostrare l'overlay "Presto disponibile" sulle pagine in sviluppo, aggiungi al file `.env`:
