@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MessageSquare, ShieldCheck } from 'lucide-react';
 import ComingSoonOverlay from '../components/ComingSoonOverlay';
@@ -58,6 +58,7 @@ export default function Chatbot() {
     () => localStorage.getItem(PRIVACY_CONSENT_KEY) === 'true'
   );
   const [loadError, setLoadError] = useState<string | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   const isConfigured = USE_MOCK || Boolean(PARTNER_KEY.trim());
 
@@ -104,13 +105,46 @@ export default function Chatbot() {
     };
   }, [hasConsent, isConfigured]);
 
+  // Keep widget viewport height in sync with the slot above BottomNav (not 100vh).
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || !hasConsent || !isConfigured) return;
+
+    const syncHeight = () => {
+      const h = el.getBoundingClientRect().height;
+      if (h > 0) {
+        el.style.setProperty('--ult-viewport-height', `${Math.round(h)}px`);
+      }
+    };
+
+    syncHeight();
+    const ro = new ResizeObserver(syncHeight);
+    ro.observe(el);
+    window.addEventListener('resize', syncHeight);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', syncHeight);
+    };
+  }, [hasConsent, isConfigured]);
+
   const handleConsent = () => {
     localStorage.setItem(PRIVACY_CONSENT_KEY, 'true');
     setHasConsent(true);
   };
 
+  // BottomNav is h-16 (4rem). Avoid `inset-0` + `bottom-*` (Tailwind can let inset win).
+  const shellStyle: React.CSSProperties = {
+    top: 0,
+    right: 0,
+    left: 0,
+    bottom: '4rem',
+  };
+
   return (
-    <div className="fixed inset-0 bottom-16 bg-slate-50 flex flex-col overflow-hidden">
+    <div
+      className="fixed bg-slate-50 flex flex-col overflow-hidden"
+      style={shellStyle}
+    >
       <ComingSoonOverlay
         enabled={CHATBOT_COMING_SOON}
         icon={MessageSquare}
@@ -119,7 +153,7 @@ export default function Chatbot() {
       />
 
       {!hasConsent && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
+        <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-blue-50 rounded-xl">
@@ -187,8 +221,15 @@ export default function Chatbot() {
       {hasConsent && isConfigured && (
         <div
           id="usalatesta-root"
-          className="relative z-10 flex-1 w-full min-h-0"
-          style={{ height: '100%' }}
+          ref={rootRef}
+          className="relative z-10 flex-1 w-full min-h-0 h-full"
+          style={
+            {
+              height: '100%',
+              // Fallback before ResizeObserver; keeps composer above BottomNav (h-16).
+              ['--ult-viewport-height' as string]: 'calc(100dvh - 4rem)',
+            } as React.CSSProperties
+          }
         />
       )}
     </div>
