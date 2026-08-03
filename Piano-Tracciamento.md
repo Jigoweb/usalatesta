@@ -60,7 +60,7 @@ L'obiettivo è misurare l'interesse degli utenti verso la richiesta di aiuto rea
 - **Fine Timer (Solo GA4):** Registra il momento in cui il timer si conclude, distinguendo se è terminato naturalmente o se è stato interrotto manualmente dall'utente.
 
 ### 4.4. Chatbot, Giochi e Blog
-- **Invio Messaggio Chat (GA4, Meta, GAds):** Traccia ogni singolo messaggio inviato dall'utente al Chatbot (senza tracciare il contenuto del messaggio per ovvi motivi di privacy).
+- **Invio Messaggio Chat (GA4, Meta, GAds):** Previsto nel catalogo (`chat_messageSend`). Con il widget embed attuale non è disponibile un hook lato host sull’invio messaggio: l’evento resta riservato e andrà ripristinato quando il kit espone callback/eventi (senza tracciare il contenuto del messaggio).
 - **Avvio Esperienza/Gioco (GA4, Meta, GAds):** Registra quando un utente avvia uno dei mini-giochi (es. Il Cervello o il Labirinto), specificando il nome del gioco.
 - **Conclusione Esperienza (Solo GA4):** Registra il momento in cui l'utente porta a termine il gioco.
 - **Lettura Blog (Solo GA4):** Traccia il click sul pulsante "Leggi Altro" al termine di un articolo, per misurare l'engagement sui contenuti testuali.
