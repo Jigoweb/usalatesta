@@ -84,9 +84,17 @@ describe('EventCatalog wiring (static source scan)', () => {
 
   const sourceBlob = filesToScan.map((f) => readFileSync(f, 'utf8')).join('\n');
 
-  it.each([...EVENT_CATALOG])('catalog event %s is referenced in app code', (eventName) => {
-    expect(sourceBlob.includes(`'${eventName}'`) || sourceBlob.includes(`"${eventName}"`)).toBe(true);
-  });
+  // Official widget is a black box: send is no longer fired from app code.
+  const widgetOwnedEvents = new Set<string>(['chat_messageSend']);
+
+  it.each([...EVENT_CATALOG].filter((eventName) => !widgetOwnedEvents.has(eventName)))(
+    'catalog event %s is referenced in app code',
+    (eventName) => {
+      expect(sourceBlob.includes(`'${eventName}'`) || sourceBlob.includes(`"${eventName}"`)).toBe(
+        true
+      );
+    }
+  );
 });
 
 describe('GTM + Consent Mode bootstrap (index.html)', () => {
@@ -119,5 +127,20 @@ describe('GTM + Consent Mode bootstrap (index.html)', () => {
       expect(html).toMatch(new RegExp(`'${key}':\\s*'denied'`));
     }
     expect(html).toContain("'wait_for_update': 500");
+  });
+});
+
+describe('CSP (vercel.json) includes production chatbot hosts', () => {
+  const vercel = readFileSync(resolve(__dirname, '../../../vercel.json'), 'utf8');
+
+  it.each([
+    'https://white-mud-0089d1403.5.azurestaticapps.net',
+    'https://novoapim-prod-001.azure-api.net',
+    'https://europe.directline.botframework.com',
+    'wss://europe.directline.botframework.com',
+    'https://www.googletagmanager.com',
+    'https://www.usa-la-testa.it',
+  ])('mentions %s', (host) => {
+    expect(vercel).toContain(host);
   });
 });
