@@ -17,6 +17,8 @@ vi.mock('../../lib/usalatesta-widget', async () => {
     ...actual,
     getPartnerKey: () => 'test-partner-key',
     loadUsalatestaWidget: vi.fn().mockResolvedValue(undefined),
+    unloadUsalatestaWidget: vi.fn(),
+    syncUsalatestaViewportHeight: vi.fn(() => () => undefined),
   };
 });
 

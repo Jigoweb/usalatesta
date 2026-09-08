@@ -9,11 +9,10 @@ import {
   USALATESTA_STYLE_ID,
   __resetUsalatestaWidgetForTests,
   applyUsalatestaConfig,
-  attachUsalatestaRoot,
   buildUsalatestaConfig,
-  detachUsalatestaRoot,
   isProductionOrigin,
   loadUsalatestaWidget,
+  syncUsalatestaViewportHeight,
 } from '../usalatesta-widget';
 
 describe('usalatesta-widget', () => {
@@ -31,6 +30,7 @@ describe('usalatesta-widget', () => {
       locale: 'it-IT',
       quickActions: [...USALATESTA_QUICK_ACTIONS],
       enableVoice: false,
+      mountSelector: `#${USALATESTA_ROOT_ID}`,
     });
   });
 
@@ -64,38 +64,17 @@ describe('usalatesta-widget', () => {
     const first = loadUsalatestaWidget(config);
     void first.catch(() => undefined);
 
-    const scriptCount = document.querySelectorAll(
-      `script#${USALATESTA_SCRIPT_ID}`
-    ).length;
+    const firstSrc = (document.getElementById(USALATESTA_SCRIPT_ID) as HTMLScriptElement)
+      .src;
     const second = loadUsalatestaWidget(config);
     void second.catch(() => undefined);
-    expect(document.querySelectorAll(`script#${USALATESTA_SCRIPT_ID}`).length).toBe(
-      scriptCount
+    expect((document.getElementById(USALATESTA_SCRIPT_ID) as HTMLScriptElement).src).toBe(
+      firstSrc
     );
 
     await expect(
       loadUsalatestaWidget({ ...config, sendStartConversationEvent: false })
     ).rejects.toThrow(/sendStartConversationEvent/);
-  });
-
-  it('attach/detach keeps a persistent #usalatesta-root', () => {
-    const host = document.createElement('div');
-    document.body.appendChild(host);
-
-    const root = attachUsalatestaRoot(host);
-    expect(root.id).toBe(USALATESTA_ROOT_ID);
-    expect(host.contains(root)).toBe(true);
-
-    detachUsalatestaRoot();
-    expect(root.getAttribute('data-usalatesta-parked')).toBe('true');
-    expect(root.style.display).toBe('none');
-    expect(root.parentElement).toBe(document.body);
-
-    attachUsalatestaRoot(host);
-    expect(root.getAttribute('data-usalatesta-parked')).toBeNull();
-    expect(host.contains(root)).toBe(true);
-
-    host.remove();
   });
 
   it('applyUsalatestaConfig writes to window before any script tag', () => {
@@ -104,5 +83,17 @@ describe('usalatesta-widget', () => {
     expect(window.UsalatestaConfig?.partnerKey).toBe('abc');
     expect(spy).not.toHaveBeenCalled();
     spy.mockRestore();
+  });
+
+  it('syncUsalatestaViewportHeight sets --ult-viewport-height', () => {
+    const el = document.createElement('div');
+    Object.defineProperty(el, 'getBoundingClientRect', {
+      value: () => ({ height: 640, width: 360, top: 0, left: 0, bottom: 640, right: 360, x: 0, y: 0, toJSON: () => ({}) }),
+    });
+    document.body.appendChild(el);
+    const stop = syncUsalatestaViewportHeight(el);
+    expect(el.style.getPropertyValue('--ult-viewport-height')).toBe('640px');
+    stop();
+    el.remove();
   });
 });
