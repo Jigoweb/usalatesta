@@ -31,19 +31,20 @@ Applicazione PWA per la sensibilizzazione sul gioco d'azzardo responsabile.
    - Il server sarà disponibile su `http://localhost:5173` (o un'altra porta se quella è occupata)
    - Vite mostrerà l'URL esatto nel terminale
 
-4. **Chatbot Vega (opzionale)**  
-   Per usare il chatbot reale (API Vega), crea un file `.env` e imposta:
-   - `VITE_VEGA_USER` – email utente
-   - `VITE_VEGA_PASSWORD` – password
-   - `VITE_VEGA_ASSISTANT_ID` – ID assistente (default `310`)  
-   Documentazione API: [https://api.vegasystem.org/docs](https://api.vegasystem.org/docs)
+4. **Chatbot Usa la Testa (produzione)**  
+   Il widget ufficiale è montato nella pagina `/chatbot` (niente iframe). In locale e sui preview Vercel APIM rifiuta l’Origin: l’unico host ammesso è `https://traeusalatesta0vr4.vercel.app`.
+
+   Imposta la chiave **solo** come variabile d’ambiente Vercel Production (non committarla):
+   - `VITE_USALATESTA_PARTNER_KEY` – subscription key APIM di produzione
+
+   Dopo una modifica a `VITE_*` serve un nuovo deploy: la chiave viene iniettata nel bundle in build. Copia `.env.example` in `.env` per lo sviluppo locale.
 
 5. **Coming Soon Overlay (opzionale)**  
    Per mostrare l'overlay "Presto disponibile" sulle pagine in sviluppo, aggiungi al file `.env`:
    - `VITE_CHATBOT_COMING_SOON=true` – mostra overlay sulla pagina Chatbot
    - `VITE_GAMES_COMING_SOON=true` – mostra overlay sulla pagina Giochi
    
-   **Nota:** In locale, lascia queste variabili non impostate o imposta `false` per lavorare sulle pagine. In produzione, imposta `true` per mostrare il messaggio "coming soon".
+   **Nota:** Lascia queste variabili non impostate o a `false` per mostrare le pagine. Il chatbot di produzione deve restare visibile (`VITE_CHATBOT_COMING_SOON` assente o `false`).
 
 ## Test su Dispositivo Mobile
 
