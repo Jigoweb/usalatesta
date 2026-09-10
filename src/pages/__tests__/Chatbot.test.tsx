@@ -2,12 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import Chatbot from '../Chatbot';
-import {
-  USALATESTA_PROD_ORIGIN,
-  __resetUsalatestaWidgetForTests,
-} from '../../lib/usalatesta-widget';
-
-const PRIVACY_CONSENT_KEY = 'usalatesta_chat_privacy_consent';
+import { __resetUsalatestaWidgetForTests } from '../../lib/usalatesta-widget';
 
 vi.mock('../../lib/usalatesta-widget', async () => {
   const actual = await vi.importActual<typeof import('../../lib/usalatesta-widget')>(
@@ -50,11 +45,5 @@ describe('Chatbot page', () => {
     expect(root).toBeTruthy();
     expect(root?.closest('iframe')).toBeNull();
     expect(document.querySelector('#usalatesta-root iframe')).toBeNull();
-  });
-
-  it('shows a non-blocking origin warning off the production host', () => {
-    localStorage.setItem(PRIVACY_CONSENT_KEY, 'true');
-    renderChatbot();
-    expect(screen.getByText(USALATESTA_PROD_ORIGIN)).toBeInTheDocument();
   });
 });

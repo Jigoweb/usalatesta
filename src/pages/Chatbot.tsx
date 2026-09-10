@@ -5,11 +5,9 @@ import ComingSoonOverlay from '../components/ComingSoonOverlay';
 import {
   buildUsalatestaConfig,
   getPartnerKey,
-  isProductionOrigin,
   loadUsalatestaWidget,
   syncUsalatestaViewportHeight,
   unloadUsalatestaWidget,
-  USALATESTA_PROD_ORIGIN,
   USALATESTA_ROOT_ID,
 } from '../lib/usalatesta-widget';
 
@@ -32,7 +30,6 @@ export default function Chatbot() {
   );
   const [loadError, setLoadError] = useState<string | null>(null);
   const partnerKey = getPartnerKey();
-  const onProductionOrigin = isProductionOrigin();
   const isConfigured = Boolean(partnerKey);
 
   useEffect(() => {
@@ -131,14 +128,6 @@ export default function Chatbot() {
             </code>{' '}
             su Vercel Production.
           </p>
-        </div>
-      )}
-
-      {hasConsent && isConfigured && !onProductionOrigin && !loadError && (
-        <div className="relative z-20 px-4 py-2 bg-amber-50 text-amber-900 text-sm border-b border-amber-200">
-          Il chatbot di produzione risponde solo da{' '}
-          <span className="font-medium">{USALATESTA_PROD_ORIGIN}</span>. Questo
-          origin non è in whitelist APIM.
         </div>
       )}
 
