@@ -30,5 +30,7 @@ native-packages/
 **/signing-key-info.txt
 **/*.apk
 **/*.aab
+# Ignore accidental google-services.json elsewhere; keep the native Android patch file tracked
 **/google-services.json
+!native/android/firebase-patches/google-services.json
 !**/google-services.json.example

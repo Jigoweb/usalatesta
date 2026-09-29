@@ -4,6 +4,11 @@ Guida per `first_open` e analytics nativi su **iOS** (PWABuilder) e **Android** 
 
 > La PWA web continua con **GTM + Consent Mode + Cookiebot**. Firebase qui serve allo **shell nativo** (store), non sostituisce il dataLayer web.
 
+> **Stato config:** file reali del cliente installati (`usalatesta-3d147`).
+> - iOS: `native/ios/USA LA TESTA/GoogleService-Info.plist` (bundle `it.usa-la-testa.app`)
+> - Android: `native/android/firebase-patches/google-services.json` (package `app.vercel.traeusalatesta0vr4.twa`) — da copiare in `app/` del progetto Bubblewrap quando disponibile.
+
+
 ## Identificatori app
 
 | Piattaforma | ID |
