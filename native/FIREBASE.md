@@ -78,3 +78,10 @@ Non unificare `first_open` e `pwa_first_open`: sono segnali diversi (install/she
 Lo zip Android include `signing.keystore` e password in chiaro.  
 **Non** vanno in repository. Tienili in un secret manager / password vault del team.  
 Se lo zip è circolato in chat/email non protette, valuta di **ruotare** le password del keystore dove possibile e limitare l’accesso.
+
+## Stato build (agent)
+
+- **Android TWA**: progetto generato in `native/android/twa-project` con Firebase Analytics montato.
+  Artifact di test in `/opt/cursor/artifacts/firebase-native-builds/` (firma **locale**, non keystore Play).
+- **iOS**: codice + plist pronti in `native/ios`. La build IPA richiede un **Mac con Xcode** (non eseguibile da questo ambiente Linux).
+
