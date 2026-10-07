@@ -17,6 +17,8 @@ import Games from './pages/Games';
 import BrainExperience from './pages/BrainExperience';
 import LabyrinthExperience from './pages/LabyrinthExperience';
 import Privacy from './pages/Privacy';
+import PrivacyAnalytics from './pages/PrivacyAnalytics';
+import CookiePolicy from './pages/CookiePolicy';
 
 function App() {
   return (
@@ -37,6 +39,8 @@ function App() {
           <Route path="/games/cervello" element={<BrainExperience />} />
           <Route path="/games/labyrinth" element={<LabyrinthExperience />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/privacy-analytics" element={<PrivacyAnalytics />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/quiz/result" element={<QuizResult />} />
           <Route path="/decalogo" element={<Decalogo />} />

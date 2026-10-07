@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoBlue from '../assets/images/usa-la-testa_logo-blue.png';
 
@@ -19,6 +19,12 @@ export default function Splash() {
       localStorage.setItem('usalatesta_user_consent', 'true');
       navigate('/home');
     }
+  };
+
+  const openPolicy = (e: MouseEvent, path: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(path);
   };
 
   return (
@@ -51,7 +57,29 @@ export default function Splash() {
           </div>
           <label htmlFor="consent" className="text-sm text-primary-blue leading-tight">
             dichiaro di essere maggiorenne e di aver letto e accettato le informative sulla{' '}
-            <span onClick={() => navigate('/privacy')} className="underline font-semibold cursor-pointer">privacy policy</span>
+            <button
+              type="button"
+              onClick={(e) => openPolicy(e, '/privacy')}
+              className="underline font-semibold"
+            >
+              informativa chatbot
+            </button>
+            {', '}
+            <button
+              type="button"
+              onClick={(e) => openPolicy(e, '/privacy-analytics')}
+              className="underline font-semibold"
+            >
+              informativa analytics e advertising
+            </button>
+            {' e '}
+            <button
+              type="button"
+              onClick={(e) => openPolicy(e, '/cookie-policy')}
+              className="underline font-semibold"
+            >
+              cookie policy
+            </button>
           </label>
         </div>
 
