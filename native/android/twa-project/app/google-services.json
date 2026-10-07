@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "838781406633",
+    "project_id": "usalatesta-3d147",
+    "storage_bucket": "usalatesta-3d147.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:838781406633:android:e79d48b32539c7cb0388b8",
+        "android_client_info": {
+          "package_name": "app.vercel.traeusalatesta0vr4.twa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCp40z2-svvZgUnx3a628BHeHplDpQ9l6o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
