@@ -24,3 +24,26 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Native store secrets / binaries (never commit)
+native-packages/
+**/*.keystore
+**/signing-key-info.txt
+**/*.apk
+**/*.aab
+# Ignore accidental google-services.json elsewhere; keep the native Android patch file tracked
+**/google-services.json
+!native/android/firebase-patches/google-services.json
+!native/android/twa-project/app/google-services.json
+!**/google-services.json.example
+
+# Bubblewrap / Android TWA generated build junk
+native/android/twa/node_modules/
+native/android/twa/package-lock.json
+native/android/twa/package.json
+native/android/twa-project/.gradle/
+native/android/twa-project/build/
+native/android/twa-project/app/build/
+native/android/twa-project/local.properties
+native/android/twa-project/android-keystore.jks
+native/android/twa-project/*.jks
+native/android/twa-project/*.keystore
