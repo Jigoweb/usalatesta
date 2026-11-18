@@ -2,6 +2,10 @@
  * Official "Usa la Testa" production chat widget.
  * Config MUST be on window before the module script is injected.
  * Never load the widget inside an iframe: APIM allowlists the host Origin.
+ *
+ * The widget ESM entry auto-boots once. Nested modules (src/widget.js) are
+ * cached by URL, so re-injecting usalatesta.js?t=… does NOT re-run boot().
+ * Keep a persistent #usalatesta-root and park/reattach it across SPA navigations.
  */
 
 export const USALATESTA_PROD_ORIGIN = 'https://traeusalatesta0vr4.vercel.app';
@@ -21,6 +25,8 @@ export const USALATESTA_QUICK_ACTIONS = [
   'Quali sono i segnali di gioco problematico?',
 ] as const;
 
+const PARKED_ROOT_ATTR = 'data-usalatesta-parked';
+
 export interface UsalatestaConfig {
   useMockTransport: boolean;
   directLineTokenUrl: string;
@@ -39,6 +45,7 @@ declare global {
 }
 
 let loadPromise: Promise<void> | null = null;
+let persistentRoot: HTMLDivElement | null = null;
 
 export function getPartnerKey(): string | undefined {
   const key = import.meta.env.VITE_USALATESTA_PARTNER_KEY;
@@ -78,14 +85,16 @@ function ensureStyle(): void {
 }
 
 function injectModuleScript(): Promise<void> {
-  document.getElementById(USALATESTA_SCRIPT_ID)?.remove();
+  const existing = document.getElementById(USALATESTA_SCRIPT_ID);
+  if (existing) return Promise.resolve();
 
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.id = USALATESTA_SCRIPT_ID;
     script.type = 'module';
-    // Cache-bust so SPA remounts re-run the auto-mounting ESM entry.
-    script.src = `${USALATESTA_ASSET_BASE}/usalatesta.js?t=${Date.now()}`;
+    // Stable URL: the entry and its nested imports must stay cached so the
+    // auto-boot runs exactly once; remounts rely on attach/detach instead.
+    script.src = `${USALATESTA_ASSET_BASE}/usalatesta.js`;
     script.onload = () => resolve();
     script.onerror = () =>
       reject(new Error('Impossibile caricare il widget Usa la Testa'));
@@ -94,13 +103,9 @@ function injectModuleScript(): Promise<void> {
 }
 
 /**
- * Declares window.UsalatestaConfig first, then injects CSS + module script.
- * Pass `{ reload: true }` when remounting the chatbot route.
+ * Declares window.UsalatestaConfig first, then injects CSS + module script once.
  */
-export function loadUsalatestaWidget(
-  config: UsalatestaConfig,
-  options?: { reload?: boolean }
-): Promise<void> {
+export function loadUsalatestaWidget(config: UsalatestaConfig): Promise<void> {
   if (!config.partnerKey) {
     return Promise.reject(new Error('partnerKey mancante'));
   }
@@ -112,10 +117,6 @@ export function loadUsalatestaWidget(
 
   applyUsalatestaConfig(config);
 
-  if (options?.reload) {
-    loadPromise = null;
-  }
-
   if (!loadPromise) {
     ensureStyle();
     loadPromise = injectModuleScript().catch((err) => {
@@ -126,11 +127,49 @@ export function loadUsalatestaWidget(
   return loadPromise;
 }
 
-export function unloadUsalatestaWidget(): void {
-  document.getElementById(USALATESTA_SCRIPT_ID)?.remove();
-  const root = document.getElementById(USALATESTA_ROOT_ID);
-  root?.replaceChildren();
-  loadPromise = null;
+export function getOrCreateUsalatestaRoot(): HTMLDivElement {
+  if (persistentRoot?.isConnected) return persistentRoot;
+
+  const existing = document.getElementById(USALATESTA_ROOT_ID);
+  if (existing instanceof HTMLDivElement) {
+    persistentRoot = existing;
+    return existing;
+  }
+
+  const el = document.createElement('div');
+  el.id = USALATESTA_ROOT_ID;
+  el.style.width = '100%';
+  el.style.height = '100%';
+  el.style.minHeight = '0';
+  persistentRoot = el;
+  return el;
+}
+
+/** Move the persistent root into the chatbot host so React unmounts do not destroy it. */
+export function attachUsalatestaRoot(host: HTMLElement): HTMLDivElement {
+  const root = getOrCreateUsalatestaRoot();
+  root.removeAttribute(PARKED_ROOT_ATTR);
+  root.style.removeProperty('display');
+  root.style.width = '100%';
+  root.style.height = '100%';
+  root.style.minHeight = '0';
+  if (root.parentElement !== host) {
+    host.appendChild(root);
+  }
+  return root;
+}
+
+/** Park the root off the chatbot page without destroying the widget instance. */
+export function detachUsalatestaRoot(): void {
+  const root =
+    persistentRoot ??
+    (document.getElementById(USALATESTA_ROOT_ID) as HTMLDivElement | null);
+  if (!root) return;
+  root.setAttribute(PARKED_ROOT_ATTR, 'true');
+  root.style.display = 'none';
+  if (root.parentElement !== document.body) {
+    document.body.appendChild(root);
+  }
 }
 
 export function syncUsalatestaViewportHeight(el: HTMLElement): () => void {
@@ -138,6 +177,8 @@ export function syncUsalatestaViewportHeight(el: HTMLElement): () => void {
     const h = el.getBoundingClientRect().height;
     if (h > 0) {
       el.style.setProperty('--ult-viewport-height', `${Math.round(h)}px`);
+      const root = document.getElementById(USALATESTA_ROOT_ID);
+      root?.style.setProperty('--ult-viewport-height', `${Math.round(h)}px`);
     }
   };
   apply();
@@ -153,6 +194,7 @@ export function syncUsalatestaViewportHeight(el: HTMLElement): () => void {
 /** Test-only: reset singleton state. */
 export function __resetUsalatestaWidgetForTests(): void {
   loadPromise = null;
+  persistentRoot = null;
   document.getElementById(USALATESTA_STYLE_ID)?.remove();
   document.getElementById(USALATESTA_SCRIPT_ID)?.remove();
   document.getElementById(USALATESTA_ROOT_ID)?.remove();

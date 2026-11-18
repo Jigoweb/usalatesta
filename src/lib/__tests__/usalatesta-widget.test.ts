@@ -9,7 +9,9 @@ import {
   USALATESTA_STYLE_ID,
   __resetUsalatestaWidgetForTests,
   applyUsalatestaConfig,
+  attachUsalatestaRoot,
   buildUsalatestaConfig,
+  detachUsalatestaRoot,
   isProductionOrigin,
   loadUsalatestaWidget,
   syncUsalatestaViewportHeight,
@@ -57,6 +59,7 @@ describe('usalatesta-widget', () => {
     expect(style.href).toContain(`${USALATESTA_ASSET_BASE}/usalatesta.css`);
     expect(script.type).toBe('module');
     expect(script.src).toContain(`${USALATESTA_ASSET_BASE}/usalatesta.js`);
+    expect(script.src).not.toMatch(/[?&]t=/);
   });
 
   it('loadUsalatestaWidget is a singleton and rejects a missing start event', async () => {
@@ -71,10 +74,39 @@ describe('usalatesta-widget', () => {
     expect((document.getElementById(USALATESTA_SCRIPT_ID) as HTMLScriptElement).src).toBe(
       firstSrc
     );
+    // Same script node — do not re-inject (nested ESM boot would not re-run).
+    expect(document.querySelectorAll(`#${USALATESTA_SCRIPT_ID}`)).toHaveLength(1);
 
     await expect(
       loadUsalatestaWidget({ ...config, sendStartConversationEvent: false })
     ).rejects.toThrow(/sendStartConversationEvent/);
+  });
+
+  it('attach/detach parks the same root without destroying widget DOM', () => {
+    const hostA = document.createElement('div');
+    const hostB = document.createElement('div');
+    document.body.append(hostA, hostB);
+
+    const root = attachUsalatestaRoot(hostA);
+    const marker = document.createElement('main');
+    marker.className = 'ult-app';
+    root.appendChild(marker);
+
+    detachUsalatestaRoot();
+    expect(root.parentElement).toBe(document.body);
+    expect(root.getAttribute('data-usalatesta-parked')).toBe('true');
+    expect(root.style.display).toBe('none');
+    expect(root.querySelector('.ult-app')).toBe(marker);
+
+    const reattached = attachUsalatestaRoot(hostB);
+    expect(reattached).toBe(root);
+    expect(root.parentElement).toBe(hostB);
+    expect(root.getAttribute('data-usalatesta-parked')).toBeNull();
+    expect(root.style.display).toBe('');
+    expect(root.querySelector('.ult-app')).toBe(marker);
+
+    hostA.remove();
+    hostB.remove();
   });
 
   it('applyUsalatestaConfig writes to window before any script tag', () => {

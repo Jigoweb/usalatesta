@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { MessageSquare, ShieldCheck } from 'lucide-react';
 import ComingSoonOverlay from '../components/ComingSoonOverlay';
 import {
+  attachUsalatestaRoot,
   buildUsalatestaConfig,
+  detachUsalatestaRoot,
   getPartnerKey,
   loadUsalatestaWidget,
   syncUsalatestaViewportHeight,
-  unloadUsalatestaWidget,
-  USALATESTA_ROOT_ID,
 } from '../lib/usalatesta-widget';
 
 const PRIVACY_CONSENT_KEY = 'usalatesta_chat_privacy_consent';
@@ -22,9 +22,15 @@ const SHELL_STYLE: CSSProperties = {
   bottom: '4rem',
 };
 
+function resetAppScroll(): void {
+  const root = document.getElementById('root');
+  if (root) root.scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+
 export default function Chatbot() {
   const navigate = useNavigate();
-  const rootRef = useRef<HTMLDivElement>(null);
+  const hostRef = useRef<HTMLDivElement>(null);
   const [hasConsent, setHasConsent] = useState(
     () => localStorage.getItem(PRIVACY_CONSENT_KEY) === 'true'
   );
@@ -33,27 +39,33 @@ export default function Chatbot() {
   const isConfigured = Boolean(partnerKey);
 
   useEffect(() => {
+    resetAppScroll();
+  }, []);
+
+  useEffect(() => {
     if (!hasConsent || CHATBOT_COMING_SOON || !partnerKey) return;
 
+    const host = hostRef.current;
+    if (!host) return;
+
     setLoadError(null);
+    attachUsalatestaRoot(host);
     let cancelled = false;
 
-    loadUsalatestaWidget(buildUsalatestaConfig(partnerKey), { reload: true }).catch(
-      (err: Error) => {
-        if (!cancelled) {
-          setLoadError(err.message || 'Errore nel caricamento del chatbot');
-        }
+    loadUsalatestaWidget(buildUsalatestaConfig(partnerKey)).catch((err: Error) => {
+      if (!cancelled) {
+        setLoadError(err.message || 'Errore nel caricamento del chatbot');
       }
-    );
+    });
 
     return () => {
       cancelled = true;
-      unloadUsalatestaWidget();
+      detachUsalatestaRoot();
     };
   }, [hasConsent, partnerKey]);
 
   useEffect(() => {
-    const el = rootRef.current;
+    const el = hostRef.current;
     if (!el || !hasConsent || !isConfigured) return;
     return syncUsalatestaViewportHeight(el);
   }, [hasConsent, isConfigured]);
@@ -65,7 +77,7 @@ export default function Chatbot() {
 
   return (
     <div
-      className="fixed bg-slate-50 flex flex-col overflow-hidden"
+      className="fixed z-40 bg-slate-50 flex flex-col overflow-hidden"
       style={SHELL_STYLE}
     >
       <ComingSoonOverlay
@@ -139,9 +151,8 @@ export default function Chatbot() {
 
       {hasConsent && isConfigured && (
         <div
-          id={USALATESTA_ROOT_ID}
-          ref={rootRef}
-          className="relative z-10 flex-1 w-full min-h-0"
+          ref={hostRef}
+          className="relative z-10 flex-1 w-full min-h-0 overflow-hidden bg-slate-50"
           style={
             {
               height: '100%',
